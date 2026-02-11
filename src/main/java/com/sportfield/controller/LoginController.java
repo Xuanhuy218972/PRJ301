@@ -54,7 +54,8 @@ public class LoginController extends HttpServlet {
         }
 
         UserDAO dao = new UserDAO();
-        User account = dao.login(user.trim(), pass);
+        String hashedPass = com.sportfield.utils.SecurityUtils.hashPassword(pass);
+        User account = dao.login(user.trim(), hashedPass);
 
         if (account != null) {
             HttpSession session = request.getSession();

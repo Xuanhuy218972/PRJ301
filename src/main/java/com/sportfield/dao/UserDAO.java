@@ -66,4 +66,56 @@ public class UserDAO {
         }
         return null;
     }
+    
+    public boolean checkUserExist(String username, String email) {
+        String sql = "SELECT UserID FROM Users WHERE Username = ? OR Email = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, username);
+                ps.setString(2, email);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return false;
+    }
+    
+    public boolean register(User user) {
+        String sql = "INSERT INTO Users (Username, Password, Email, Phone, FullName, Role, WalletBalance, Verified, CreatedAt) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, 1, GETDATE())";
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, user.getUsername());
+                ps.setString(2, user.getPassword());
+                ps.setString(3, user.getEmail());
+                ps.setString(4, user.getPhone());
+                ps.setString(5, user.getFullName());
+                
+                int rows = ps.executeUpdate();
+                return rows > 0; 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
 }

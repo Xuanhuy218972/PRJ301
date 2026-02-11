@@ -2,49 +2,67 @@
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
 */
-/* 
+/*
     Created on : Feb 10, 2026, 9:35:49 PM
     Author     : hxhbang
 */
 
-/* Import font từ Google Font (để ở đầu file CSS) */
-@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600&family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --primary-color: #da291c;
+    --primary-dark: #b30000;
+    --text-dark: #1a1a1a;
+    --text-muted: #666;
+    --border-color: #ced4da;
+}
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f8f9fa;
+    background: #f8f9fa;
 }
 
-/* Cột chứa ảnh bên trái */
+
 .bg-image {
-    /* Ảnh sân bóng chất lượng cao */
-    background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0565c6a?q=80&w=1920&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
     position: relative;
+    background: #212529;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
-/* Lớp phủ màu đen mờ lên ảnh */
+.bg-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../images/background-auth.jpg') center/cover;
+    filter: blur(8px) brightness(0.6);
+    transform: scale(1.1);
+}
+
 .bg-overlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4); 
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 }
 
 .brand-text {
-    font-family: 'Teko', sans-serif;
-    font-size: 5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem;
     color: white;
     text-transform: uppercase;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
     line-height: 0.9;
+    letter-spacing: 2px;
 }
 
-/* Form bên phải */
+.primary-text {
+    color: var(--primary-color);
+}
+
 .login-section {
     display: flex;
     align-items: center;
@@ -56,47 +74,82 @@ body {
 .login-card {
     width: 100%;
     max-width: 450px;
-    padding: 20px;
+    padding: 30px;
+}
+
+.auth-logo {
+    width: 80px;
+    margin: 0 auto 15px;
+    display: block;
+}
+
+.form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--text-dark);
+    text-transform: uppercase;
+}
+
+.input-group {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(218, 41, 28, 0.25);
+}
+
+.input-group:focus-within .input-group-text i {
+    color: var(--primary-color);
+}
+
+.input-group-text {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+}
+
+.form-control {
+    border: none;
+    padding-left: 0;
+}
+
+.form-control:focus {
+    box-shadow: none;
 }
 
 .btn-primary-custom {
-    background-color: #1a1a1a; /* Màu đen chủ đạo */
+    background: var(--primary-color);
     border: none;
     padding: 12px;
-    font-weight: 600;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    border-radius: 4px;
+    color: white;
+    width: 100%;
     transition: all 0.3s ease;
 }
 
 .btn-primary-custom:hover {
-    background-color: #28a745; /* Hover chuyển sang màu xanh sân cỏ */
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(218, 41, 28, 0.3);
 }
 
-.form-control:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+.alert {
+    font-size: 0.9rem;
 }
 
-.input-group-text {
-    background-color: transparent;
-    border-right: none;
+.animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
 }
 
-.form-control {
-    border-left: none;
-}
-
-/* Custom Input Group Border */
-.input-group {
-    border: 1px solid #ced4da;
-    border-radius: 0.375rem;
-    overflow: hidden;
-}
-
-.input-group:focus-within {
-     border-color: #28a745;
-     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
