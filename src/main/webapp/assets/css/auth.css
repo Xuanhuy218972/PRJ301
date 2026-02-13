@@ -1,17 +1,10 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/*
-    Created on : Feb 10, 2026, 9:35:49 PM
-    Author     : hxhbang
-*/
-
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap');
 
 :root {
     --primary-color: #da291c;
     --primary-dark: #b30000;
+    --admin-primary: #3498db;
+    --admin-primary-dark: #2980b9;
     --text-dark: #1a1a1a;
     --text-muted: #666;
     --border-color: #ced4da;
@@ -22,12 +15,15 @@ body {
     background: #f8f9fa;
 }
 
-
-.bg-image {
+.bg-image,
+.internal-login-wrapper {
     position: relative;
-    background: #212529;
     min-height: 100vh;
     overflow: hidden;
+}
+
+.bg-image {
+    background: #212529;
 }
 
 .bg-image::before {
@@ -37,6 +33,22 @@ body {
     background: url('../images/background-auth.jpg') center/cover;
     filter: blur(8px) brightness(0.6);
     transform: scale(1.1);
+}
+
+.internal-login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.internal-login-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../images/background-auth-admin.jpg') center/cover;
+    filter: blur(8px);
+    transform: scale(1.1);
+    z-index: -1;
 }
 
 .bg-overlay {
@@ -59,8 +71,37 @@ body {
     letter-spacing: 2px;
 }
 
+.subtitle-text {
+    letter-spacing: 1px;
+}
+
 .primary-text {
     color: var(--primary-color);
+}
+
+.form-title {
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.internal-form-title {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.internal-subtitle {
+    color: #b0bec5;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
 }
 
 .login-section {
@@ -77,24 +118,59 @@ body {
     padding: 30px;
 }
 
-.auth-logo {
-    width: 80px;
-    margin: 0 auto 15px;
-    display: block;
+.internal-login-card {
+    background: rgba(30, 40, 50, 0.85);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.form-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    color: var(--text-dark);
-    text-transform: uppercase;
+.auth-logo,
+.internal-login-logo {
+    display: block;
+    margin: 0 auto 20px;
+    background: url('../images/logo.png') no-repeat center center;
+    background-size: contain;
+}
+
+.auth-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 15px;
+}
+
+.internal-login-logo {
+    width: 100px;
+    height: 100px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 10px;
+    background-origin: content-box;
+    box-sizing: border-box;
+}
+
+.input-group,
+.internal-input-group {
+    display: flex;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s;
 }
 
 .input-group {
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    overflow: hidden;
-    transition: all 0.2s ease-in-out;
+}
+
+.internal-input-group {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .input-group:focus-within {
@@ -102,18 +178,41 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(218, 41, 28, 0.25);
 }
 
+.internal-input-group:focus-within {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
 .input-group:focus-within .input-group-text i {
     color: var(--primary-color);
 }
 
-.input-group-text {
+.input-group-text,
+.internal-input-group .input-group-text {
     background: transparent;
     border: none;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-text {
     color: var(--text-muted);
 }
 
-.form-control {
+.internal-input-group .input-group-text {
+    color: #b0bec5;
+}
+
+.form-control,
+.internal-input-group .form-control {
     border: none;
+    padding: 12px;
+    width: 100%;
+    outline: none;
+}
+
+.form-control {
     padding-left: 0;
 }
 
@@ -121,24 +220,72 @@ body {
     box-shadow: none;
 }
 
-.btn-primary-custom {
-    background: var(--primary-color);
-    border: none;
+.internal-input-group .form-control {
+    background: transparent;
+    color: #fff;
+}
+
+.internal-input-group .form-control::placeholder {
+    color: #607d8b;
+}
+
+.btn-primary-custom,
+.internal-btn-primary {
+    width: 100%;
     padding: 12px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-radius: 4px;
     color: white;
-    width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .btn-primary-custom:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(218, 41, 28, 0.3);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(218, 41, 28, 0.4);
+}
+
+.internal-btn-primary {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-primary-dark));
+    font-size: 1rem;
+}
+
+.internal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.internal-back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #90a4ae;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.internal-back-link:hover {
+    color: var(--admin-primary);
+    text-decoration: underline;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+    border-width: 2px !important;
+}
+
+.internal-input-group.border-danger {
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
 }
 
 .alert {
@@ -150,6 +297,12 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

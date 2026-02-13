@@ -28,7 +28,7 @@
                     <div class="bg-overlay">
                         <div class="text-center animate-fade-in">
                             <h1 class="brand-text">JOIN THE<br><span class="primary-text">GAME</span></h1>
-                            <p class="text-white fs-4 mt-2" style="font-family: 'Roboto'; letter-spacing: 1px;">Tham gia vào cộng đồng của chúng tôi!</p>
+                            <p class="text-white fs-4 mt-2 subtitle-text">Tham gia vào cộng đồng của chúng tôi!</p>
                         </div>
                     </div>
                 </div>
@@ -36,11 +36,11 @@
                 <div class="col-md-5 col-lg-4 login-section">
                     <div class="login-card">
 
-                        <img src="${pageContext.request.contextPath}/assets/images/logo.png" alt="Logo" class="auth-logo">
+                        <div class="auth-logo"></div>
 
-                        <h2 class="form-title text-center mb-2">SIGN UP</h2>
+                        <h2 class="form-title text-center mb-2">Đăng Ký</h2>
                         <p class="text-muted text-center mb-4">
-                            Đã có tài khoản ? <a href="login.jsp" class="text-danger fw-bold text-decoration-none">Đăng nhập ngay</a>
+                            Đã có tài khoản ? <a href="login" class="text-danger fw-bold text-decoration-none">Đăng nhập ngay</a>
                         </p>
 
                         <c:if test="${not empty error}">
@@ -72,24 +72,23 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Email</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                        <input type="email" class="form-control" name="email" value="${param.email}" placeholder="Email" required>
-                                    </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" name="email" value="${param.email}" placeholder="Email" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Điện thoại</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                        <input type="tel" class="form-control" name="phone" value="${param.phone}" placeholder="Phone" required>
-                                    </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Điện thoại</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" name="phone" value="${param.phone}" placeholder="Phone" required>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label class="form-label fw-bold">Mật khẩu</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -107,7 +106,7 @@
 
                             <div class="d-grid mb-3">
                                 <button type="submit" class="btn btn-primary-custom">
-                                    CREATE ACCOUNT
+                                    Tạo Tài Khoản
                                 </button>
                             </div>
 
