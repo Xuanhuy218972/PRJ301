@@ -20,13 +20,18 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author hxhbang
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
+@WebServlet(name = "LoginController", urlPatterns = {"/login", "/login-internal"})
 public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("views/auth/login.jsp").forward(request, response);
+        String path = request.getServletPath();
+        if ("/login-internal".equals(path)) {
+            request.getRequestDispatcher("views/auth/login-internal.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("views/auth/login.jsp").forward(request, response);
+        }
     }
 
     @Override
