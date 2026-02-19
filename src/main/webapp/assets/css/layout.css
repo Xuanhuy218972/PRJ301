@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* ==================== VARIABLES ==================== */
+:root {
+    --primary-color: #da291c;
+    --primary-dark: #b30000;
+    --secondary-color: #2c3e50;
+    --text-dark: #1a1a1a;
+    --bg-light: #f8f9fa;
+}
+
+/* ==================== BASE ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-dark);
+    background: var(--bg-light);
+    line-height: 1.6;
+}
+
+/* ==================== HEADER ==================== */
+.main-header {
+    background: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .navbar {
+    padding: 0;
+    min-height: 60px;
+}
+
+.navbar-brand {
+    padding: 5px 0;
+    margin-right: 30px;
+}
+
+.header-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.main-header .navbar-nav {
+    gap: 5px;
+}
+
+.main-header .nav-link {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white !important;
+    padding: 20px 15px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.main-header .nav-link:hover {
+    background: rgba(0, 0, 0, 0.1);
+    border-bottom-color: white;
+}
+
+/* Sponsor Logos */
+.sponsor-logos {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 0 15px;
+}
+
+.sponsor-logo {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.sponsor-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Header Buttons */
+.btn-header-login,
+.btn-header-register {
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    border: 2px solid white;
+}
+
+.btn-header-login {
+    background: transparent;
+    color: white;
+}
+
+.btn-header-login:hover {
+    background: white;
+    color: var(--primary-color);
+}
+
+.btn-header-register {
+    background: white;
+    color: var(--primary-color);
+}
+
+.btn-header-register:hover {
+    background: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+}
+
+/* User Dropdown */
+.user-menu {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 8px 15px !important;
+}
+
+.user-menu:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-bottom-color: transparent !important;
+}
+
+.user-dropdown .dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.user-dropdown .dropdown-item {
+    padding: 10px 20px;
+    transition: all 0.3s;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: var(--bg-light);
+    color: var(--primary-color);
+}
+
+/* Mobile Toggle */
+.navbar-toggler {
+    border-color: white;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ==================== FOOTER ==================== */
+.main-footer {
+    background: var(--secondary-color);
+    color: white;
+    padding: 30px 0 20px;
+    margin-top: 60px;
+}
+
+/* Footer Sponsors */
+.footer-sponsors {
+    padding: 20px 0 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.sponsor-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.footer-sponsor-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: all 0.3s;
+    filter: grayscale(100%) brightness(2);
+}
+
+.footer-sponsor-logo:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: grayscale(0%) brightness(1);
+}
+
+.footer-bottom {
+    padding-top: 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+

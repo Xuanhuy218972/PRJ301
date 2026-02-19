@@ -8,27 +8,31 @@
         <title>SportFieldHub - Trang Chủ</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/assets/css/layout.css" rel="stylesheet">
     </head>
-    <body>     
-        <c:choose>
-            <c:when test="${not empty sessionScope.account}">
-                <p>Succes!</p>
-                <a href="<c:url value='/logout'/>" class="text-decoration-none">
-                    <i class="fas fa-sign-out-alt"></i> Đăng Xuất
-                </a>
-            </c:when>
-            <c:otherwise>
-                <p>Hello</p>              
-                <div>
-                    <a href="<c:url value='/login'/>" class="text-decoration-none">
-                        <i class="fas fa-sign-out-alt"></i> Đăng Nhập
-                    </a>
-                    <a href="<c:url value='/register'/>" class="text-decoration-none">
-                        <i class="fas fa-sign-out-alt"></i> Đăng Ký
-                    </a>
-                </div>
-            </c:otherwise>
-        </c:choose>
-    </div>
-</body>
+    <body>
+        <!-- Header -->
+        <jsp:include page="views/common/header.jsp" />
+
+        <section>
+            <h1>Chào Mừng Đến SportFieldHub</h1>
+            <p>Đặt sân bóng nhanh chóng - Tiện lợi - Uy tín</p>
+            <a href="/register">Đăng Ký Ngay</a> | <a href="/login">Đăng Nhập</a>
+        </section>
+
+        <main>
+            <h2>Tại Sao Chọn SportFieldHub?</h2>
+            <ul>
+                <li>Đặt sân nhanh chóng</li>
+                <li>An toàn & uy tín</li>
+                <li>Hỗ trợ 24/7</li>
+            </ul>
+        </main>
+
+
+        <!-- Footer -->
+        <jsp:include page="views/common/footer.jsp" />
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
