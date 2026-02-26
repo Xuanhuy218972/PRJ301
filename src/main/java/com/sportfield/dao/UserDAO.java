@@ -134,4 +134,78 @@ public class UserDAO {
         }
         return users;
     }
+
+    public boolean update(User user) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ? WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, user.getFullName());
+                ps.setString(2, user.getEmail());
+                ps.setString(3, user.getPhone());
+                ps.setString(4, user.getAddress());
+                ps.setString(5, user.getGender());
+                ps.setString(6, user.getDateOfBirth());
+                ps.setString(7, user.getAvatar());
+                ps.setInt(8, user.getUserID());
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public boolean delete(int userID) {
+        String sql = "DELETE FROM Users WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, userID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public boolean changeRole(int userID, String newRole) {
+        String sql = "UPDATE Users SET Role = ? WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, newRole);
+                ps.setInt(2, userID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
 }
