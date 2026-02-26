@@ -47,6 +47,7 @@
                         </c:if>
 
                         <form action="${pageContext.request.contextPath}/login" method="post">
+                            <input type="hidden" name="loginType" value="customer">
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-uppercase small">Username</label>
                                 <div class="input-group">
@@ -76,7 +77,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <a href="login-internal" class="btn btn-outline-secondary">
+                                <a href="${pageContext.request.contextPath}/admin" class="btn btn-outline-secondary">
                                     <i class="fas fa-user-shield me-2"></i> Đăng nhập với tư cách Nhân viên
                                 </a>
                             </div>

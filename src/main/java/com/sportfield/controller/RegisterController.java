@@ -25,13 +25,34 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("userRole");
+            String userRole = roleObj instanceof String ? (String) roleObj : null;
+            if ("ADMIN".equals(userRole) || "STAFF".equals(userRole)) {
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+                return;
+            }
+        }
+
         request.getRequestDispatcher("views/auth/register.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("userRole");
+            String userRole = roleObj instanceof String ? (String) roleObj : null;
+            if ("ADMIN".equals(userRole) || "STAFF".equals(userRole)) {
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+                return;
+            }
+        }
+
         request.setCharacterEncoding("UTF-8");
 
         String fullname = request.getParameter("fullname");
@@ -71,9 +92,10 @@ public class RegisterController extends HttpServlet {
             User account = dao.login(username, hashedPass);
 
             if (account != null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("account", account);
-                session.setMaxInactiveInterval(30 * 60);
+                HttpSession newSession = request.getSession();
+                newSession.setAttribute("account", account);
+                newSession.setAttribute("userRole", account.getRole());
+                newSession.setMaxInactiveInterval(30 * 60);
 
                 response.sendRedirect("index.jsp");
             } else {
