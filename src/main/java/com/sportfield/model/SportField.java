@@ -1,34 +1,36 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.sportfield.model;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 /**
- *
+ * Model class for Fields table
  * @author hxhbang
  */
 public class SportField {
-
     private int fieldID;
-    private int ownerID;
-    private String name;
-    private String fieldType;
-    private String image;
-    private String status;
+    private String fieldName;
+    private int fieldType;
+    private BigDecimal pricePerHour;
+    private String imageURL;
+    private String status; // ACTIVE, MAINTENANCE, HIDDEN
+    private LocalDateTime createdAt;
 
     public SportField() {
     }
 
-    public SportField(int fieldID, int ownerID, String name, String fieldType, String image, String status) {
+    public SportField(int fieldID, String fieldName, int fieldType, BigDecimal pricePerHour, 
+                      String imageURL, String status, LocalDateTime createdAt) {
         this.fieldID = fieldID;
-        this.ownerID = ownerID;
-        this.name = name;
+        this.fieldName = fieldName;
         this.fieldType = fieldType;
-        this.image = image;
+        this.pricePerHour = pricePerHour;
+        this.imageURL = imageURL;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
+    // Getters and Setters
     public int getFieldID() {
         return fieldID;
     }
@@ -37,36 +39,36 @@ public class SportField {
         this.fieldID = fieldID;
     }
 
-    public int getOwnerID() {
-        return ownerID;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setOwnerID(int ownerID) {
-        this.ownerID = ownerID;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFieldType() {
+    public int getFieldType() {
         return fieldType;
     }
 
-    public void setFieldType(String fieldType) {
+    public void setFieldType(int fieldType) {
         this.fieldType = fieldType;
     }
 
-    public String getImage() {
-        return image;
+    public BigDecimal getPricePerHour() {
+        return pricePerHour;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPricePerHour(BigDecimal pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getStatus() {
@@ -77,8 +79,22 @@ public class SportField {
         this.status = status;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
-        return "SportField{" + "fieldID=" + fieldID + ", name=" + name + ", status=" + status + '}';
+        return "SportField{" +
+                "fieldID=" + fieldID +
+                ", fieldName='" + fieldName + '\'' +
+                ", fieldType=" + fieldType +
+                ", pricePerHour=" + pricePerHour +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
