@@ -5,9 +5,11 @@
 package com.sportfield.controller;
 
 import java.io.IOException;
+
 import com.sportfield.dao.UserDAO;
 import com.sportfield.model.User;
 import com.sportfield.validator.RegisterValidator;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -61,6 +63,7 @@ public class RegisterController extends HttpServlet {
         String phone = request.getParameter("phone");
         String pass = request.getParameter("password");
         String repass = request.getParameter("confirm_password");
+        String avatar = request.getParameter("avatar");
 
         String error = RegisterValidator.validate(request);
 
@@ -85,6 +88,11 @@ public class RegisterController extends HttpServlet {
         newUser.setPhone(phone);
         String hashedPass = com.sportfield.utils.SecurityUtils.hashPassword(pass);
         newUser.setPassword(hashedPass);
+        
+        // Set avatar nếu có
+        if (avatar != null && !avatar.trim().isEmpty()) {
+            newUser.setAvatar(avatar.trim());
+        }
 
         boolean isSuccess = dao.register(newUser);
 
