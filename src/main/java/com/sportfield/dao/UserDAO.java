@@ -52,8 +52,8 @@ public class UserDAO {
     }
 
     public boolean register(User user) {
-        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, CreatedAt, Address, Gender, DateOfBirth) "
-                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, GETDATE(), ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, ?, GETDATE(), ?, ?, ?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -67,9 +67,10 @@ public class UserDAO {
                 ps.setString(3, user.getFullName());
                 ps.setString(4, user.getEmail());
                 ps.setString(5, user.getPhone());
-                ps.setString(6, user.getAddress());
-                ps.setString(7, user.getGender());
-                ps.setString(8, user.getDateOfBirth());
+                ps.setString(6, user.getAvatar());
+                ps.setString(7, user.getAddress());
+                ps.setString(8, user.getGender());
+                ps.setString(9, user.getDateOfBirth());
                 
                 int rows = ps.executeUpdate();
                 return rows > 0; 
@@ -136,7 +137,7 @@ public class UserDAO {
     }
 
     public boolean update(User user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ? WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ?, WalletBalance = ? WHERE UserID = ?";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -151,7 +152,8 @@ public class UserDAO {
                 ps.setString(5, user.getGender());
                 ps.setString(6, user.getDateOfBirth());
                 ps.setString(7, user.getAvatar());
-                ps.setInt(8, user.getUserID());
+                ps.setDouble(8, user.getWalletBalance());
+                ps.setInt(9, user.getUserID());
 
                 int rows = ps.executeUpdate();
                 return rows > 0;
@@ -207,5 +209,44 @@ public class UserDAO {
             DBContext.close(conn, ps, null);
         }
         return false;
+    }
+
+    public User getUserByID(int userID) {
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, userID);
+                rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    return user;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return null;
     }
 }
