@@ -24,7 +24,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link">
+                <a href="${pageContext.request.contextPath}/admin/fields" class="nav-link sidebar-link ${fn:contains(currentURI, '/views/admin/fields/') ? 'active' : ''}">
                     <i class="fas fa-layer-group"></i> Quản lý Sân Bóng
                 </a>
             </li>
