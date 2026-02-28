@@ -1,0 +1,157 @@
+.css-modal-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.55);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.css-modal-overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+.css-modal-content {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+    padding: 1.75rem 1.75rem 1.5rem;
+}
+
+.css-modal-overlay:target .animate-slide-up {
+    animation: cssModalSlideUp 0.25s ease-out;
+}
+
+@keyframes cssModalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.css-modal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.css-modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.css-modal-text {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 1.25rem;
+}
+
+.css-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.css-modal-btn {
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.css-modal-btn.stay {
+    background: #f9fafb;
+    color: #111827;
+    border-color: #e5e7eb;
+}
+
+.css-modal-btn.leave {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+
+.css-modal-btn.leave:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.css-modal-btn.stay:hover {
+    background: #e5e7eb;
+}
+
+/* ========================================
+   Bootstrap Delete Modal - User Confirm
+   ======================================== */
+.confirm-delete-modal {
+    border-radius: 1.25rem;
+    overflow: hidden;
+}
+
+.confirm-delete-modal-header {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff;
+    padding: 1rem 1.25rem;
+}
+
+.confirm-delete-modal-header .modal-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.confirm-delete-modal-header small {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.confirm-delete-modal-body {
+    padding: 1.5rem 1.75rem 1.25rem;
+}
+
+.user-confirm-card {
+    border-radius: 0.9rem;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.user-confirm-name {
+    font-weight: 700;
+    color: #111827;
+}
+
+.user-confirm-username {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.confirm-delete-modal-footer {
+    border-top: 0;
+    padding: 0 1.75rem 1.5rem;
+}

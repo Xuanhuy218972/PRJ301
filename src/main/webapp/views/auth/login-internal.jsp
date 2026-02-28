@@ -31,7 +31,7 @@
                     </div>
                 </c:if>
 
-                <form action="${pageContext.request.contextPath}/login" method="post" onsubmit="return validateForm()">
+                <form action="${pageContext.request.contextPath}/login" method="post">
                     <input type="hidden" name="loginType" value="internal">
 
                     <div class="internal-input-group" id="username-group">

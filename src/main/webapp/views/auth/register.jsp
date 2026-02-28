@@ -104,6 +104,17 @@
                                 </div>
                             </div>
 
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Avatar URL <span class="text-muted">(Tùy chọn)</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-image"></i></span>
+                                    <input type="url" class="form-control" name="avatar" value="${param.avatar}" placeholder="https://example.com/avatar.jpg hoặc Google Drive link">
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle"></i> Nhập link ảnh từ Google Drive, Imgur, hoặc URL trực tiếp
+                                </small>
+                            </div>
+
                             <div class="d-grid mb-3">
                                 <button type="submit" class="btn btn-primary-custom">
                                     Tạo Tài Khoản

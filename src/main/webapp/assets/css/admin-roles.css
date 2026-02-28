@@ -1,0 +1,342 @@
+/* Role Badge Modern Button */
+.role-dropdown .dropdown-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.role-dropdown .dropdown-toggle:focus,
+.role-dropdown .dropdown-toggle:active {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.role-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
+/* Badge Modern Styles */
+.badge-modern {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.badge-modern:hover::before {
+    opacity: 1;
+}
+
+/* Badge Color Variants */
+.badge-admin {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.badge-admin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+.badge-staff {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.badge-staff:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.badge-customer {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.badge-customer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Dropdown Menu Modern */
+.dropdown-menu-modern {
+    min-width: 320px;
+    border: none;
+    border-radius: 16px;
+    padding: 12px;
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-header-modern {
+    padding: 12px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #64748b;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 8px;
+}
+
+/* Role Item Modern */
+.dropdown-item-modern {
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 0;
+    margin-bottom: 6px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-item-modern:last-child {
+    margin-bottom: 0;
+}
+
+.dropdown-item-modern::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: currentColor;
+    transform: scaleY(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-item-modern:hover::before {
+    transform: scaleY(1);
+}
+
+.dropdown-item-modern:not(:disabled):hover {
+    transform: translateX(4px);
+    border-color: currentColor;
+}
+
+.role-item-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    position: relative;
+}
+
+.role-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-item-modern:hover .role-icon {
+    transform: rotate(5deg) scale(1.1);
+}
+
+.role-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.role-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+    transition: color 0.2s ease;
+}
+
+.role-desc {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    line-height: 1.3;
+}
+
+.role-check {
+    font-size: 1.25rem;
+    color: currentColor;
+    flex-shrink: 0;
+    animation: checkBounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Customer Role Styling */
+.role-item-customer {
+    color: #3b82f6;
+}
+
+.role-item-customer .role-icon {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #2563eb;
+}
+
+.role-item-customer:hover {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-color: #93c5fd;
+}
+
+.role-item-customer.active {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #3b82f6;
+}
+
+.role-item-customer.active .role-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Staff Role Styling */
+.role-item-staff {
+    color: #f59e0b;
+}
+
+.role-item-staff .role-icon {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #d97706;
+}
+
+.role-item-staff:hover {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #fcd34d;
+}
+
+.role-item-staff.active {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-color: #f59e0b;
+}
+
+.role-item-staff.active .role-icon {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Admin Role Styling */
+.role-item-admin {
+    color: #dc2626;
+}
+
+.role-item-admin .role-icon {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #b91c1c;
+}
+
+.role-item-admin:hover {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #fca5a5;
+}
+
+.role-item-admin.active {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-color: #dc2626;
+}
+
+.role-item-admin.active .role-icon {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Disabled State */
+.dropdown-item-modern:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.dropdown-item-modern:disabled:hover {
+    background: transparent;
+    border-color: transparent;
+}
+
+.dropdown-item-modern:disabled::before {
+    display: none;
+}
+
+.dropdown-item-modern:disabled .role-icon {
+    transform: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dropdown-menu-modern {
+        min-width: 280px;
+    }
+    
+    .role-item-content {
+        gap: 10px;
+        padding: 12px 14px;
+    }
+    
+    .role-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.125rem;
+    }
+    
+    .role-name {
+        font-size: 0.875rem;
+    }
+    
+    .role-desc {
+        font-size: 0.6875rem;
+    }
+}

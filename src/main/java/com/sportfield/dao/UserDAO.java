@@ -3,7 +3,9 @@ package com.sportfield.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sportfield.model.User;
 import com.sportfield.utils.DBContext;
 
@@ -50,8 +52,8 @@ public class UserDAO {
     }
 
     public boolean register(User user) {
-        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, CreatedAt, Address, Gender, DateOfBirth) "
-                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, GETDATE(), ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, ?, GETDATE(), ?, ?, ?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -65,9 +67,10 @@ public class UserDAO {
                 ps.setString(3, user.getFullName());
                 ps.setString(4, user.getEmail());
                 ps.setString(5, user.getPhone());
-                ps.setString(6, user.getAddress());
-                ps.setString(7, user.getGender());
-                ps.setString(8, user.getDateOfBirth());
+                ps.setString(6, user.getAvatar());
+                ps.setString(7, user.getAddress());
+                ps.setString(8, user.getGender());
+                ps.setString(9, user.getDateOfBirth());
                 
                 int rows = ps.executeUpdate();
                 return rows > 0; 
@@ -92,5 +95,158 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<User> getAll() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    users.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return users;
+    }
+
+    public boolean update(User user) {
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ?, WalletBalance = ? WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, user.getFullName());
+                ps.setString(2, user.getEmail());
+                ps.setString(3, user.getPhone());
+                ps.setString(4, user.getAddress());
+                ps.setString(5, user.getGender());
+                ps.setString(6, user.getDateOfBirth());
+                ps.setString(7, user.getAvatar());
+                ps.setDouble(8, user.getWalletBalance());
+                ps.setInt(9, user.getUserID());
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public boolean delete(int userID) {
+        String sql = "DELETE FROM Users WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, userID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public boolean changeRole(int userID, String newRole) {
+        String sql = "UPDATE Users SET Role = ? WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, newRole);
+                ps.setInt(2, userID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public User getUserByID(int userID) {
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, userID);
+                rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    return user;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return null;
     }
 }

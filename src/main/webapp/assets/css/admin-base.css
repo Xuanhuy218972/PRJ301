@@ -1,0 +1,68 @@
+:root {
+    --primary: #6366f1;
+    --primary-light: #eef2ff;
+    --secondary: #64748b;
+    --bg-main: #f8fafc;
+    --sidebar-dark: #1e293b;
+    --surface: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+}
+
+/* Reset body để tránh cuộn kép */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* Admin Layout - Cố định toàn bộ viewport */
+.admin-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Content Area - Cuộn độc lập */
+.main-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem;
+    background-color: var(--bg-main);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar cho main-content */
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.main-content .container-fluid {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
