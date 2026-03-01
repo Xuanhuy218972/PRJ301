@@ -12,7 +12,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin.css?v=2" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin-roles.css?v=2" rel="stylesheet">
 </head>
 <body>
 
@@ -100,23 +101,103 @@
                                     </td>
                                     <td>${user.email}</td>
                                     <td>
-                                        <c:choose>
-                                            <c:when test="${user.role == 'ADMIN'}">
-                                                <span class="badge-modern badge-admin">
-                                                    <i class="fas fa-crown me-2"></i>ADMIN
-                                                </span>
-                                            </c:when>
-                                            <c:when test="${user.role == 'STAFF'}">
-                                                <span class="badge-modern badge-staff">
-                                                    <i class="fas fa-user-shield me-2"></i>STAFF
-                                                </span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badge-modern badge-customer">
-                                                    <i class="fas fa-user me-2"></i>CUSTOMER
-                                                </span>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <div class="dropdown role-dropdown">
+                                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" ${sessionScope.account.userID == user.userID ? 'disabled' : ''}>
+                                                <c:choose>
+                                                    <c:when test="${user.role == 'ADMIN'}">
+                                                        <span class="badge-modern badge-admin">
+                                                            <i class="fas fa-crown me-2"></i>ADMIN
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${user.role == 'STAFF'}">
+                                                        <span class="badge-modern badge-staff">
+                                                            <i class="fas fa-user-shield me-2"></i>STAFF
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge-modern badge-customer">
+                                                            <i class="fas fa-user me-2"></i>CUSTOMER
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </button>
+                                            
+                                            <ul class="dropdown-menu dropdown-menu-modern">
+                                                <li class="dropdown-header-modern">
+                                                    <i class="fas fa-user-tag me-1"></i>Chọn vai trò mới
+                                                </li>
+                                                <li><hr class="dropdown-divider dropdown-divider-modern"></li>
+                                                
+                                                <!-- CUSTOMER Role -->
+                                                <li class="dropdown-item-modern role-item-customer ${user.role == 'CUSTOMER' ? 'active' : ''}">
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" class="role-submit-btn">
+                                                        <input type="hidden" name="action" value="changeRole">
+                                                        <input type="hidden" name="id" value="${user.userID}">
+                                                        <input type="hidden" name="newRole" value="CUSTOMER">
+                                                        <button type="submit" class="role-submit-btn" ${user.role == 'CUSTOMER' ? 'disabled' : ''}>
+                                                            <div class="role-item-content">
+                                                                <div class="role-icon">
+                                                                    <i class="fas fa-user"></i>
+                                                                </div>
+                                                                <div class="role-info">
+                                                                    <div class="role-name">CUSTOMER</div>
+                                                                    <div class="role-desc">Khách hàng sử dụng dịch vụ</div>
+                                                                </div>
+                                                                <c:if test="${user.role == 'CUSTOMER'}">
+                                                                    <i class="fas fa-check-circle role-check"></i>
+                                                                </c:if>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                
+                                                <!-- STAFF Role -->
+                                                <li class="dropdown-item-modern role-item-staff ${user.role == 'STAFF' ? 'active' : ''}">
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" class="role-submit-btn">
+                                                        <input type="hidden" name="action" value="changeRole">
+                                                        <input type="hidden" name="id" value="${user.userID}">
+                                                        <input type="hidden" name="newRole" value="STAFF">
+                                                        <button type="submit" class="role-submit-btn" ${user.role == 'STAFF' ? 'disabled' : ''}>
+                                                            <div class="role-item-content">
+                                                                <div class="role-icon">
+                                                                    <i class="fas fa-user-shield"></i>
+                                                                </div>
+                                                                <div class="role-info">
+                                                                    <div class="role-name">STAFF</div>
+                                                                    <div class="role-desc">Nhân viên quản lý vận hành</div>
+                                                                </div>
+                                                                <c:if test="${user.role == 'STAFF'}">
+                                                                    <i class="fas fa-check-circle role-check"></i>
+                                                                </c:if>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                
+                                                <!-- ADMIN Role -->
+                                                <li class="dropdown-item-modern role-item-admin ${user.role == 'ADMIN' ? 'active' : ''}">
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/users" class="role-submit-btn">
+                                                        <input type="hidden" name="action" value="changeRole">
+                                                        <input type="hidden" name="id" value="${user.userID}">
+                                                        <input type="hidden" name="newRole" value="ADMIN">
+                                                        <button type="submit" class="role-submit-btn" ${user.role == 'ADMIN' ? 'disabled' : ''}>
+                                                            <div class="role-item-content">
+                                                                <div class="role-icon">
+                                                                    <i class="fas fa-crown"></i>
+                                                                </div>
+                                                                <div class="role-info">
+                                                                    <div class="role-name">ADMIN</div>
+                                                                    <div class="role-desc">Toàn quyền quản trị hệ thống</div>
+                                                                </div>
+                                                                <c:if test="${user.role == 'ADMIN'}">
+                                                                    <i class="fas fa-check-circle role-check"></i>
+                                                                </c:if>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </td>
                                     <td class="text-muted small">
                                         <i class="far fa-calendar me-1"></i>
