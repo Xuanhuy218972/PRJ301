@@ -14,6 +14,10 @@ public class BookingDetail {
     private LocalDate bookingDate;
     private BigDecimal price;
 
+    private String fieldName;
+    private String slotStartTime;
+    private String slotEndTime;
+
     public BookingDetail() {
     }
 
@@ -64,6 +68,30 @@ public class BookingDetail {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getSlotStartTime() {
+        return slotStartTime;
+    }
+
+    public void setSlotStartTime(String slotStartTime) {
+        this.slotStartTime = slotStartTime;
+    }
+
+    public String getSlotEndTime() {
+        return slotEndTime;
+    }
+
+    public void setSlotEndTime(String slotEndTime) {
+        this.slotEndTime = slotEndTime;
     }
 
     @Override
