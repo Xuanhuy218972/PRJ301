@@ -29,7 +29,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link">
+                <a href="${pageContext.request.contextPath}/admin/bookings" class="nav-link sidebar-link ${fn:contains(currentURI, '/views/admin/bookings/') ? 'active' : ''}">
                     <i class="fas fa-calendar-check"></i> Quản lý Đặt Sân
                 </a>
             </li>
@@ -44,7 +44,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link sidebar-link">
+                    <a href="${pageContext.request.contextPath}/admin/reports" class="nav-link sidebar-link ${fn:contains(currentURI, '/views/admin/reports/') ? 'active' : ''}">
                         <i class="fas fa-chart-pie"></i> Báo cáo doanh thu
                     </a>
                 </li>

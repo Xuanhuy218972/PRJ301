@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -39,16 +40,16 @@
 
                 <!-- Quick Actions -->
                 <div class="quick-actions-row d-flex flex-wrap gap-2">
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-plus"></i> Thêm Booking mới
+                    <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-action-btn">
+                        <i class="fas fa-plus"></i> Quản lý Booking
                     </a>
                     <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
                         <i class="fas fa-wallet"></i> Kiểm tra ví / Người dùng
                     </a>
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-file-export"></i> Xuất báo cáo tháng
-                    </a>
                     <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                        <a href="${pageContext.request.contextPath}/admin/reports" class="quick-action-btn">
+                            <i class="fas fa-file-export"></i> Xem báo cáo doanh thu
+                        </a>
                         <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
                             <i class="fas fa-user-shield"></i> Quản lý khách hàng
                         </a>
@@ -62,7 +63,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center p-4">
                                 <div>
                                     <h6 class="text-muted text-uppercase small mb-1">Tổng số sân</h6>
-                                    <h2 class="fw-bold mb-0">6</h2>
+                                    <h2 class="fw-bold mb-0">${totalFields}</h2>
                                 </div>
                                 <i class="fas fa-futbol widget-icon text-primary"></i>
                             </div>
@@ -73,7 +74,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center p-4">
                                 <div>
                                     <h6 class="text-muted text-uppercase small mb-1">Booking hôm nay</h6>
-                                    <h2 class="fw-bold mb-0 text-success">28</h2>
+                                    <h2 class="fw-bold mb-0 text-success">${bookingsToday}</h2>
                                 </div>
                                 <i class="fas fa-calendar-check widget-icon text-success"></i>
                             </div>
@@ -83,8 +84,8 @@
                         <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
                             <div class="card-body d-flex justify-content-between align-items-center p-4">
                                 <div>
-                                    <h6 class="text-muted text-uppercase small mb-1">Khách hàng mới</h6>
-                                    <h2 class="fw-bold mb-0">150</h2>
+                                    <h6 class="text-muted text-uppercase small mb-1">Tổng khách hàng</h6>
+                                    <h2 class="fw-bold mb-0">${totalCustomers}</h2>
                                 </div>
                                 <i class="fas fa-users widget-icon text-warning"></i>
                             </div>
@@ -96,7 +97,7 @@
                                 <div class="card-body d-flex justify-content-between align-items-center p-4">
                                     <div>
                                         <h6 class="text-muted text-uppercase small mb-1">Doanh thu tháng</h6>
-                                        <h3 class="fw-bold mb-0 text-danger">25.5M</h3>
+                                        <h3 class="fw-bold mb-0 text-danger"><fmt:formatNumber value="${monthlyRevenue}" pattern="#,###"/>đ</h3>
                                     </div>
                                     <i class="fas fa-wallet widget-icon text-danger"></i>
                                 </div>
@@ -112,7 +113,7 @@
                         <div class="table-container">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold mb-0"><i class="fas fa-clock text-primary me-2"></i>Lượt đặt sân gần đây</h5>
-                                <a href="#" class="btn btn-primary btn-sm shadow-sm rounded-pill">Xem tất cả</a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings" class="btn btn-primary btn-sm shadow-sm rounded-pill">Xem tất cả</a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
@@ -120,33 +121,56 @@
                                         <tr>
                                             <th>Mã Booking</th>
                                             <th>Khách hàng</th>
-                                            <th>Sân</th>
-                                            <th>Giờ đá</th>
+                                            <th>Loại</th>
+                                            <th>Tổng tiền</th>
                                             <th>Trạng thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td><strong>#BK001</strong></td>
-                                            <td>Nguyễn Văn A</td>
-                                            <td>Sân Tuyên Sơn 1</td>
-                                            <td>18:00 - 19:30</td>
-                                            <td><span class="badge bg-success bg-opacity-10 text-success">Đã xác nhận</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>#BK002</strong></td>
-                                            <td>Trần Thị B</td>
-                                            <td>Sân VIP 2</td>
-                                            <td>19:30 - 21:00</td>
-                                            <td><span class="badge bg-warning bg-opacity-10 text-dark">Chờ thanh toán</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>#BK003</strong></td>
-                                            <td>Lê Văn C</td>
-                                            <td>Sân 5</td>
-                                            <td>20:00 - 21:30</td>
-                                            <td><span class="badge bg-info bg-opacity-10 text-info">Mới tạo</span></td>
-                                        </tr>
+                                        <c:forEach var="booking" items="${latestBookings}">
+                                            <tr>
+                                                <td>
+                                                    <a href="${pageContext.request.contextPath}/admin/bookings?action=detail&id=${booking.bookingID}" class="text-decoration-none">
+                                                        <strong>#BK${booking.bookingID}</strong>
+                                                    </a>
+                                                </td>
+                                                <td>${not empty booking.customerName ? booking.customerName : 'N/A'}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${booking.bookingType == 'EVENT'}">Sự kiện</c:when>
+                                                        <c:otherwise>Lẻ</c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td class="fw-bold text-success">
+                                                    <fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${booking.status == 'PENDING'}">
+                                                            <span class="badge bg-warning bg-opacity-10 text-dark">Chờ xử lý</span>
+                                                        </c:when>
+                                                        <c:when test="${booking.status == 'CONFIRMED'}">
+                                                            <span class="badge bg-success bg-opacity-10 text-success">Đã xác nhận</span>
+                                                        </c:when>
+                                                        <c:when test="${booking.status == 'COMPLETED'}">
+                                                            <span class="badge bg-info bg-opacity-10 text-info">Hoàn thành</span>
+                                                        </c:when>
+                                                        <c:when test="${booking.status == 'CANCELLED'}">
+                                                            <span class="badge bg-danger bg-opacity-10 text-danger">Đã hủy</span>
+                                                        </c:when>
+                                                    </c:choose>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+
+                                        <c:if test="${empty latestBookings}">
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                                    <p class="mb-0">Chưa có đơn đặt sân nào</p>
+                                                </td>
+                                            </tr>
+                                        </c:if>
                                     </tbody>
                                 </table>
                             </div>
@@ -155,41 +179,42 @@
 
                     <!-- Sidebar: Quick Actions + Occupancy + Alerts -->
                     <div class="col-lg-4">
-                        <!-- Thao tác nhanh (compact) -->
+                        <!-- Thao tac nhanh -->
                         <div class="dashboard-side-card">
                             <h6 class="card-title mb-3"><i class="fas fa-bolt me-1"></i> Thao tác nhanh</h6>
                             <div class="d-flex flex-column gap-2">
-                                <a href="#" class="quick-action-btn"><i class="fas fa-plus"></i> Đặt sân mới</a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-action-btn"><i class="fas fa-calendar-check"></i> Quản lý đặt sân</a>
                                 <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn"><i class="fas fa-user-plus"></i> Quản lý người dùng</a>
-                                <a href="#" class="quick-action-btn"><i class="fas fa-cog"></i> Cài đặt hệ thống</a>
+                                <a href="${pageContext.request.contextPath}/admin/fields" class="quick-action-btn"><i class="fas fa-futbol"></i> Quản lý sân bóng</a>
                             </div>
                         </div>
 
-                        <!-- Court Occupancy (CSS progress bar) -->
+                        <!-- Court Occupancy -->
                         <div class="dashboard-side-card">
                             <h6 class="card-title mb-3"><i class="fas fa-futbol me-1"></i> Trạng thái sân</h6>
-                            <div class="occupancy-label">Hiện có 6/6 sân đang có khách đá</div>
+                            <c:set var="occupancyPct" value="${totalFields > 0 ? (activeFields * 100 / totalFields) : 0}" />
+                            <div class="occupancy-label">Hiện có ${activeFields}/${totalFields} sân đang hoạt động</div>
                             <div class="progress rounded-pill progress-sm">
-                                <div class="progress-bar bg-primary progress-full" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: ${occupancyPct}%;" aria-valuenow="${occupancyPct}" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <div class="occupancy-value mt-2">100% đang sử dụng</div>
+                            <div class="occupancy-value mt-2"><fmt:formatNumber value="${occupancyPct}" maxFractionDigits="0"/>% đang hoạt động</div>
                         </div>
 
                         <!-- System Alerts -->
                         <div class="dashboard-side-card">
-                            <h6 class="card-title mb-3"><i class="fas fa-bell me-1"></i> Thông báo gần đây</h6>
+                            <h6 class="card-title mb-3"><i class="fas fa-bell me-1"></i> Thống kê nhanh</h6>
                             <div class="alert-list">
                                 <div class="alert-item alert-topup">
                                     <span class="alert-icon"><i class="fas fa-coins"></i></span>
-                                    Người dùng <strong>huyhieu21</strong> vừa nạp 200,000 VNĐ.
+                                    Doanh thu tháng này: <strong><fmt:formatNumber value="${monthlyRevenue}" pattern="#,###"/>đ</strong>
                                 </div>
                                 <div class="alert-item alert-booking">
                                     <span class="alert-icon"><i class="fas fa-calendar-plus"></i></span>
-                                    Booking <strong>#BK003</strong> vừa được tạo — Sân 5, 20:00.
+                                    Booking hôm nay: <strong>${bookingsToday} đơn</strong>
                                 </div>
                                 <div class="alert-item alert-cancel">
-                                    <span class="alert-icon"><i class="fas fa-times-circle"></i></span>
-                                    Sân VIP 2 — lịch 19:30 đã được hủy.
+                                    <span class="alert-icon"><i class="fas fa-users"></i></span>
+                                    Tổng khách hàng: <strong>${totalCustomers} người</strong>
                                 </div>
                             </div>
                         </div>

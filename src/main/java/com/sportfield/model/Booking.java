@@ -17,6 +17,9 @@ public class Booking {
     private String note;
     private LocalDateTime createdAt;
 
+    private String customerName;
+    private String customerPhone;
+
     public Booking() {
     }
 
@@ -95,6 +98,22 @@ public class Booking {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
     }
 
     @Override
