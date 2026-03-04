@@ -1,0 +1,144 @@
+/* Legend Dots */
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Schedule Wrapper - Scrollable Container */
+.schedule-wrapper {
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* Custom Scrollbar */
+.schedule-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.schedule-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.schedule-wrapper::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+.schedule-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+.schedule-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 800px;
+}
+
+/* Sticky Header (Days Row) */
+.schedule-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Sticky First Column (Time) */
+.time-col {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: 120px;
+    background-color: #ffffff;
+    border-right: 2px solid #dee2e6 !important;
+}
+
+/* Sticky Corner (Top-Left Cell) */
+.schedule-table thead .time-col {
+    z-index: 3;
+    background-color: #ffffff;
+}
+
+.schedule-table td {
+    vertical-align: middle;
+}
+
+.slot-card {
+    border-radius: 8px;
+    padding: 10px 5px;
+    transition: all 0.2s ease-in-out;
+    height: 100%;
+    min-height: 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.slot-card i {
+    font-size: 1.2rem;
+}
+
+.slot-card small {
+    font-size: 0.85rem;
+}
+
+/* Hoverable Slot (Available) */
+.slot-hoverable {
+    cursor: pointer;
+}
+
+.slot-hoverable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(25, 135, 84, 0.15);
+    background-color: #d1e7dd !important;
+}
+
+.slot-hoverable:active {
+    transform: translateY(0);
+}
+
+@media print {
+    .schedule-wrapper {
+        max-height: none;
+        overflow: visible;
+    }
+    
+    .schedule-table .time-col,
+    .schedule-table thead th {
+        position: static;
+    }
+    
+    .slot-card {
+        border: 1px solid #000 !important;
+    }
+}
+
+.slot-hoverable:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .slot-card {
+        border-width: 2px !important;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .slot-card,
+    .slot-hoverable {
+        transition: none;
+    }
+    
+    .slot-hoverable:hover {
+        transform: none;
+    }
+}

@@ -132,8 +132,13 @@
                                         <i class="far fa-calendar me-1"></i>
                                         ${field.createdAt != null ? field.createdAt.toString().substring(0, 10) : 'N/A'}
                                     </td>
-                                    <td class="text-end pe-4">
+                                                    <td class="text-end pe-4">
                                         <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+                                            <a href="${pageContext.request.contextPath}/admin/field-schedule?fieldId=${field.fieldID}" 
+                                               class="btn btn-white btn-sm border-end" 
+                                               title="Xem lịch sân">
+                                                <i class="fas fa-calendar-alt text-success"></i>
+                                            </a>
                                             <a href="?action=manageSlots&id=${field.fieldID}" 
                                                class="btn btn-white btn-sm border-end" 
                                                title="Quản lý khung giờ">

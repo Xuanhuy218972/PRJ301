@@ -359,6 +359,70 @@ public class BookingDAO {
         return 0;
     }
 
+    public List<BookingDetail> getBookingsByFieldAndWeek(int fieldID, java.time.LocalDate weekStart) {
+        List<BookingDetail> details = new ArrayList<>();
+        java.time.LocalDate weekEnd = weekStart.plusDays(6);
+        
+        String sql = "SELECT bd.*, fs.StartTime, fs.EndTime, b.Status AS BookingStatus, "
+                   + "u.FullName AS CustomerName, u.Phone AS CustomerPhone "
+                   + "FROM BookingDetails bd "
+                   + "INNER JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "INNER JOIN Bookings b ON bd.BookingID = b.BookingID "
+                   + "LEFT JOIN Users u ON b.CustomerID = u.UserID "
+                   + "WHERE fs.FieldID = ? AND bd.BookingDate BETWEEN ? AND ? "
+                   + "AND b.Status IN ('PENDING', 'CONFIRMED', 'COMPLETED') "
+                   + "ORDER BY bd.BookingDate, fs.StartTime";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, fieldID);
+                ps.setDate(2, Date.valueOf(weekStart));
+                ps.setDate(3, Date.valueOf(weekEnd));
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    BookingDetail detail = new BookingDetail();
+                    detail.setDetailID(rs.getInt("DetailID"));
+                    detail.setBookingID(rs.getInt("BookingID"));
+                    detail.setSlotID(rs.getInt("SlotID"));
+                    
+                    Date bookingDate = rs.getDate("BookingDate");
+                    if (bookingDate != null) {
+                        detail.setBookingDate(bookingDate.toLocalDate());
+                    }
+                    
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    
+                    java.sql.Time startTime = rs.getTime("StartTime");
+                    java.sql.Time endTime = rs.getTime("EndTime");
+                    if (startTime != null) {
+                        detail.setSlotStartTime(startTime.toString().substring(0, 5));
+                    }
+                    if (endTime != null) {
+                        detail.setSlotEndTime(endTime.toString().substring(0, 5));
+                    }
+                    
+                    detail.setCustomerName(rs.getString("CustomerName"));
+                    detail.setCustomerPhone(rs.getString("CustomerPhone"));
+                    
+                    details.add(detail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+
+        return details;
+    }
+
     private Booking mapBooking(ResultSet rs) throws Exception {
         Booking booking = new Booking();
         booking.setBookingID(rs.getInt("BookingID"));
