@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.math.BigDecimal;
 
 import com.sportfield.model.SportField;
 import com.sportfield.utils.DBContext;
@@ -157,6 +156,10 @@ public class SportFieldDAO {
             DBContext.close(conn, ps, null);
         }
         return false;
+    }
+
+    public List<SportField> getFieldsByOwner(int ownerID) {
+        return getAll();
     }
 
     public boolean updateStatus(int fieldID, String status) {
