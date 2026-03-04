@@ -13,10 +13,11 @@ public class BookingDetail {
     private int slotID;
     private LocalDate bookingDate;
     private BigDecimal price;
-
     private String fieldName;
     private String slotStartTime;
     private String slotEndTime;
+    private String customerName;
+    private String customerPhone;
 
     public BookingDetail() {
     }
@@ -92,6 +93,22 @@ public class BookingDetail {
 
     public void setSlotEndTime(String slotEndTime) {
         this.slotEndTime = slotEndTime;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
     }
 
     @Override

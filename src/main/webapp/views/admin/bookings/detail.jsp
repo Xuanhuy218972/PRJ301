@@ -51,9 +51,17 @@
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">
                                 <h6 class="text-muted text-uppercase small mb-2">Khách hàng</h6>
-                                <div class="fw-bold fs-5">${not empty booking.customerName ? booking.customerName : 'N/A'}</div>
+                                <div class="fw-bold fs-5 mb-2">${not empty booking.customerName ? booking.customerName : 'N/A'}</div>
                                 <c:if test="${not empty booking.customerPhone}">
-                                    <div class="small text-muted mt-1"><i class="fas fa-phone me-1"></i>${booking.customerPhone}</div>
+                                    <div class="d-flex align-items-center gap-2 text-dark">
+                                        <i class="fas fa-phone-alt text-muted"></i>
+                                        <span class="fw-medium">${booking.customerPhone}</span>
+                                    </div>
+                                </c:if>
+                                <c:if test="${empty booking.customerPhone}">
+                                    <div class="small text-muted">
+                                        <i class="fas fa-phone-slash me-1"></i>Chưa có SĐT
+                                    </div>
                                 </c:if>
                             </div>
                         </div>
