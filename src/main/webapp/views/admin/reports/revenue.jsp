@@ -45,27 +45,30 @@
                         <form method="get" action="${pageContext.request.contextPath}/admin/reports" class="d-flex flex-wrap align-items-end gap-3">
                             <div>
                                 <label class="form-label small fw-bold text-muted">Năm</label>
-                                <select name="year" class="form-select" style="min-width: 120px;">
+                                <select name="year" class="form-select" style="min-width: 120px;" onchange="this.form.submit()">
                                     <c:forEach var="y" items="${availableYears}">
-                                        <option value="${y}" ${y.toString() == selectedYear ? 'selected' : ''}>${y}</option>
+                                        <option value="${y}"
+                                            <c:if test="${y.toString() == selectedYear}">selected</c:if>>
+                                            ${y}
+                                        </option>
                                     </c:forEach>
                                 </select>
                             </div>
                             <div>
                                 <label class="form-label small fw-bold text-muted">Tháng</label>
-                                <select name="month" class="form-select" style="min-width: 120px;">
-                                    <option value="1" ${selectedMonth == '1' ? 'selected' : ''}>Tháng 1</option>
-                                    <option value="2" ${selectedMonth == '2' ? 'selected' : ''}>Tháng 2</option>
-                                    <option value="3" ${selectedMonth == '3' ? 'selected' : ''}>Tháng 3</option>
-                                    <option value="4" ${selectedMonth == '4' ? 'selected' : ''}>Tháng 4</option>
-                                    <option value="5" ${selectedMonth == '5' ? 'selected' : ''}>Tháng 5</option>
-                                    <option value="6" ${selectedMonth == '6' ? 'selected' : ''}>Tháng 6</option>
-                                    <option value="7" ${selectedMonth == '7' ? 'selected' : ''}>Tháng 7</option>
-                                    <option value="8" ${selectedMonth == '8' ? 'selected' : ''}>Tháng 8</option>
-                                    <option value="9" ${selectedMonth == '9' ? 'selected' : ''}>Tháng 9</option>
-                                    <option value="10" ${selectedMonth == '10' ? 'selected' : ''}>Tháng 10</option>
-                                    <option value="11" ${selectedMonth == '11' ? 'selected' : ''}>Tháng 11</option>
-                                    <option value="12" ${selectedMonth == '12' ? 'selected' : ''}>Tháng 12</option>
+                                <select name="month" class="form-select" style="min-width: 120px;" onchange="this.form.submit()">
+                                    <option value="1"  <c:if test="${selectedMonth == '1'}">selected</c:if>>Tháng 1</option>
+                                    <option value="2"  <c:if test="${selectedMonth == '2'}">selected</c:if>>Tháng 2</option>
+                                    <option value="3"  <c:if test="${selectedMonth == '3'}">selected</c:if>>Tháng 3</option>
+                                    <option value="4"  <c:if test="${selectedMonth == '4'}">selected</c:if>>Tháng 4</option>
+                                    <option value="5"  <c:if test="${selectedMonth == '5'}">selected</c:if>>Tháng 5</option>
+                                    <option value="6"  <c:if test="${selectedMonth == '6'}">selected</c:if>>Tháng 6</option>
+                                    <option value="7"  <c:if test="${selectedMonth == '7'}">selected</c:if>>Tháng 7</option>
+                                    <option value="8"  <c:if test="${selectedMonth == '8'}">selected</c:if>>Tháng 8</option>
+                                    <option value="9"  <c:if test="${selectedMonth == '9'}">selected</c:if>>Tháng 9</option>
+                                    <option value="10" <c:if test="${selectedMonth == '10'}">selected</c:if>>Tháng 10</option>
+                                    <option value="11" <c:if test="${selectedMonth == '11'}">selected</c:if>>Tháng 11</option>
+                                    <option value="12" <c:if test="${selectedMonth == '12'}">selected</c:if>>Tháng 12</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
@@ -100,15 +103,17 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
-                            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                                <div>
-                                    <h6 class="text-muted text-uppercase small mb-1">Khách mới tháng ${selectedMonth}</h6>
-                                    <h2 class="fw-bold mb-0">${newCustomers}</h2>
+                        <a href="${pageContext.request.contextPath}/admin/users?type=new_customers&month=${selectedMonth}&year=${selectedYear}" class="text-decoration-none">
+                            <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
+                                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                                    <div>
+                                        <h6 class="text-muted text-uppercase small mb-1">Khách mới tháng ${selectedMonth}</h6>
+                                        <h2 class="fw-bold mb-0">${newCustomers}</h2>
+                                    </div>
+                                    <i class="fas fa-user-plus widget-icon text-warning"></i>
                                 </div>
-                                <i class="fas fa-user-plus widget-icon text-warning"></i>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <div class="card stat-card stat-card-danger shadow-sm h-100 border-0">

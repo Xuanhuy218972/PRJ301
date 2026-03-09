@@ -39,19 +39,19 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="quick-actions-row d-flex flex-wrap gap-2">
-                    <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-action-btn">
-                        <i class="fas fa-plus"></i> Quản lý Booking
+                <div class="quick-actions-row d-flex flex-wrap gap-3">
+                    <a href="${pageContext.request.contextPath}/admin/field-schedule" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                        <i class="fas fa-calendar-alt me-2"></i>Xem Lịch Sân
                     </a>
-                    <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
-                        <i class="fas fa-wallet"></i> Kiểm tra ví / Người dùng
+                    <a href="${pageContext.request.contextPath}/admin/bookings" class="btn btn-success rounded-pill px-4 shadow-sm text-white">
+                        <i class="fas fa-list-check me-2"></i>Duyệt Đơn Đặt
+                    </a>
+                    <a href="${pageContext.request.contextPath}/admin/fields" class="btn btn-info rounded-pill px-4 shadow-sm text-white">
+                        <i class="fas fa-futbol me-2"></i>Quản Lý Sân
                     </a>
                     <c:if test="${sessionScope.account.role == 'ADMIN'}">
-                        <a href="${pageContext.request.contextPath}/admin/reports" class="quick-action-btn">
-                            <i class="fas fa-file-export"></i> Xem báo cáo doanh thu
-                        </a>
-                        <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
-                            <i class="fas fa-user-shield"></i> Quản lý khách hàng
+                        <a href="${pageContext.request.contextPath}/admin/reports" class="btn btn-warning rounded-pill px-4 shadow-sm text-white">
+                            <i class="fas fa-chart-line me-2"></i>Báo Cáo Doanh Thu
                         </a>
                     </c:if>
                 </div>
@@ -81,15 +81,17 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
-                        <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
-                            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                                <div>
-                                    <h6 class="text-muted text-uppercase small mb-1">Tổng khách hàng</h6>
-                                    <h2 class="fw-bold mb-0">${totalCustomers}</h2>
+                        <a href="${pageContext.request.contextPath}/admin/users?role=CUSTOMER" class="text-decoration-none">
+                            <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
+                                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                                    <div>
+                                        <h6 class="text-muted text-uppercase small mb-1">Tổng khách hàng</h6>
+                                        <h2 class="fw-bold mb-0">${totalCustomers}</h2>
+                                    </div>
+                                    <i class="fas fa-users widget-icon text-warning"></i>
                                 </div>
-                                <i class="fas fa-users widget-icon text-warning"></i>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <c:if test="${sessionScope.account.role == 'ADMIN'}">
                         <div class="col-md-6 col-lg-3">

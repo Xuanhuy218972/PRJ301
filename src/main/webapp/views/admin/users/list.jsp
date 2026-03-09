@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/assets/css/admin.css?v=2" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/assets/css/admin-roles.css?v=2" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin-modals.css?v=2" rel="stylesheet">
 </head>
 <body>
 
@@ -60,6 +61,49 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                     <c:remove var="error" scope="session" />
+                </c:if>
+
+                <div class="d-flex align-items-center mb-4 gap-2">
+                    <a href="?role=ALL" class="btn btn-sm ${empty selectedRole || selectedRole == 'ALL' ? 'btn-dark' : 'btn-outline-dark'} rounded-pill px-4 fw-medium shadow-sm">
+                        <i class="fas fa-layer-group me-1"></i> Tất cả
+                    </a>
+                    <a href="?role=STAFF" class="btn btn-sm ${selectedRole == 'STAFF' ? 'btn-warning text-white' : 'btn-outline-warning'} rounded-pill px-4 fw-medium shadow-sm">
+                        <i class="fas fa-user-tie me-1"></i> Staff
+                    </a>
+                    <a href="?role=CUSTOMER" class="btn btn-sm ${selectedRole == 'CUSTOMER' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill px-4 fw-medium shadow-sm">
+                        <i class="fas fa-user me-1"></i> Customer
+                    </a>
+                    <a href="?type=new_customers" class="btn btn-sm ${selectedRole == 'NEW_CUSTOMERS' ? 'btn-success' : 'btn-outline-success'} rounded-pill px-4 fw-medium shadow-sm">
+                        <i class="fas fa-user-plus me-1"></i> Khách hàng mới
+                    </a>
+                </div>
+
+                <c:if test="${selectedRole == 'NEW_CUSTOMERS'}">
+                    <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Danh sách khách hàng mới đăng ký trong <strong>Tháng ${filterMonth}/${filterYear}</strong>
+                    </div>
+
+                    <!-- Bộ lọc tháng/năm đơn giản, tự submit bằng onchange -->
+                    <form method="get" class="row g-2 align-items-end mb-4">
+                        <input type="hidden" name="type" value="new_customers">
+                        <div class="col-auto">
+                            <label class="form-label small fw-bold text-muted mb-1">Tháng</label>
+                            <select name="month" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <c:forEach var="m" begin="1" end="12">
+                                    <option value="${m}" <c:if test="${m == filterMonth}">selected</c:if>>Tháng ${m}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label small fw-bold text-muted mb-1">Năm</label>
+                            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <c:forEach var="y" begin="${filterYear - 2}" end="${filterYear}">
+                                    <option value="${y}" <c:if test="${y == filterYear}">selected</c:if>>${y}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </form>
                 </c:if>
 
                 <div class="row">
@@ -210,62 +254,41 @@
                                                title="Chỉnh sửa">
                                                 <i class="fas fa-edit text-primary"></i>
                                             </a>
-                                            <button class="btn btn-white btn-sm" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#deleteModal${user.userID}"
-                                                    title="Xóa"
-                                                    ${sessionScope.account.userID == user.userID ? 'disabled' : ''}>
+                                            <a href="#deleteModal${user.userID}" 
+                                               class="btn btn-white btn-sm ${sessionScope.account.userID == user.userID ? 'disabled' : ''}" 
+                                               title="Xóa"
+                                               ${sessionScope.account.userID == user.userID ? 'aria-disabled="true" style="pointer-events: none; opacity: 0.6;"' : ''}>
                                                 <i class="fas fa-trash text-danger"></i>
-                                            </button>
+                                            </a>
                                         </div>
 
-                                        <div class="modal fade" id="deleteModal${user.userID}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow-lg confirm-delete-modal">
-                                                    <div class="confirm-delete-modal-header d-flex justify-content-between align-items-start">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                                            <div>
-                                                                <h5 class="modal-title mb-0">Xác nhận xóa người dùng</h5>
-                                                                <small>Hành động này không thể hoàn tác.</small>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
+                                        <!-- CSS Pure Modal (:target) -->
+                                        <div id="deleteModal${user.userID}" class="css-modal-overlay">
+                                            <div class="css-modal-content animate-slide-up">
+                                                <div class="d-flex flex-column align-items-center text-center">
+                                                    <div class="css-modal-icon">
+                                                        <i class="fas fa-exclamation-triangle fa-lg"></i>
                                                     </div>
-                                                    <div class="confirm-delete-modal-body">
-                                                        <p class="mb-3">Bạn có chắc chắn muốn xóa tài khoản sau khỏi hệ thống?</p>
-                                                        <div class="user-confirm-card d-flex align-items-center p-3 mb-2">
-                                                            <div class="avatar-circle me-3">
-                                                                <c:choose>
-                                                                    <c:when test="${not empty user.avatar}">
-                                                                        <img src="${user.avatar}" alt="${user.fullName}">
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <span>${fn:toUpperCase(user.fullName.substring(0,1))}</span>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="user-confirm-name">${user.fullName}</div>
-                                                                <div class="user-confirm-username">@${user.username}</div>
-                                                            </div>
-                                                        </div>
-                                                        <p class="text-muted small mb-0">Mọi dữ liệu liên quan đến người dùng này có thể bị ảnh hưởng sau khi xóa.</p>
-                                                    </div>
-                                                    <div class="modal-footer confirm-delete-modal-footer">
-                                                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
-                                                            <i class="fas fa-times me-1"></i>Hủy
-                                                        </button>
+                                                    <h3 class="css-modal-title">Xóa người dùng?</h3>
+                                                    <p class="css-modal-text">
+                                                        Bạn có chắc chắn muốn xóa người dùng <strong>${user.fullName}</strong> (@${user.username})? 
+                                                        <br>Hành động này không thể hoàn tác.
+                                                    </p>
+                                                    <div class="css-modal-actions w-100 justify-content-center">
+                                                        <a href="#" class="css-modal-btn stay">
+                                                            Hủy bỏ
+                                                        </a>
                                                         <form method="post" action="${pageContext.request.contextPath}/admin/users" class="d-inline">
                                                             <input type="hidden" name="action" value="delete">
                                                             <input type="hidden" name="id" value="${user.userID}">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class="fas fa-trash me-1"></i>Xóa ngay
+                                                            <button type="submit" class="css-modal-btn leave cursor-pointer border-0">
+                                                                Xóa ngay
                                                             </button>
                                                         </form>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <a href="#" class="css-modal-close-area" style="position: absolute; inset: 0; z-index: -1;"></a>
                                         </div>
                                     </td>
                                 </tr>

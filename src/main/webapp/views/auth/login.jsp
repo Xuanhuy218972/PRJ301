@@ -39,10 +39,18 @@
                             </p>
                         </div>
 
-                        <c:if test="${not empty error}">
+                        <c:if test="${not empty sessionScope.error}">
+                            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <div>${sessionScope.error}</div>
+                            </div>
+                            <c:remove var="error" scope="session"/>
+                        </c:if>
+
+                        <c:if test="${not empty requestScope.error}">
                             <div class="alert alert-danger d-flex align-items-center" role="alert">
                                 <i class="fas fa-exclamation-circle me-2"></i>
-                                <div>${error}</div>
+                                <div>${requestScope.error}</div>
                             </div>
                         </c:if>
 
