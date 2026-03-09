@@ -12,8 +12,42 @@ import java.util.List;
 import com.sportfield.model.Booking;
 import com.sportfield.model.BookingDetail;
 import com.sportfield.utils.DBContext;
+import java.time.LocalDate;
 
 public class BookingDAO {
+
+    public List<Integer> getBookedSlotIDs(int fieldID, LocalDate date) {
+        List<Integer> bookedSlotIDs = new ArrayList<>();
+        String sql = "SELECT bd.SlotID "
+                   + "FROM BookingDetails bd "
+                   + "INNER JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "INNER JOIN Bookings b ON bd.BookingID = b.BookingID "
+                   + "WHERE fs.FieldID = ? AND bd.BookingDate = ? AND b.Status IN ('PENDING', 'CONFIRMED', 'COMPLETED')";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, fieldID);
+                ps.setDate(2, Date.valueOf(date));
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    bookedSlotIDs.add(rs.getInt("SlotID"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+
+        return bookedSlotIDs;
+    }
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
@@ -410,6 +444,67 @@ public class BookingDAO {
                     
                     detail.setCustomerName(rs.getString("CustomerName"));
                     detail.setCustomerPhone(rs.getString("CustomerPhone"));
+                    
+                    details.add(detail);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+
+        return details;
+    }
+
+    public List<BookingDetail> getBookingsByUserID(int userID) {
+        List<BookingDetail> details = new ArrayList<>();
+        
+        String sql = "SELECT bd.*, b.BookingID, b.Status AS BookingStatus, b.CreatedAt, "
+                   + "f.FieldName, f.FieldType, fs.StartTime, fs.EndTime "
+                   + "FROM BookingDetails bd "
+                   + "INNER JOIN Bookings b ON bd.BookingID = b.BookingID "
+                   + "INNER JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "INNER JOIN Fields f ON fs.FieldID = f.FieldID "
+                   + "WHERE b.CustomerID = ? "
+                   + "ORDER BY bd.BookingDate DESC, fs.StartTime DESC";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, userID);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    BookingDetail detail = new BookingDetail();
+                    detail.setDetailID(rs.getInt("DetailID"));
+                    detail.setBookingID(rs.getInt("BookingID"));
+                    detail.setSlotID(rs.getInt("SlotID"));
+                    
+                    Date bookingDate = rs.getDate("BookingDate");
+                    if (bookingDate != null) {
+                        detail.setBookingDate(bookingDate.toLocalDate());
+                    }
+                    
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    detail.setFieldName(rs.getString("FieldName"));
+                    
+                    java.sql.Time startTime = rs.getTime("StartTime");
+                    java.sql.Time endTime = rs.getTime("EndTime");
+                    if (startTime != null) {
+                        detail.setSlotStartTime(startTime.toString().substring(0, 5));
+                    }
+                    if (endTime != null) {
+                        detail.setSlotEndTime(endTime.toString().substring(0, 5));
+                    }
+                    
+                    // Set booking status for display
+                    detail.setCustomerName(rs.getString("BookingStatus"));
                     
                     details.add(detail);
                 }

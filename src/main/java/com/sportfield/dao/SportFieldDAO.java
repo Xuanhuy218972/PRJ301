@@ -47,6 +47,79 @@ public class SportFieldDAO {
         return fields;
     }
 
+    public List<SportField> getActiveFields() {
+        List<SportField> fields = new ArrayList<>();
+        String sql = "SELECT * FROM Fields WHERE Status = 'ACTIVE' ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    SportField field = new SportField();
+                    field.setFieldID(rs.getInt("FieldID"));
+                    field.setFieldName(rs.getString("FieldName"));
+                    field.setFieldType(rs.getInt("FieldType"));
+                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
+                    field.setImageURL(rs.getString("ImageURL"));
+                    field.setStatus(rs.getString("Status"));
+                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
+                    if (timestamp != null) {
+                        field.setCreatedAt(timestamp.toLocalDateTime());
+                    }
+                    fields.add(field);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return fields;
+    }
+
+    public List<SportField> getActiveFieldsByType(int fieldType) {
+        List<SportField> fields = new ArrayList<>();
+        String sql = "SELECT * FROM Fields WHERE Status = 'ACTIVE' AND FieldType = ? ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, fieldType);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    SportField field = new SportField();
+                    field.setFieldID(rs.getInt("FieldID"));
+                    field.setFieldName(rs.getString("FieldName"));
+                    field.setFieldType(rs.getInt("FieldType"));
+                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
+                    field.setImageURL(rs.getString("ImageURL"));
+                    field.setStatus(rs.getString("Status"));
+                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
+                    if (timestamp != null) {
+                        field.setCreatedAt(timestamp.toLocalDateTime());
+                    }
+                    fields.add(field);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return fields;
+    }
+
     public SportField getByID(int fieldID) {
         String sql = "SELECT * FROM Fields WHERE FieldID = ?";
         Connection conn = null;

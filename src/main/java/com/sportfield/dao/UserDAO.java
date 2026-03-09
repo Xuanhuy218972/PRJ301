@@ -136,6 +136,87 @@ public class UserDAO {
         return users;
     }
 
+    public List<User> getUsersByRole(String role) {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Role = ? ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, role);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    users.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return users;
+    }
+
+    public List<User> getNewCustomers(int month, int year) {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Role = 'CUSTOMER' AND MONTH(CreatedAt) = ? AND YEAR(CreatedAt) = ? ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, month);
+                ps.setInt(2, year);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    users.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return users;
+    }
+
     public boolean update(User user) {
         String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ?, WalletBalance = ? WHERE UserID = ?";
         Connection conn = null;
