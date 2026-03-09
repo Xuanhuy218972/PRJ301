@@ -3,9 +3,6 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="java.time.LocalDate" %>
 
-<c:if test="${requestScope.hotFields == null}">
-    <c:redirect url="/home"/>
-</c:if>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -20,7 +17,7 @@
         <link href="${pageContext.request.contextPath}/assets/css/customer/home.css" rel="stylesheet">
     </head>
     <body>
-        <jsp:include page="views/common/header.jsp" />
+        <jsp:include page="../common/header.jsp" />
 
         <section class="hero-section">
             <div class="container text-center position-relative z-1">
@@ -252,6 +249,6 @@
             </div>
         </section>
 
-        <jsp:include page="views/common/footer.jsp" />
+        <jsp:include page="../common/footer.jsp" />
     </body>
 </html>

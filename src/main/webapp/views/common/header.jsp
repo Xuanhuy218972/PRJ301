@@ -5,7 +5,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid px-4">
             <!-- Logo -->
-            <a class="navbar-brand" href="${pageContext.request.contextPath}/index.jsp">
+            <a class="navbar-brand" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/assets/images/logo.png" alt="Logo" class="header-logo">
             </a>
             
@@ -19,7 +19,7 @@
                 <!-- Menu -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/index.jsp">TRANG CHỦ</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/home">TRANG CHỦ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/shop">HỆ THỐNG SÂN</a>
