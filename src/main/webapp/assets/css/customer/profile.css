@@ -1,0 +1,135 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 8, 2026, 10:48:12 PM
+    Author     : hxhbang
+*/
+
+.profile-sidebar {
+    background: #2d3436;
+    color: white;
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 1rem;
+    border: 4px solid #fff;
+    box-shadow: 0 5px 15px rgba(255,71,87,0.4);
+}
+.content-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+    min-height: 100%;
+}
+.history-card {
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: 0.2s;
+    border-left: 5px solid #2d3436;
+}
+.history-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transform: translateX(5px);
+}
+.btn-action {
+    background: #2d3436;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: 0.2s;
+    border: none;
+}
+.btn-action:hover {
+    background: #ff4757;
+    color: white;
+}
+
+.badge-status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.badge-status-confirmed {
+    background-color: #cce5ff;
+    color: #004085;
+    border-left-color: #004085 !important;
+}
+.badge-status-completed {
+    background-color: #d4edda;
+    color: #155724;
+    border-left-color: #2ed573 !important;
+}
+.badge-status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left-color: #ff4757 !important;
+    text-decoration: line-through;
+}
+
+/* Pure CSS tabs */
+input[type="radio"][name="profile_tabs"] {
+    display: none;
+}
+.tab-label {
+    display: block;
+    color: #2d3436;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.tab-label:hover {
+    background: #f1f2f6;
+}
+.tab-label i {
+    width: 25px;
+}
+.css-tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+#tab-info:checked ~ .row .content-info, #tab-bookings:checked ~ .row .content-bookings, #tab-security:checked ~ .row .content-security {
+    display: block;
+}
+#tab-info:checked ~ .row .label-info, #tab-bookings:checked ~ .row .label-bookings, #tab-security:checked ~ .row .label-security {
+    background: #ff4757;
+    color: white;
+}
+
+/* Dismissible alerts */
+input.alert-closer {
+    display: none;
+}
+input.alert-closer:checked + .custom-alert-box {
+    display: none;
+    animation: fadeOut 0.3s;
+}

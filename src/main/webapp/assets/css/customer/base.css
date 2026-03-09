@@ -1,6 +1,13 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 8, 2026, 10:47:15 PM
+    Author     : hxhbang
+*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-/* ==================== VARIABLES ==================== */
 :root {
     --primary-color: #da291c;
     --primary-dark: #b30000;
@@ -16,11 +23,22 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     color: var(--text-dark);
     background: var(--bg-light);
     line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5,
+.hero-title,
+.shop-title,
+.detail-title {
+    font-family: 'Montserrat', sans-serif;
 }
 
 /* ==================== HEADER ==================== */
@@ -61,6 +79,7 @@ body {
     letter-spacing: 0.5px;
     transition: all 0.3s;
     border-bottom: 3px solid transparent;
+    white-space: nowrap;
 }
 
 .main-header .nav-link:hover {
@@ -90,6 +109,30 @@ body {
     transform: scale(1.1);
 }
 
+/* CTA Button */
+.btn-cta-booking {
+    background-color: white;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    border: 2px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.btn-cta-booking:hover {
+    background-color: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
 /* Header Buttons */
 .btn-header-login,
 .btn-header-register {
@@ -101,6 +144,7 @@ body {
     letter-spacing: 0.5px;
     transition: all 0.3s;
     border: 2px solid white;
+    white-space: nowrap;
 }
 
 .btn-header-login {
@@ -124,11 +168,59 @@ body {
     border-color: var(--primary-dark);
 }
 
-/* User Dropdown */
+/* User Menu - CSS-only dropdown (no JavaScript) */
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 200px;
+    margin-top: 4px;
+    padding: 8px 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    z-index: 1050;
+}
+
+.user-dropdown:hover .dropdown-menu,
+.user-dropdown:focus-within .dropdown-menu {
+    display: block;
+}
+
+.user-dropdown .dropdown-item {
+    display: block;
+    padding: 10px 16px;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.user-dropdown .dropdown-item.text-danger:hover {
+    background: #fff5f5;
+}
+
+.user-dropdown .dropdown-divider {
+    margin: 8px 0;
+    border: 0;
+    border-top: 1px solid #e9ecef;
+}
+
 .user-menu {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     padding: 8px 15px !important;
+    cursor: pointer;
+    font: inherit;
 }
 
 .user-menu:hover {
@@ -136,47 +228,19 @@ body {
     border-bottom-color: transparent !important;
 }
 
-.user-dropdown .dropdown-menu {
-    border: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    margin-top: 10px;
-}
 
-.user-dropdown .dropdown-item {
-    padding: 10px 20px;
-    transition: all 0.3s;
-}
-
-.user-dropdown .dropdown-item:hover {
-    background: var(--bg-light);
-    color: var(--primary-color);
-}
-
-/* Mobile Toggle */
-.navbar-toggler {
-    border-color: white;
-}
-
-.navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-}
-
-/* ==================== FOOTER ==================== */
+/* Footer */
 .main-footer {
     background: var(--secondary-color);
     color: white;
     padding: 30px 0 20px;
     margin-top: 60px;
 }
-
-/* Footer Sponsors */
 .footer-sponsors {
     padding: 20px 0 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 20px;
 }
-
 .sponsor-container {
     display: flex;
     justify-content: center;
@@ -184,7 +248,6 @@ body {
     gap: 50px;
     flex-wrap: wrap;
 }
-
 .footer-sponsor-logo {
     height: 50px;
     width: auto;
@@ -193,7 +256,6 @@ body {
     transition: all 0.3s;
     filter: grayscale(100%) brightness(2);
 }
-
 .footer-sponsor-logo:hover {
     opacity: 1;
     transform: scale(1.1);
@@ -205,5 +267,3 @@ body {
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
 }
-
-

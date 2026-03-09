@@ -1,0 +1,93 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 8, 2026, 10:47:50 PM
+    Author     : hxhbang
+*/
+
+.detail-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.price-badge {
+    background: rgba(46, 213, 115, 0.1);
+    color: #2ed573;
+    padding: 15px 25px;
+    border-radius: 15px;
+    display: inline-block;
+    border: 2px solid rgba(46, 213, 115, 0.2);
+}
+.schedule-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    padding: 2rem;
+    margin-top: 0px;
+    position: relative;
+    z-index: 10;
+}
+.schedule-card .table th {
+    background: #2d3436 !important;
+    color: white !important;
+    border: none;
+}
+.time-col {
+    background: #f8f9fa !important;
+    color: #2d3436 !important;
+    border-right: 2px solid #e9ecef !important;
+}
+.slot-card {
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+}
+.slot-card-link {
+    text-decoration: none;
+    display: block;
+}
+.slot-card-link:hover .slot-card {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+}
+
+.bg-success-subtle {
+    background-color: rgba(46, 213, 115, 0.1) !important;
+    color: #2ed573 !important;
+    border: 1px solid rgba(46, 213, 115, 0.3) !important;
+}
+.bg-danger-subtle {
+    background-color: rgba(255, 71, 87, 0.1) !important;
+    color: #ff4757 !important;
+    border: 1px solid rgba(255, 71, 87, 0.3) !important;
+}
+.bg-secondary-subtle {
+    background-color: #f1f2f6 !important;
+    color: #a4b0be !important;
+    border: 1px dashed #ced4da !important;
+}
+
+.detail-hero-header {
+    background: linear-gradient(135deg, #1e272e 0%, #2d3436 100%);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    color: white;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+}
+
+.time-col-header {
+    width: 120px;
+}
