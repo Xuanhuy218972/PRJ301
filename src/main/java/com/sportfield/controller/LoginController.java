@@ -142,10 +142,16 @@ public class LoginController extends HttpServlet {
         session.setAttribute("userRole", role);
         session.setMaxInactiveInterval(30 * 60);
 
-        if (isStaff) {
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+        String returnUrl = (String) session.getAttribute("returnUrl");
+        if (returnUrl != null) {
+            session.removeAttribute("returnUrl");
+            response.sendRedirect(returnUrl);
         } else {
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            if (isStaff) {
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/home");
+            }
         }
     }
 

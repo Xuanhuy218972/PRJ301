@@ -90,7 +90,46 @@ public class AdminUserController extends HttpServlet {
 
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<User> users = userDAO.getAll();
+        String role = request.getParameter("role");
+        String type = request.getParameter("type");
+        List<User> users;
+
+        if ("new_customers".equals(type)) {
+            String monthStr = request.getParameter("month");
+            String yearStr = request.getParameter("year");
+            
+            int month = 0;
+            int year = 0;
+            
+            try {
+                if (monthStr != null && !monthStr.isEmpty()) {
+                    month = Integer.parseInt(monthStr);
+                } else {
+                    month = java.time.LocalDate.now().getMonthValue();
+                }
+                
+                if (yearStr != null && !yearStr.isEmpty()) {
+                    year = Integer.parseInt(yearStr);
+                } else {
+                    year = java.time.LocalDate.now().getYear();
+                }
+            } catch (NumberFormatException e) {
+                month = java.time.LocalDate.now().getMonthValue();
+                year = java.time.LocalDate.now().getYear();
+            }
+            
+            users = userDAO.getNewCustomers(month, year);
+            request.setAttribute("selectedRole", "NEW_CUSTOMERS");
+            request.setAttribute("filterMonth", month);
+            request.setAttribute("filterYear", year);
+        } else if (role != null && !role.trim().isEmpty() && !"ALL".equalsIgnoreCase(role)) {
+            users = userDAO.getUsersByRole(role);
+            request.setAttribute("selectedRole", role);
+        } else {
+            users = userDAO.getAll();
+            request.setAttribute("selectedRole", "ALL");
+        }
+        
         request.setAttribute("users", users);
         request.getRequestDispatcher("/views/admin/users/list.jsp").forward(request, response);
     }

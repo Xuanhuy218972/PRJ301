@@ -32,6 +32,10 @@
         <servlet-name>AdminFieldScheduleController</servlet-name>
         <servlet-class>com.sportfield.controller.admin.AdminFieldScheduleController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HomeController</servlet-name>
+        <servlet-class>com.sportfield.controller.HomeController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -79,6 +83,10 @@
     <servlet-mapping>
         <servlet-name>AdminFieldScheduleController</servlet-name>
         <url-pattern>/admin/field-schedule</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeController</servlet-name>
+        <url-pattern>/home</url-pattern>
     </servlet-mapping>
     <filter>
         <filter-name>RoleBasedAccessFilter</filter-name>
