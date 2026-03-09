@@ -15,8 +15,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin-schedule.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin-schedule.css" rel="stylesheet">
 </head>
 <body>
 
@@ -160,7 +160,7 @@
                                                         <c:choose>
                                                             <c:when test="${slot.status eq 'INACTIVE'}">
                                                                 <div class="slot-card bg-light text-muted border border-secondary-subtle">
-                                                                    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 50px;">
+                                                                    <div class="d-flex flex-column align-items-center justify-content-center slot-inner-wrapper">
                                                                         <i class="fas fa-lock mb-2"></i>
                                                                         <small>Khóa</small>
                                                                     </div>
@@ -168,17 +168,14 @@
                                                             </c:when>
                                                             <%-- Tích hợp Cách 1 & Cách 3 khi có người đặt --%>
                                                             <c:when test="${not empty currentBooking}">
-                                                                <div class="slot-card bg-danger-subtle text-danger border border-danger-subtle position-relative slot-hoverable"
-                                                                     style="cursor: pointer; padding: 8px 5px;"
+                                                                <div class="slot-card bg-danger-subtle text-danger border border-danger-subtle position-relative slot-hoverable booked-slot-card"
                                                                      data-bs-toggle="modal" 
                                                                      data-bs-target="#bookingModal_${currentBooking.bookingID}_${slot.slotID}"
                                                                      title="Xem chi tiết đơn">
-                                                                    <i class="fas fa-info-circle position-absolute top-0 end-0 m-1" 
-                                                                       style="font-size: 0.7rem; opacity: 0.7;"></i>
-                                                                    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 50px;">
+                                                                    <i class="fas fa-info-circle position-absolute top-0 end-0 m-1 slot-info-icon"></i>
+                                                                    <div class="d-flex flex-column align-items-center justify-content-center slot-inner-wrapper">
                                                                         <i class="fas fa-user-check mb-2"></i>
-                                                                        <small class="fw-bold text-center lh-sm" 
-                                                                               style="font-size: 0.7rem; max-width: 80px; word-wrap: break-word; overflow-wrap: break-word;">
+                                                                        <small class="fw-bold text-center lh-sm booked-customer-name">
                                                                             ${not empty currentBooking.customerName ? currentBooking.customerName : 'Đã đặt'}
                                                                         </small>
                                                                     </div>
@@ -204,7 +201,7 @@
                                                                                 </div>
                                                                                 
                                                                                 <div class="mb-3 d-flex align-items-start">
-                                                                                    <i class="fas fa-user text-muted mt-1 me-3" style="width: 20px;"></i>
+                                                                                    <i class="fas fa-user text-muted mt-1 me-3 modal-icon-width"></i>
                                                                                     <div>
                                                                                         <div class="text-muted small">Khách hàng</div>
                                                                                         <div class="fw-bold text-dark fs-6">
@@ -214,7 +211,7 @@
                                                                                 </div>
                                                                                 
                                                                                 <div class="mb-3 d-flex align-items-start">
-                                                                                    <i class="fas fa-phone-alt text-muted mt-1 me-3" style="width: 20px;"></i>
+                                                                                    <i class="fas fa-phone-alt text-muted mt-1 me-3 modal-icon-width"></i>
                                                                                     <div>
                                                                                         <div class="text-muted small">Số điện thoại</div>
                                                                                         <c:choose>
@@ -231,7 +228,7 @@
                                                                                 </div>
                                                                                 
                                                                                 <div class="mb-3 d-flex align-items-start">
-                                                                                    <i class="fas fa-clock text-muted mt-1 me-3" style="width: 20px;"></i>
+                                                                                    <i class="fas fa-clock text-muted mt-1 me-3 modal-icon-width"></i>
                                                                                     <div>
                                                                                         <div class="text-muted small">Khung giờ</div>
                                                                                         <div class="fw-bold text-dark fs-6">
@@ -241,7 +238,7 @@
                                                                                 </div>
                                                                                 
                                                                                 <div class="mb-2 d-flex align-items-start">
-                                                                                    <i class="fas fa-money-bill-wave text-muted mt-1 me-3" style="width: 20px;"></i>
+                                                                                    <i class="fas fa-money-bill-wave text-muted mt-1 me-3 modal-icon-width"></i>
                                                                                     <div>
                                                                                         <div class="text-muted small">Giá tiền</div>
                                                                                         <div class="fw-bold text-success fs-6">
@@ -263,9 +260,8 @@
                                                             </c:when>
                                                             <%-- Ô Trống --%>
                                                             <c:otherwise>
-                                                                <div class="slot-card bg-success-subtle text-success border border-success-subtle slot-hoverable" 
-                                                                     style="cursor: pointer;">
-                                                                    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 50px;">
+                                                                <div class="slot-card bg-success-subtle text-success border border-success-subtle slot-hoverable empty-slot-card">
+                                                                    <div class="d-flex flex-column align-items-center justify-content-center slot-inner-wrapper">
                                                                         <i class="far fa-circle mb-2"></i>
                                                                         <small class="fw-medium">Trống</small>
                                                                     </div>

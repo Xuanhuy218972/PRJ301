@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
 </head>
 <body>
 
@@ -145,7 +145,7 @@
                         <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="d-flex align-items-center gap-3">
                             <input type="hidden" name="action" value="updateStatus">
                             <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                            <select name="newStatus" class="form-select" style="max-width: 250px;" required>
+                            <select name="newStatus" class="form-select status-select-max" required>
                                 <option value="PENDING" ${booking.status == 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
                                 <option value="CONFIRMED" ${booking.status == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
                                 <option value="COMPLETED" ${booking.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>

@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
 </head>
 <body>
 
@@ -85,10 +85,10 @@
                                         <div class="d-flex align-items-center">
                                             <c:choose>
                                                 <c:when test="${not empty field.imageURL}">
-                                                    <img src="${field.imageURL}" alt="${field.fieldName}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    <img src="${field.imageURL}" alt="${field.fieldName}" class="rounded me-3 field-list-img">
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <div class="bg-success-subtle text-success rounded p-2 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                                    <div class="bg-success-subtle text-success rounded p-2 me-3 field-list-icon">
                                                         <i class="fas fa-futbol fa-lg"></i>
                                                     </div>
                                                 </c:otherwise>

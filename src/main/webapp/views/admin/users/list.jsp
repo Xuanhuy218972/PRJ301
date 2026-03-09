@@ -12,9 +12,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css?v=2" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin-roles.css?v=2" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin-modals.css?v=2" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css?v=2" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin-roles.css?v=2" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin-modals.css?v=2" rel="stylesheet">
 </head>
 <body>
 
@@ -288,7 +288,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a href="#" class="css-modal-close-area" style="position: absolute; inset: 0; z-index: -1;"></a>
+                                            <a href="#" class="css-modal-close-area"></a>
                                         </div>
                                     </td>
                                 </tr>

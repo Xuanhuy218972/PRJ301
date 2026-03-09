@@ -24,7 +24,7 @@
                     <input type="checkbox" id="close-success" class="alert-closer">
                     <div class="alert custom-alert-box border-0 bg-success text-white rounded-3 shadow-sm mb-4 position-relative" role="alert">
                         <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
-                        <label for="close-success" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75" style="cursor: pointer; transition: 0.2s;">
+                        <label for="close-success" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75 alert-close-btn">
                             <i class="fas fa-times fs-5"></i>
                         </label>
                     </div>
@@ -35,7 +35,7 @@
                     <input type="checkbox" id="close-error" class="alert-closer">
                     <div class="alert custom-alert-box border-0 bg-danger text-white rounded-3 shadow-sm mb-4 position-relative" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>${sessionScope.error}
-                        <label for="close-error" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75" style="cursor: pointer; transition: 0.2s;">
+                        <label for="close-error" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75 alert-close-btn">
                             <i class="fas fa-times fs-5"></i>
                         </label>
                     </div>
@@ -51,7 +51,7 @@
                             <div class="avatar-circle">
                                 <c:choose>
                                     <c:when test="${not empty user.avatar}">
-                                        <img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                        <img src="${user.avatar}" alt="Avatar" class="avatar-img">
                                     </c:when>
                                     <c:otherwise>
                                         <i class="fas fa-user-ninja"></i>

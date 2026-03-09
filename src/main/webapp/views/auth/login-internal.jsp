@@ -52,7 +52,7 @@
                 <c:choose>
                     <c:when test="${not empty sessionScope.account}">
                         <%-- Đã đăng nhập rồi (ví dụ: Customer bị chặn vào admin) -> quay về trang chủ --%>
-                        <a href="${pageContext.request.contextPath}/index.jsp" class="internal-back-link">
+                        <a href="${pageContext.request.contextPath}/home" class="internal-back-link">
                             <i class="fas fa-arrow-left me-1"></i> Quay lại trang Khách hàng
                         </a>
                     </c:when>

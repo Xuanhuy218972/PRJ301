@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
 </head>
 <body>
 
@@ -45,7 +45,7 @@
                         <form method="get" action="${pageContext.request.contextPath}/admin/reports" class="d-flex flex-wrap align-items-end gap-3">
                             <div>
                                 <label class="form-label small fw-bold text-muted">Năm</label>
-                                <select name="year" class="form-select" style="min-width: 120px;" onchange="this.form.submit()">
+                                <select name="year" class="form-select filter-select-min" onchange="this.form.submit()">
                                     <c:forEach var="y" items="${availableYears}">
                                         <option value="${y}"
                                             <c:if test="${y.toString() == selectedYear}">selected</c:if>>
@@ -56,7 +56,7 @@
                             </div>
                             <div>
                                 <label class="form-label small fw-bold text-muted">Tháng</label>
-                                <select name="month" class="form-select" style="min-width: 120px;" onchange="this.form.submit()">
+                                <select name="month" class="form-select filter-select-min" onchange="this.form.submit()">
                                     <option value="1"  <c:if test="${selectedMonth == '1'}">selected</c:if>>Tháng 1</option>
                                     <option value="2"  <c:if test="${selectedMonth == '2'}">selected</c:if>>Tháng 2</option>
                                     <option value="3"  <c:if test="${selectedMonth == '3'}">selected</c:if>>Tháng 3</option>
@@ -140,7 +140,7 @@
                                             <tr>
                                                 <th>Tháng</th>
                                                 <th>Doanh thu</th>
-                                                <th style="width: 50%;">Biểu đồ</th>
+                                                <th class="chart-col">Biểu đồ</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -167,7 +167,7 @@
                                                         <fmt:formatNumber value="${entry.value}" pattern="#,###"/>đ
                                                     </td>
                                                     <td>
-                                                        <div class="progress rounded-pill" style="height: 20px;">
+                                                        <div class="progress rounded-pill progress-bar-lg">
                                                             <div class="progress-bar ${entry.key.toString() == selectedMonth ? 'bg-primary' : 'bg-success bg-opacity-75'} rounded-pill"
                                                                  role="progressbar"
                                                                  style="width: ${pct > 0 ? pct : 0}%;">
@@ -210,7 +210,7 @@
                                             <fmt:formatNumber value="${successRate}" maxFractionDigits="1"/>%
                                         </span>
                                     </div>
-                                    <div class="progress rounded-pill" style="height: 8px;">
+                                    <div class="progress rounded-pill progress-bar-sm">
                                         <div class="progress-bar bg-success rounded-pill" style="width: ${successRate}%;"></div>
                                         <div class="progress-bar bg-danger rounded-pill" style="width: ${100 - successRate}%;"></div>
                                     </div>
@@ -227,8 +227,7 @@
                                         <c:forEach var="field" items="${topFields}" varStatus="loop">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <span class="badge ${loop.index == 0 ? 'bg-warning' : loop.index == 1 ? 'bg-secondary' : 'bg-dark bg-opacity-25'} rounded-circle me-2"
-                                                          style="width: 24px; height: 24px; line-height: 16px; text-align: center;">
+                                                    <span class="badge ${loop.index == 0 ? 'bg-warning' : loop.index == 1 ? 'bg-secondary' : 'bg-dark bg-opacity-25'} rounded-circle me-2 top-badge">
                                                         ${loop.index + 1}
                                                     </span>
                                                     <span class="fw-bold">${field.fieldName}</span>
