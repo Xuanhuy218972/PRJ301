@@ -142,3 +142,33 @@
         transform: none;
     }
 }
+
+/* Schedule Specific Classes Replacing Inline Styles */
+.slot-inner-wrapper {
+    min-height: 50px;
+}
+
+.booked-slot-card {
+    cursor: pointer;
+    padding: 8px 5px;
+}
+
+.empty-slot-card {
+    cursor: pointer;
+}
+
+.slot-info-icon {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.booked-customer-name {
+    font-size: 0.7rem;
+    max-width: 80px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.modal-icon-width {
+    width: 20px;
+}

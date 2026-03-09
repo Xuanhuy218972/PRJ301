@@ -209,3 +209,9 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.css-modal-close-area {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
