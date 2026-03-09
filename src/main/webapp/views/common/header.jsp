@@ -22,10 +22,7 @@
                         <a class="nav-link" href="${pageContext.request.contextPath}/index.jsp">TRANG CHỦ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">ĐẶT SÂN</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">SÂN BÓNG</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/shop">HỆ THỐNG SÂN</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">LIÊN HỆ</a>
@@ -35,37 +32,32 @@
                     </li>
                 </ul>
                 
-                <!-- Sponsor Logos -->
-                <div class="sponsor-logos d-none d-lg-flex">
-                    <img src="${pageContext.request.contextPath}/assets/images/konami.png" alt="Konami" class="sponsor-logo">
-                    <img src="${pageContext.request.contextPath}/assets/images/tiger.png" alt="Tiger" class="sponsor-logo">
-                    <img src="${pageContext.request.contextPath}/assets/images/adidas.png" alt="Adidas" class="sponsor-logo">
-                </div>
-                
                 <!-- User Actions -->
                 <ul class="navbar-nav ms-3 align-items-center">
                     <c:choose>
                         <c:when test="${not empty sessionScope.account}">
                             <!-- Logged In -->
                             <li class="nav-item dropdown user-dropdown">
-                                <a class="nav-link dropdown-toggle user-menu" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <button type="button" class="nav-link dropdown-toggle user-menu border-0 bg-transparent" id="userDropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-user-circle me-2"></i>${sessionScope.account.fullName}
-                                </a>
+                                </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-user me-2"></i>Thông Tin
+                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/profile">
+                                            <i class="fas fa-user me-2"></i>Thông tin cá nhân
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="fas fa-history me-2"></i>Lịch Sử Đặt Sân
-                                        </a>
-                                    </li>
+                                    <c:if test="${sessionScope.account.role == 'ADMIN' || sessionScope.account.role == 'STAFF'}">
+                                        <li>
+                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/admin/dashboard">
+                                                <i class="fas fa-cog me-2"></i>Quản trị
+                                            </a>
+                                        </li>
+                                    </c:if>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng Xuất
+                                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                         </a>
                                     </li>
                                 </ul>

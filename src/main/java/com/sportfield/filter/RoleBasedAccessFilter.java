@@ -46,6 +46,7 @@ public class RoleBasedAccessFilter implements Filter {
                 || requestURI.startsWith(contextPath + "/login")
                 || requestURI.startsWith(contextPath + "/register")
                 || requestURI.startsWith(contextPath + "/shop")
+                || requestURI.startsWith(contextPath + "/field-detail")
                 || requestURI.startsWith(contextPath + "/customer")
                 || requestURI.startsWith(contextPath + "/profile")) {
             isCustomerUrl = true;
