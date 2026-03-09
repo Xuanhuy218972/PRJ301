@@ -42,7 +42,7 @@ public class RoleBasedAccessFilter implements Filter {
         boolean isCustomerUrl = false;
 
         if (requestURI.equals(contextPath + "/")
-                || requestURI.equals(contextPath + "/index.jsp")
+                || requestURI.equals(contextPath + "/home")
                 || requestURI.startsWith(contextPath + "/login")
                 || requestURI.startsWith(contextPath + "/register")
                 || requestURI.startsWith(contextPath + "/shop")
