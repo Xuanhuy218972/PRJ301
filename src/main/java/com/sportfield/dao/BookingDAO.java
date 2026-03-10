@@ -114,6 +114,61 @@ public class BookingDAO {
         return bookings;
     }
 
+    public List<Booking> getBookingsByFilters(String status, String date, String customerName) {
+        List<Booking> bookings = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT b.*, u.FullName AS CustomerName, u.Phone AS CustomerPhone " +
+                "FROM Bookings b LEFT JOIN Users u ON b.CustomerID = u.UserID WHERE 1=1 ");
+
+        if (status != null && !status.isEmpty()) {
+            sql.append("AND b.Status = ? ");
+        }
+        if (date != null && !date.isEmpty()) {
+            sql.append("AND CAST(b.CreatedAt AS DATE) = ? ");
+        }
+        if (customerName != null && !customerName.isEmpty()) {
+            sql.append("AND u.FullName LIKE ? ");
+        }
+
+        sql.append("ORDER BY b.CreatedAt DESC");
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql.toString());
+                int paramIndex = 1;
+
+                if (status != null && !status.isEmpty()) {
+                    ps.setString(paramIndex++, status);
+                }
+                if (date != null && !date.isEmpty()) {
+                    ps.setString(paramIndex++, date);
+                }
+                if (customerName != null && !customerName.isEmpty()) {
+                    ps.setString(paramIndex++, "%" + customerName.trim() + "%");
+                }
+
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    Booking booking = mapBooking(rs);
+                    booking.setCustomerName(rs.getString("CustomerName"));
+                    booking.setCustomerPhone(rs.getString("CustomerPhone"));
+                    bookings.add(booking);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+
+        return bookings;
+    }
+
     public Booking getBookingByID(int bookingID) {
         String sql = "SELECT b.*, u.FullName AS CustomerName, u.Phone AS CustomerPhone "
                    + "FROM Bookings b LEFT JOIN Users u ON b.CustomerID = u.UserID "

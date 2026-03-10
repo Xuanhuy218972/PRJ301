@@ -217,6 +217,71 @@ public class UserDAO {
         return users;
     }
 
+    public List<User> getUsersByFilters(String role, String type, int month, int year, String name) {
+        List<User> users = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1 ");
+
+        if ("new_customers".equals(type)) {
+            sql.append("AND Role = 'CUSTOMER' AND MONTH(CreatedAt) = ? AND YEAR(CreatedAt) = ? ");
+        } else if (role != null && !role.trim().isEmpty() && !"ALL".equalsIgnoreCase(role)) {
+            sql.append("AND Role = ? ");
+        }
+
+        if (name != null && !name.trim().isEmpty()) {
+            sql.append("AND (FullName LIKE ? OR Username LIKE ?) ");
+        }
+
+        sql.append("ORDER BY CreatedAt DESC");
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql.toString());
+                int paramIndex = 1;
+
+                if ("new_customers".equals(type)) {
+                    ps.setInt(paramIndex++, month);
+                    ps.setInt(paramIndex++, year);
+                } else if (role != null && !role.trim().isEmpty() && !"ALL".equalsIgnoreCase(role)) {
+                    ps.setString(paramIndex++, role);
+                }
+
+                if (name != null && !name.trim().isEmpty()) {
+                    ps.setString(paramIndex++, "%" + name.trim() + "%");
+                    ps.setString(paramIndex++, "%" + name.trim() + "%");
+                }
+
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    users.add(user);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return users;
+    }
+
     public boolean update(User user) {
         String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ?, WalletBalance = ? WHERE UserID = ?";
         Connection conn = null;

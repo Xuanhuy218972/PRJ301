@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.YearMonth;
 
 import com.sportfield.utils.DBContext;
 
@@ -41,10 +42,10 @@ public class ReportDAO {
         return BigDecimal.ZERO;
     }
 
-    public BigDecimal getTotalRevenueByYear(String year) {
+    public BigDecimal getTotalRevenueToday() {
         String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
                    + "WHERE Status IN ('CONFIRMED', 'COMPLETED') "
-                   + "AND YEAR(CreatedAt) = ?";
+                   + "AND CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -54,7 +55,6 @@ public class ReportDAO {
             conn = DBContext.getConnection();
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
-                ps.setInt(1, Integer.parseInt(year));
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     return rs.getBigDecimal(1);
@@ -98,6 +98,47 @@ public class ReportDAO {
             DBContext.close(conn, ps, rs);
         }
         return monthlyRevenue;
+    }
+
+    public Map<Integer, BigDecimal> getDailyRevenueByMonth(String year, String month) {
+        Map<Integer, BigDecimal> dailyRevenue = new LinkedHashMap<>();
+        int yearInt = Integer.parseInt(year);
+        int monthInt = Integer.parseInt(month);
+        
+        // Find total days in the month
+        int daysInMonth = YearMonth.of(yearInt, monthInt).lengthOfMonth();
+        
+        // Initialize all days to zero
+        for (int i = 1; i <= daysInMonth; i++) {
+            dailyRevenue.put(i, BigDecimal.ZERO);
+        }
+
+        String sql = "SELECT DAY(CreatedAt) AS D, ISNULL(SUM(TotalPrice), 0) AS Revenue "
+                   + "FROM Bookings WHERE Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
+                   + "GROUP BY DAY(CreatedAt) ORDER BY D";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, yearInt);
+                ps.setInt(2, monthInt);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    dailyRevenue.put(rs.getInt("D"), rs.getBigDecimal("Revenue"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return dailyRevenue;
     }
 
     public int getTotalBookingsByMonth(String year, String month) {
