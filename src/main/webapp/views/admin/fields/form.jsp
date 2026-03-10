@@ -61,7 +61,6 @@
                                             <option value="">-- Chọn loại sân --</option>
                                             <option value="5" ${field.fieldType == 5 ? 'selected' : ''}>Sân 5 người</option>
                                             <option value="7" ${field.fieldType == 7 ? 'selected' : ''}>Sân 7 người</option>
-                                            <option value="11" ${field.fieldType == 11 ? 'selected' : ''}>Sân 11 người</option>
                                         </select>
                                     </div>
 
@@ -129,6 +128,5 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

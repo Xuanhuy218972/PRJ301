@@ -63,19 +63,45 @@
                     <c:remove var="error" scope="session" />
                 </c:if>
 
-                <div class="d-flex align-items-center mb-4 gap-2">
-                    <a href="?role=ALL" class="btn btn-sm ${empty selectedRole || selectedRole == 'ALL' ? 'btn-dark' : 'btn-outline-dark'} rounded-pill px-4 fw-medium shadow-sm">
-                        <i class="fas fa-layer-group me-1"></i> Tất cả
-                    </a>
-                    <a href="?role=STAFF" class="btn btn-sm ${selectedRole == 'STAFF' ? 'btn-warning text-white' : 'btn-outline-warning'} rounded-pill px-4 fw-medium shadow-sm">
-                        <i class="fas fa-user-tie me-1"></i> Staff
-                    </a>
-                    <a href="?role=CUSTOMER" class="btn btn-sm ${selectedRole == 'CUSTOMER' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill px-4 fw-medium shadow-sm">
-                        <i class="fas fa-user me-1"></i> Customer
-                    </a>
-                    <a href="?type=new_customers" class="btn btn-sm ${selectedRole == 'NEW_CUSTOMERS' ? 'btn-success' : 'btn-outline-success'} rounded-pill px-4 fw-medium shadow-sm">
-                        <i class="fas fa-user-plus me-1"></i> Khách hàng mới
-                    </a>
+                <div class="bg-white p-3 rounded-4 shadow-sm border border-light mb-4">
+                    <div class="row gy-3 align-items-center">
+                        <div class="col-xl-7 col-lg-12">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="?role=ALL&name=${selectedName}" class="btn btn-sm ${empty selectedRole || selectedRole == 'ALL' ? 'btn-dark' : 'btn-outline-dark'} rounded-pill px-4 fw-medium shadow-sm">
+                                    <i class="fas fa-layer-group me-1"></i> Tất cả
+                                </a>
+                                <a href="?role=STAFF&name=${selectedName}" class="btn btn-sm ${selectedRole == 'STAFF' ? 'btn-warning text-white' : 'btn-outline-warning'} rounded-pill px-4 fw-medium shadow-sm">
+                                    <i class="fas fa-user-tie me-1"></i> Staff
+                                </a>
+                                <a href="?role=CUSTOMER&name=${selectedName}" class="btn btn-sm ${selectedRole == 'CUSTOMER' ? 'btn-primary' : 'btn-outline-primary'} rounded-pill px-4 fw-medium shadow-sm">
+                                    <i class="fas fa-user me-1"></i> Customer
+                                </a>
+                                <a href="?type=new_customers&name=${selectedName}" class="btn btn-sm ${selectedRole == 'NEW_CUSTOMERS' ? 'btn-success' : 'btn-outline-success'} rounded-pill px-4 fw-medium shadow-sm">
+                                    <i class="fas fa-user-plus me-1"></i> Khách hàng mới
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-5 col-lg-12">
+                            <form action="${pageContext.request.contextPath}/admin/users" method="GET" class="d-flex flex-wrap justify-content-xl-end gap-2 m-0">
+                                <input type="hidden" name="role" value="${selectedRole != 'NEW_CUSTOMERS' ? selectedRole : ''}">
+                                <c:if test="${selectedRole == 'NEW_CUSTOMERS'}">
+                                    <input type="hidden" name="type" value="new_customers">
+                                    <input type="hidden" name="month" value="${filterMonth}">
+                                    <input type="hidden" name="year" value="${filterYear}">
+                                </c:if>
+                                <div class="input-group input-group-sm" style="max-width: 250px;">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-secondary"></i></span>
+                                    <input type="text" name="name" class="form-control border-start-0 shadow-none ps-0" placeholder="Tìm tên/username..." value="${selectedName}">
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary px-3 shadow-sm">Lọc</button>
+                                <c:if test="${not empty selectedName}">
+                                    <a href="${pageContext.request.contextPath}/admin/users?role=${selectedRole}${selectedRole == 'NEW_CUSTOMERS' ? '&type=new_customers' : ''}" class="btn btn-sm btn-light border px-3 shadow-sm text-danger" title="Xóa bộ lọc">
+                                        Xóa
+                                    </a>
+                                </c:if>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
                 <c:if test="${selectedRole == 'NEW_CUSTOMERS'}">
@@ -87,9 +113,10 @@
                     <!-- Bộ lọc tháng/năm đơn giản, tự submit bằng onchange -->
                     <form method="get" class="row g-2 align-items-end mb-4">
                         <input type="hidden" name="type" value="new_customers">
+                        <input type="hidden" name="name" value="${selectedName}">
                         <div class="col-auto">
                             <label class="form-label small fw-bold text-muted mb-1">Tháng</label>
-                            <select name="month" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <select name="month" class="form-select form-select-sm pe-5" style="min-width: 110px;" onchange="this.form.submit()">
                                 <c:forEach var="m" begin="1" end="12">
                                     <option value="${m}" <c:if test="${m == filterMonth}">selected</c:if>>Tháng ${m}</option>
                                 </c:forEach>
@@ -97,7 +124,7 @@
                         </div>
                         <div class="col-auto">
                             <label class="form-label small fw-bold text-muted mb-1">Năm</label>
-                            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <select name="year" class="form-select form-select-sm pe-5" style="min-width: 100px;" onchange="this.form.submit()">
                                 <c:forEach var="y" begin="${filterYear - 2}" end="${filterYear}">
                                     <option value="${y}" <c:if test="${y == filterYear}">selected</c:if>>${y}</option>
                                 </c:forEach>

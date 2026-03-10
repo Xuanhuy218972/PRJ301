@@ -38,74 +38,80 @@
     margin-bottom: 1rem;
 }
 
-/* Stat Cards - viền rõ, nhãn h6 tách bạch */
-.stat-card {
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 1.25rem;
-    background: var(--surface);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
-}
-
-.stat-card h6 {
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 0.4rem;
-    margin-bottom: 0.5rem;
-}
-
-.stat-card-primary {
-    border-left: 4px solid #6366f1 !important;
-}
-
-.stat-card-success {
-    border-left: 4px solid #10b981 !important;
-}
-
-.stat-card-warning {
-    border-left: 4px solid #f59e0b !important;
-}
-
-.stat-card-danger {
-    border-left: 4px solid #ef4444 !important;
-}
-
-.icon-shape {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-}
-
-.widget-icon {
-    font-size: 2rem;
-    opacity: 0.9;
-}
-
 /* Cards */
 .card {
     border: none !important;
     border-radius: 1.25rem;
-    background: var(--surface);
+    background: var(--surface, #ffffff);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 2rem;
 }
 
-/* Tables */
+/* Stat Cards - Vibrant Gradients & Modern Effects */
+.stat-card {
+    border: none !important;
+    border-radius: 1.25rem;
+    color: white;
+    background-size: 200% auto;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-position 0.3s ease;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    z-index: -1;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15);
+    background-position: right center;
+}
+
+.stat-card h6 {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    color: rgba(255,255,255,0.9) !important;
+}
+
+.stat-card h2, .stat-card h3 {
+    color: white !important;
+}
+
+.card.stat-card-primary { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); }
+.card.stat-card-success { background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+.card.stat-card-warning { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+.card.stat-card-danger  { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+
+.widget-icon {
+    font-size: 4.5rem;
+    color: rgba(255,255,255,0.15) !important;
+    position: absolute;
+    right: -10px;
+    bottom: -15px;
+    transform: rotate(-15deg);
+    transition: transform 0.3s ease, opacity 0.3s;
+}
+
+.stat-card:hover .widget-icon {
+    transform: rotate(0deg) scale(1.1);
+    opacity: 0.3;
+}
+
+/* Tables - Glassmorphism */
 .table-container {
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 1.25rem;
     padding: 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
     width: 100% !important;
     max-width: 100% !important;
     margin-bottom: 2rem;
@@ -380,13 +386,16 @@
     color: #b91c1c;
 }
 
-/* Dashboard sidebar cards */
+/* Dashboard sidebar cards  - Glassmorphism */
 .dashboard-side-card {
-    background: var(--surface);
-    border-radius: 1rem;
-    border: 1px solid #e2e8f0;
-    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 1.5rem;
     margin-bottom: 1.25rem;
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
 }
 
 .dashboard-side-card .card-title {
@@ -435,3 +444,358 @@
 .alert-item.alert-topup .alert-icon { background: #dcfce7; color: #16a34a; }
 .alert-item.alert-booking .alert-icon { background: #dbeafe; color: #2563eb; }
 .alert-item.alert-cancel .alert-icon { background: #fee2e2; color: #dc2626; }
+
+/* ==================== ADMIN SCHEDULE TABLE ==================== */
+.schedule-wrapper {
+    max-height: 70vh; /* Chiều cao tối đa để cuộn */
+    overflow: auto;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Customize Scrollbar cho mượt */
+.schedule-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+.schedule-wrapper::-webkit-scrollbar-track { background: #f1f5f9; }
+.schedule-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.schedule-wrapper::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.schedule-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: separate; /* Bắt buộc để dùng sticky */
+    border-spacing: 0;
+    margin: 0;
+}
+
+/* Sticky Header (Dòng Thứ/Ngày) */
+.schedule-table thead th {
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    z-index: 10;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Sticky Column (Cột Khung giờ) */
+.schedule-table tbody th.time-col {
+    position: sticky;
+    left: 0;
+    background: #f8fafc;
+    z-index: 5;
+    font-weight: 600;
+    color: #475569;
+    text-align: center;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 0.5rem;
+    width: 120px;
+}
+
+/* Góc giao nhau trên cùng bên trái */
+.schedule-table thead th.time-col-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 15;
+    background: #f8fafc;
+}
+
+/* Base Cell */
+.schedule-table td {
+    padding: 0 !important; /* Xóa padding mặc định để fill full ô */
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    height: 70px; /* Chiều cao cố định cho mọi ô */
+    vertical-align: middle;
+}
+
+/* --- Tình trạng các ô lịch --- */
+.slot-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+/* 1. Trống (Sẵn sàng đặt) */
+.slot-available {
+    background: #ffffff;
+    color: #10b981;
+    font-weight: 500;
+    cursor: pointer;
+}
+.slot-available:hover {
+    background: #ecfdf3; /* Xanh lá siêu nhạt */
+    box-shadow: inset 0 0 0 2px #34d399; /* Viền trong xanh lá */
+    color: #059669;
+}
+
+/* 2. Đã đặt */
+.slot-booked {
+    background: #fee2e2; /* Đỏ nhạt */
+    color: #b91c1c;
+    font-weight: 600;
+    cursor: not-allowed;
+}
+
+/* 3. Đã quá giờ (Quá khứ) */
+.slot-past {
+    background: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* 4. Khóa / Không hoạt động (Hiệu ứng gạch sọc) */
+.slot-locked {
+    background: repeating-linear-gradient(
+        45deg,
+        #f1f5f9,
+        #f1f5f9 10px,
+        #e2e8f0 10px,
+        #e2e8f0 20px
+    );
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+/* Chấm màu Legend */
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+/* ==================== PURE CSS BAR CHART ==================== */
+.css-chart-container {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 10px;
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+/* Các đường lưới ngang (Grid lines) */
+.css-chart-grid {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.css-chart-grid-line {
+    width: 100%;
+    height: 1px;
+    background-color: #f1f5f9;
+}
+
+.css-chart-bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    z-index: 2;
+    padding: 0 0.15rem; /* Giảm padding để fit 31 ngày */
+    position: relative;
+}
+
+.css-chart-bar {
+    width: 100%;
+    max-width: 3rem; /* Cho phép cột to ra nếu ít dữ liệu (td 12 tháng) */
+    background: #e2e8f0;
+    border-radius: 0.25rem 0.25rem 0 0;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    min-height: 2px; /* Dù 0 đồng vẫn nổi len một chút */
+}
+
+/* Modifier cho Daily Chart (31 ngày) */
+.css-chart-bar.daily-bar {
+    max-width: 1.25rem; /* Cột mỏng hơn để nhét vừa 31 cột */
+    border-radius: 0.15rem 0.15rem 0 0;
+}
+
+.css-chart-bar:hover {
+    transform: scaleY(1.02);
+    transform-origin: bottom;
+    opacity: 0.9;
+}
+
+.css-chart-label {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Tùy chỉnh màu cột */
+.css-chart-bar.active { background-color: #4f46e5; } /* Tháng hiện tại */
+.css-chart-bar.inactive { background-color: #e2e8f0; } /* Các tháng khác */
+.css-chart-bar.inactive:hover { background-color: #cbd5e1; }
+
+/* Custom Tooltip CSS (Bóng bay khi hover) */
+.css-chart-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 10;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.css-chart-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+}
+
+.css-chart-bar:hover .css-chart-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: calc(100% + 15px);
+}
+
+/* Clean Dashboard Unified Forms */
+.unified-filter-bar {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.unified-filter-bar select {
+    border: none;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.unified-filter-bar select {
+    border: 1px solid transparent;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-weight: 500;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+.unified-filter-bar select:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.unified-filter-bar select:focus {
+    outline: none;
+    border-color: #3b82f6; /* Nổi bật viền xanh da trời khi Focus */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* Hiệu ứng tỏa sáng nhẹ */
+    background: #fff;
+}
+
+/* Minimalist Stat Cards */
+.stat-card-clean {
+    background: #fff;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
+    height: 100%;
+}
+
+.stat-card-clean:hover {
+    transform: translateY(-4px); /* Nổi bật nổi lên */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: #3b82f6; /* Viền sáng màu xanh dương */
+}
+
+.stat-card-clean .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-clean .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+/* Lưới Bảng Clean */
+.clean-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.clean-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem 0.5rem;
+    font-weight: 600;
+}
+
+.clean-table td {
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: middle;
+}
+
+.clean-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.clean-table tbody tr:hover td {
+    background-color: #f8fafc;
+}

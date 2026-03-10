@@ -135,12 +135,12 @@
 
                                                                             <div class="mb-3">
                                                                                 <label class="form-label fw-semibold">Giờ bắt đầu</label>
-                                                                                <input type="time" class="form-control" name="startTime" value="${slot.startTime}" required>
+                                                                                <input type="text" class="form-control start-time-input" name="startTime" value="${slot.startTime}" placeholder="VD: 17:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" title="Định dạng 24h (VD: 17:00)" required>
                                                                             </div>
 
                                                                             <div class="mb-3">
                                                                                 <label class="form-label fw-semibold">Giờ kết thúc</label>
-                                                                                <input type="time" class="form-control" name="endTime" value="${slot.endTime}" required>
+                                                                                <input type="text" class="form-control end-time-input" name="endTime" value="${slot.endTime}" placeholder="VD: 18:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" title="Định dạng 24h (VD: 18:00)" required>
                                                                             </div>
 
                                                                             <div class="mb-3">
@@ -275,12 +275,12 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Giờ bắt đầu <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" name="startTime" required>
+                            <input type="text" class="form-control start-time-input" name="startTime" placeholder="VD: 17:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" title="Định dạng 24h (VD: 17:00)" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Giờ kết thúc <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" name="endTime" required>
+                            <input type="text" class="form-control end-time-input" name="endTime" placeholder="VD: 18:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" title="Định dạng 24h (VD: 18:00)" required>
                         </div>
 
                         <div class="mb-3">
@@ -309,5 +309,40 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hàm xử lý nhảy giờ (+/-)
+            function calculateTime(timeStr, offsetHours) {
+                if (!timeStr.match(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)) return timeStr;
+                let parts = timeStr.split(':');
+                let h = parseInt(parts[0], 10);
+                let m = parts[1];
+                h = (h + offsetHours + 24) % 24; // Xử lý qua ngày (24h)
+                return (h < 10 ? '0' : '') + h + ':' + m;
+            }
+
+            // Gán sự kiện cho Giờ bắt đầu
+            document.querySelectorAll('.start-time-input').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    let form = this.closest('form');
+                    let endInput = form.querySelector('.end-time-input');
+                    if (this.value && endInput) {
+                        endInput.value = calculateTime(this.value, 1); // +1 tiếng
+                    }
+                });
+            });
+
+            // Gán sự kiện cho Giờ kết thúc
+            document.querySelectorAll('.end-time-input').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    let form = this.closest('form');
+                    let startInput = form.querySelector('.start-time-input');
+                    if (this.value && startInput) {
+                        startInput.value = calculateTime(this.value, -1); // -1 tiếng
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

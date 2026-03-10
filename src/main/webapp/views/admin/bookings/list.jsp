@@ -40,28 +40,56 @@
                     </div>
                 </div>
 
-                <!-- Status Filter Tabs -->
-                <div class="d-flex flex-wrap gap-2 mb-4">
-                    <a href="${pageContext.request.contextPath}/admin/bookings"
-                       class="btn btn-sm rounded-pill px-3 shadow-sm ${empty currentStatus ? 'btn-primary' : 'btn-outline-secondary'}">
-                        <i class="fas fa-list me-1"></i> Tất cả
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/bookings?status=PENDING"
-                       class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'PENDING' ? 'btn-warning' : 'btn-outline-warning'}">
-                        <i class="fas fa-clock me-1"></i> Chờ xử lý <span class="badge bg-white text-warning ms-1">${pendingCount}</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/bookings?status=CONFIRMED"
-                       class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'CONFIRMED' ? 'btn-success' : 'btn-outline-success'}">
-                        <i class="fas fa-check me-1"></i> Đã xác nhận <span class="badge bg-white text-success ms-1">${confirmedCount}</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/bookings?status=COMPLETED"
-                       class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'COMPLETED' ? 'btn-info' : 'btn-outline-info'}">
-                        <i class="fas fa-check-double me-1"></i> Hoàn thành <span class="badge bg-white text-info ms-1">${completedCount}</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/bookings?status=CANCELLED"
-                       class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'CANCELLED' ? 'btn-danger' : 'btn-outline-danger'}">
-                        <i class="fas fa-times me-1"></i> Đã hủy <span class="badge bg-white text-danger ms-1">${cancelledCount}</span>
-                    </a>
+                <!-- Filter Section -->
+                <div class="bg-white p-3 rounded-4 shadow-sm border border-light mb-4">
+                    <div class="row gy-3 align-items-center">
+                        <div class="col-xl-7 col-lg-12">
+                            <!-- Status Filter Tabs -->
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="${pageContext.request.contextPath}/admin/bookings?date=${selectedDate}&customerName=${selectedCustomerName}"
+                                   class="btn btn-sm rounded-pill px-3 shadow-sm ${empty currentStatus ? 'btn-primary' : 'btn-outline-secondary'}">
+                                    <i class="fas fa-list me-1"></i> Tất cả
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings?status=PENDING&date=${selectedDate}&customerName=${selectedCustomerName}"
+                                   class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'PENDING' ? 'btn-warning' : 'btn-outline-warning'}">
+                                    <i class="fas fa-clock me-1"></i> Chờ xử lý <span class="badge bg-white text-warning ms-1">${pendingCount}</span>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings?status=CONFIRMED&date=${selectedDate}&customerName=${selectedCustomerName}"
+                                   class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'CONFIRMED' ? 'btn-success' : 'btn-outline-success'}">
+                                    <i class="fas fa-check me-1"></i> Đã xác nhận <span class="badge bg-white text-success ms-1">${confirmedCount}</span>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings?status=COMPLETED&date=${selectedDate}&customerName=${selectedCustomerName}"
+                                   class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'COMPLETED' ? 'btn-info' : 'btn-outline-info'}">
+                                    <i class="fas fa-check-double me-1"></i> Hoàn thành <span class="badge bg-white text-info ms-1">${completedCount}</span>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/bookings?status=CANCELLED&date=${selectedDate}&customerName=${selectedCustomerName}"
+                                   class="btn btn-sm rounded-pill px-3 shadow-sm ${currentStatus == 'CANCELLED' ? 'btn-danger' : 'btn-outline-danger'}">
+                                    <i class="fas fa-times me-1"></i> Đã hủy <span class="badge bg-white text-danger ms-1">${cancelledCount}</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-5 col-lg-12">
+                            <!-- Date & Name Search Form -->
+                            <form action="${pageContext.request.contextPath}/admin/bookings" method="GET" class="d-flex flex-wrap justify-content-xl-end gap-2 m-0">
+                                <input type="hidden" name="status" value="${currentStatus}">
+                                <div class="input-group input-group-sm" style="width: auto;">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-calendar-day text-secondary"></i></span>
+                                    <input type="date" name="date" class="form-control border-start-0 shadow-none ps-0" value="${selectedDate}" title="Lọc theo ngày">
+                                </div>
+                                <div class="input-group input-group-sm" style="width: 200px;">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-secondary"></i></span>
+                                    <input type="text" name="customerName" class="form-control border-start-0 shadow-none ps-0" placeholder="Tìm tên khách hàng..." value="${selectedCustomerName}">
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary px-3 shadow-sm">Lọc</button>
+                                <c:if test="${not empty selectedDate or not empty selectedCustomerName}">
+                                    <a href="${pageContext.request.contextPath}/admin/bookings?status=${currentStatus}" class="btn btn-sm btn-light border px-3 shadow-sm text-danger" title="Xóa bộ lọc">
+                                        Xóa
+                                    </a>
+                                </c:if>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
                 <c:if test="${not empty sessionScope.success}">
