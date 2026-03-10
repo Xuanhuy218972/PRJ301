@@ -92,14 +92,15 @@ public class AdminUserController extends HttpServlet {
             throws ServletException, IOException {
         String role = request.getParameter("role");
         String type = request.getParameter("type");
+        String nameFilter = request.getParameter("name");
         List<User> users;
+
+        int month = 0;
+        int year = 0;
 
         if ("new_customers".equals(type)) {
             String monthStr = request.getParameter("month");
             String yearStr = request.getParameter("year");
-            
-            int month = 0;
-            int year = 0;
             
             try {
                 if (monthStr != null && !monthStr.isEmpty()) {
@@ -118,18 +119,18 @@ public class AdminUserController extends HttpServlet {
                 year = java.time.LocalDate.now().getYear();
             }
             
-            users = userDAO.getNewCustomers(month, year);
             request.setAttribute("selectedRole", "NEW_CUSTOMERS");
             request.setAttribute("filterMonth", month);
             request.setAttribute("filterYear", year);
         } else if (role != null && !role.trim().isEmpty() && !"ALL".equalsIgnoreCase(role)) {
-            users = userDAO.getUsersByRole(role);
             request.setAttribute("selectedRole", role);
         } else {
-            users = userDAO.getAll();
             request.setAttribute("selectedRole", "ALL");
         }
         
+        request.setAttribute("selectedName", nameFilter);
+        
+        users = userDAO.getUsersByFilters(role, type, month, year, nameFilter);
         request.setAttribute("users", users);
         request.getRequestDispatcher("/views/admin/users/list.jsp").forward(request, response);
     }

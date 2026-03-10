@@ -48,24 +48,24 @@ public class AdminReportController extends HttpServlet {
         }
 
         BigDecimal monthlyRevenue = reportDAO.getTotalRevenue(year, month);
-        BigDecimal yearlyRevenue = reportDAO.getTotalRevenueByYear(year);
+        BigDecimal dailyRevenue = reportDAO.getTotalRevenueToday();
         int totalBookings = reportDAO.getTotalBookingsByMonth(year, month);
         int completedBookings = reportDAO.getCompletedBookingsByMonth(year, month);
         int cancelledBookings = reportDAO.getCancelledBookingsByMonth(year, month);
         int newCustomers = reportDAO.getNewCustomersByMonth(year, month);
-        Map<Integer, BigDecimal> monthlyChart = reportDAO.getMonthlyRevenueByYear(year);
+        Map<Integer, BigDecimal> dailyChart = reportDAO.getDailyRevenueByMonth(year, month);
         List<Map<String, Object>> topFields = reportDAO.getTopFieldsByRevenue(year, month);
         List<Integer> availableYears = reportDAO.getAvailableYears();
 
         request.setAttribute("selectedYear", year);
         request.setAttribute("selectedMonth", month);
         request.setAttribute("monthlyRevenue", monthlyRevenue);
-        request.setAttribute("yearlyRevenue", yearlyRevenue);
+        request.setAttribute("dailyRevenue", dailyRevenue);
         request.setAttribute("totalBookings", totalBookings);
         request.setAttribute("completedBookings", completedBookings);
         request.setAttribute("cancelledBookings", cancelledBookings);
         request.setAttribute("newCustomers", newCustomers);
-        request.setAttribute("monthlyChart", monthlyChart);
+        request.setAttribute("dailyChart", dailyChart);
         request.setAttribute("topFields", topFields);
         request.setAttribute("availableYears", availableYears);
 

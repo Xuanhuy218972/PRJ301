@@ -84,14 +84,14 @@ public class AdminBookingController extends HttpServlet {
     private void listBookings(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String statusFilter = request.getParameter("status");
-        List<Booking> bookings;
-
-        if (statusFilter != null && !statusFilter.isEmpty()) {
-            bookings = bookingDAO.getBookingsByStatus(statusFilter);
-            request.setAttribute("currentStatus", statusFilter);
-        } else {
-            bookings = bookingDAO.getAllBookings();
-        }
+        String dateFilter = request.getParameter("date");
+        String nameFilter = request.getParameter("customerName");
+        
+        List<Booking> bookings = bookingDAO.getBookingsByFilters(statusFilter, dateFilter, nameFilter);
+        
+        request.setAttribute("currentStatus", statusFilter);
+        request.setAttribute("selectedDate", dateFilter);
+        request.setAttribute("selectedCustomerName", nameFilter);
 
         int pendingCount = bookingDAO.countByStatus("PENDING");
         int confirmedCount = bookingDAO.countByStatus("CONFIRMED");
