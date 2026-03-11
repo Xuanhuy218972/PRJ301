@@ -1,9 +1,9 @@
-/*
+﻿/*
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
 */
 /* 
-    Created on : Mar 8, 2026, 10:48:00 PM
+    Created on : Mar 8, 2026, 10:48:00â€¯PM
     Author     : hxhbang
 */
 
@@ -66,4 +66,138 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     background: #ff2a3f;
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+}
+
+/* === Payment Options === */
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-option {
+    cursor: pointer;
+    margin: 0;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option-content {
+    border: 2px solid #e9ecef;
+    border-radius: 16px;
+    padding: 16px 20px;
+    transition: all 0.25s ease;
+    position: relative;
+    background: #fff;
+}
+
+.payment-option-content:hover {
+    border-color: #b2bec3;
+    background: #fafafa;
+}
+
+.payment-option input[type="radio"]:checked + .payment-option-content {
+    border-color: #00b894;
+    background: linear-gradient(135deg, #f0fff4, #ffffff);
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.15);
+}
+
+.payment-recommend-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.payment-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.payment-icon-online {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.payment-icon-deposit {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: #fff;
+}
+
+.payment-icon-cash {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
+    color: #fff;
+}
+
+/* === Success Page === */
+.success-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-icon-wrapper i {
+    font-size: 5rem;
+    color: #00b894;
+    animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.success-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f2f6;
+}
+
+.success-field-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.payment-summary-box {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid #e9ecef;
+}
+/* --- CSS-driven dynamic text logic --- */
+.payment-options:has(#payFull:checked) ~ .payment-summary-box .price-full-text {
+    display: inline !important;
+}
+.payment-options:has(#payDeposit:checked) ~ .payment-summary-box .price-deposit-text {
+    display: inline !important;
+}
+.payment-options:has(#payFull:checked) ~ .dynamic-btn .btn-text-full {
+    display: inline !important;
+}
+.payment-options:has(#payDeposit:checked) ~ .dynamic-btn .btn-text-deposit {
+    display: inline !important;
 }

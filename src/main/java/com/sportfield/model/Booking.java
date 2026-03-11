@@ -17,6 +17,11 @@ public class Booking {
     private String note;
     private LocalDateTime createdAt;
 
+    // Payment fields
+    private String paymentMethod;  // VNPAY, MOMO
+    private String paymentStatus;  // UNPAID, DEPOSITED, PAID
+    private BigDecimal paidAmount;  // Actual amount paid so far
+
     private String customerName;
     private String customerPhone;
 
@@ -100,6 +105,40 @@ public class Booking {
         this.createdAt = createdAt;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    /**
+     * Calculates remaining amount to be collected.
+     * totalPrice - paidAmount
+     */
+    public BigDecimal getRemainingAmount() {
+        BigDecimal total = totalPrice != null ? totalPrice : BigDecimal.ZERO;
+        BigDecimal paid = paidAmount != null ? paidAmount : BigDecimal.ZERO;
+        return total.subtract(paid);
+    }
+
     public String getCustomerName() {
         return customerName;
     }
@@ -124,6 +163,9 @@ public class Booking {
                 ", bookingType='" + bookingType + '\'' +
                 ", totalPrice=" + totalPrice +
                 ", deposit=" + deposit +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                ", paymentStatus='" + paymentStatus + '\'' +
+                ", paidAmount=" + paidAmount +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

@@ -116,9 +116,11 @@
                                                         pageContext.setAttribute("currentDay", day);
                                                 %>
                                                 <c:set var="isBooked" value="false" />
+                                                <c:set var="bookedCustomerName" value="" />
                                                 <c:forEach var="booking" items="${bookings}">
                                                     <c:if test="${booking.bookingDate eq currentDay && booking.slotID eq slot.slotID}">
                                                         <c:set var="isBooked" value="true" />
+                                                        <c:set var="bookedCustomerName" value="${booking.customerName}" />
                                                     </c:if>
                                                 </c:forEach>
                                                 <%
@@ -137,8 +139,8 @@
                                                             </div>
                                                         </c:when>
                                                         <c:when test="${isBooked}">
-                                                            <div class="slot-card bg-danger-subtle">
-                                                                <i class="fas fa-times-circle mb-1"></i> <small class="fw-bold">Đã đặt</small>
+                                                            <div class="slot-card bg-danger-subtle" title="${bookedCustomerName}">
+                                                                <i class="fas fa-user-check mb-1"></i> <small class="fw-bold" style="font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px; display:block;">${not empty bookedCustomerName ? bookedCustomerName : 'Đã đặt'}</small>
                                                             </div>
                                                         </c:when>
                                                         <c:when test="${isPast}">

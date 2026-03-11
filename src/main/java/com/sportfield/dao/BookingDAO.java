@@ -256,8 +256,9 @@ public class BookingDAO {
     }
 
     public boolean insertBooking(Booking booking) {
-        String sql = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, CreatedAt) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, "
+                   + "PaymentMethod, PaymentStatus, PaidAmount, CreatedAt) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -272,6 +273,9 @@ public class BookingDAO {
                 ps.setBigDecimal(4, booking.getDeposit());
                 ps.setString(5, booking.getStatus());
                 ps.setString(6, booking.getNote());
+                ps.setString(7, booking.getPaymentMethod() != null ? booking.getPaymentMethod() : "VNPAY");
+                ps.setString(8, booking.getPaymentStatus() != null ? booking.getPaymentStatus() : "UNPAID");
+                ps.setBigDecimal(9, booking.getPaidAmount() != null ? booking.getPaidAmount() : BigDecimal.ZERO);
 
                 int rows = ps.executeUpdate();
                 return rows > 0;
@@ -284,9 +288,78 @@ public class BookingDAO {
 
         return false;
     }
+    /**
+     * Insert booking + booking detail in a single transaction.
+     * Returns the new BookingID, or throws RuntimeException on failure.
+     */
+    public int insertBookingWithDetails(Booking booking, int slotID, java.time.LocalDate bookingDate, BigDecimal slotPrice) {
+        String sqlBooking = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, "
+                          + "PaymentMethod, PaymentStatus, PaidAmount, CreatedAt) "
+                          + "OUTPUT INSERTED.BookingID "
+                          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+        String sqlDetail = "INSERT INTO BookingDetails (BookingID, SlotID, BookingDate, Price) VALUES (?, ?, ?, ?)";
+
+        Connection conn = null;
+        PreparedStatement psBooking = null;
+        PreparedStatement psDetail = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                conn.setAutoCommit(false);
+
+                psBooking = conn.prepareStatement(sqlBooking);
+                psBooking.setInt(1, booking.getCustomerID());
+                psBooking.setString(2, booking.getBookingType());
+                psBooking.setBigDecimal(3, booking.getTotalPrice());
+                psBooking.setBigDecimal(4, booking.getDeposit());
+                psBooking.setString(5, booking.getStatus());
+                psBooking.setString(6, booking.getNote());
+                psBooking.setString(7, booking.getPaymentMethod() != null ? booking.getPaymentMethod() : "VNPAY");
+                psBooking.setString(8, booking.getPaymentStatus() != null ? booking.getPaymentStatus() : "UNPAID");
+                psBooking.setBigDecimal(9, booking.getPaidAmount() != null ? booking.getPaidAmount() : BigDecimal.ZERO);
+
+                // OUTPUT INSERTED returns a ResultSet via executeQuery
+                rs = psBooking.executeQuery();
+                int newBookingID = -1;
+
+                if (rs.next()) {
+                    newBookingID = rs.getInt(1);
+                }
+
+                if (newBookingID > 0) {
+                    psDetail = conn.prepareStatement(sqlDetail);
+                    psDetail.setInt(1, newBookingID);
+                    psDetail.setInt(2, slotID);
+                    psDetail.setDate(3, Date.valueOf(bookingDate));
+                    psDetail.setBigDecimal(4, slotPrice);
+                    psDetail.executeUpdate();
+                }
+
+                conn.commit();
+                return newBookingID;
+            }
+        } catch (Exception e) {
+            try {
+                if (conn != null) conn.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Insert booking failed: " + e.getMessage(), e);
+        } finally {
+            DBContext.close(null, psDetail, null);
+            DBContext.close(null, null, rs);
+            DBContext.close(conn, psBooking, null);
+        }
+
+        return -1;
+    }
 
     public boolean updateBooking(Booking booking) {
-        String sql = "UPDATE Bookings SET BookingType = ?, TotalPrice = ?, Deposit = ?, Status = ?, Note = ? "
+        String sql = "UPDATE Bookings SET BookingType = ?, TotalPrice = ?, Deposit = ?, Status = ?, Note = ?, "
+                   + "PaymentMethod = ?, PaymentStatus = ?, PaidAmount = ? "
                    + "WHERE BookingID = ?";
 
         Connection conn = null;
@@ -301,7 +374,73 @@ public class BookingDAO {
                 ps.setBigDecimal(3, booking.getDeposit());
                 ps.setString(4, booking.getStatus());
                 ps.setString(5, booking.getNote());
-                ps.setInt(6, booking.getBookingID());
+                ps.setString(6, booking.getPaymentMethod());
+                ps.setString(7, booking.getPaymentStatus());
+                ps.setBigDecimal(8, booking.getPaidAmount());
+                ps.setInt(9, booking.getBookingID());
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+
+        return false;
+    }
+
+    /**
+     * Admin checkout: update paid amount + payment status + booking status.
+     */
+    public boolean updatePaymentInfo(int bookingID, BigDecimal paidAmount, String paymentStatus, String bookingStatus) {
+        String sql = "UPDATE Bookings SET PaidAmount = ?, PaymentStatus = ?, Status = ? WHERE BookingID = ?";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setBigDecimal(1, paidAmount);
+                ps.setString(2, paymentStatus);
+                ps.setString(3, bookingStatus);
+                ps.setInt(4, bookingID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+
+        return false;
+    }
+
+    /**
+     * Add service charge to a booking's total price and append description to note.
+     */
+    public boolean addServiceCharge(int bookingID, BigDecimal amount, String description) {
+        String sql = "UPDATE Bookings SET TotalPrice = TotalPrice + ?, "
+                   + "Note = CASE WHEN Note IS NULL OR Note = '' THEN ? ELSE Note + CHAR(10) + ? END "
+                   + "WHERE BookingID = ?";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                String serviceNote = "[Dịch vụ] " + description + ": " + amount + "đ";
+                ps = conn.prepareStatement(sql);
+                ps.setBigDecimal(1, amount);
+                ps.setString(2, serviceNote);
+                ps.setString(3, serviceNote);
+                ps.setInt(4, bookingID);
 
                 int rows = ps.executeUpdate();
                 return rows > 0;
@@ -402,7 +541,7 @@ public class BookingDAO {
     public BigDecimal getMonthlyRevenue() {
         String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
                    + "WHERE MONTH(CreatedAt) = MONTH(GETDATE()) AND YEAR(CreatedAt) = YEAR(GETDATE()) "
-                   + "AND Status IN ('CONFIRMED', 'COMPLETED')";
+                   + "AND Status = 'COMPLETED'";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -582,6 +721,11 @@ public class BookingDAO {
         booking.setDeposit(rs.getBigDecimal("Deposit"));
         booking.setStatus(rs.getString("Status"));
         booking.setNote(rs.getString("Note"));
+
+        // Payment fields
+        booking.setPaymentMethod(rs.getString("PaymentMethod"));
+        booking.setPaymentStatus(rs.getString("PaymentStatus"));
+        booking.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 
         Timestamp createdAt = rs.getTimestamp("CreatedAt");
         if (createdAt != null) {

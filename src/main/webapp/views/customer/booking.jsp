@@ -3,6 +3,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="java.time.format.DateTimeFormatter" %>
 <%@page import="java.time.LocalDate" %>
+<%@page import="java.math.BigDecimal" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -49,9 +50,10 @@
                             <div class="ticket-divider"></div>
 
                             <div class="d-flex justify-content-between align-items-end">
-                                <div class="text-uppercase fw-bold opacity-75">Tổng thanh toán</div>
+                                <div class="text-uppercase fw-bold opacity-75">Giá sân</div>
                                 <div class="fs-1 fw-bold text-success"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</div>
                             </div>
+
                         </div>
                     </div>
 
@@ -59,7 +61,7 @@
                         <div class="form-card">
                             <h3 class="fw-bold mb-4 border-bottom pb-3"><i class="fas fa-user-edit text-danger me-2"></i>Thông tin người đặt</h3>
 
-                            <form method="post" action="${pageContext.request.contextPath}/booking">
+                            <form method="post" action="${pageContext.request.contextPath}/booking" id="bookingForm">
                                 <input type="hidden" name="fieldId" value="${field.fieldID}">
                                 <input type="hidden" name="slotId" value="${slot.slotID}">
                                 <input type="hidden" name="date" value="${bookingDate}">
@@ -85,8 +87,74 @@
                                     <textarea class="form-control custom-input" name="note" rows="3" placeholder="Yêu cầu thuê bóng, áo bib..."></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-submit w-100 fs-5 mt-2">
-                                    <i class="fas fa-bolt me-2"></i> Chốt Kèo Ngay
+                                <!-- Payment Method Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-muted small text-uppercase mb-3">
+                                        <i class="fas fa-wallet me-1"></i>Phương thức thanh toán
+                                    </label>
+
+                                    <div class="payment-options">
+                                        <!-- Option 1: Full Online -->
+                                        <label class="payment-option" for="payFull">
+                                            <input type="radio" name="paymentOption" id="payFull" value="FULL"
+                                                   data-amount="${slot.price}">
+                                            <div class="payment-option-content">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="payment-icon payment-icon-online">
+                                                        <i class="fas fa-credit-card"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold">Thanh toán</div>
+                                                        <div class="small text-muted">Chuyển khoản qua VNPay / Ngân hàng</div>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <div class="fw-bold text-success"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        <!-- Option 2: 30% Deposit -->
+                                        <label class="payment-option" for="payDeposit">
+                                            <input type="radio" name="paymentOption" id="payDeposit" value="DEPOSIT"
+                                                   data-amount="${depositAmount}" checked>
+                                            <div class="payment-option-content">
+                                                <div class="payment-recommend-tag">
+                                                    <i class="fas fa-star me-1"></i>Khuyên dùng
+                                                </div>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="payment-icon payment-icon-deposit">
+                                                        <i class="fas fa-shield-alt"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold">Cọc trước 30%</div>
+                                                        <div class="small text-muted">Còn lại thanh toán tại sân sau trận</div>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <div class="fw-bold text-success"><fmt:formatNumber value="${depositAmount}" pattern="#,###"/>đ</div>
+                                                        <div class="small text-muted text-decoration-line-through"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-summary-box mb-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-uppercase small fw-bold text-muted">Tổng thanh toán:</span>
+                                        <span class="fs-4 fw-bold text-success dynamic-price">
+                                            <span class="price-full-text d-none"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</span>
+                                            <span class="price-deposit-text d-none"><fmt:formatNumber value="${depositAmount}" pattern="#,###"/>đ</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-submit w-100 fs-5 mt-2 dynamic-btn">
+                                    <i class="fas fa-bolt me-2"></i> 
+                                    <span class="btn-text-full d-none">Thanh Toán & Đặt Ngay</span>
+                                    <span class="btn-text-deposit d-none">Cọc</span>
                                 </button>
                             </form>
                         </div>
@@ -96,6 +164,7 @@
         </main>
 
         <jsp:include page="../common/footer.jsp" />
+
+
     </body>
 </html>
-
