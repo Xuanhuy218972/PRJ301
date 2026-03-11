@@ -16,7 +16,7 @@ public class ReportDAO {
 
     public BigDecimal getTotalRevenue(String year, String month) {
         String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
-                   + "WHERE Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "WHERE Status = 'COMPLETED' "
                    + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
 
         Connection conn = null;
@@ -44,7 +44,7 @@ public class ReportDAO {
 
     public BigDecimal getTotalRevenueToday() {
         String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
-                   + "WHERE Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "WHERE Status = 'COMPLETED' "
                    + "AND CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
 
         Connection conn = null;
@@ -75,7 +75,7 @@ public class ReportDAO {
         }
 
         String sql = "SELECT MONTH(CreatedAt) AS M, ISNULL(SUM(TotalPrice), 0) AS Revenue "
-                   + "FROM Bookings WHERE Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "FROM Bookings WHERE Status = 'COMPLETED' "
                    + "AND YEAR(CreatedAt) = ? GROUP BY MONTH(CreatedAt) ORDER BY M";
 
         Connection conn = null;
@@ -114,7 +114,7 @@ public class ReportDAO {
         }
 
         String sql = "SELECT DAY(CreatedAt) AS D, ISNULL(SUM(TotalPrice), 0) AS Revenue "
-                   + "FROM Bookings WHERE Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "FROM Bookings WHERE Status = 'COMPLETED' "
                    + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
                    + "GROUP BY DAY(CreatedAt) ORDER BY D";
 
@@ -169,7 +169,7 @@ public class ReportDAO {
 
     public int getCompletedBookingsByMonth(String year, String month) {
         String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
-                   + "AND Status IN ('CONFIRMED', 'COMPLETED')";
+                   + "AND Status = 'COMPLETED'";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -229,7 +229,7 @@ public class ReportDAO {
                    + "JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
                    + "JOIN Fields f ON fs.FieldID = f.FieldID "
                    + "JOIN Bookings b ON bd.BookingID = b.BookingID "
-                   + "WHERE b.Status IN ('CONFIRMED', 'COMPLETED') "
+                   + "WHERE b.Status = 'COMPLETED' "
                    + "AND YEAR(b.CreatedAt) = ? AND MONTH(b.CreatedAt) = ? "
                    + "GROUP BY f.FieldName ORDER BY TotalRevenue DESC";
 

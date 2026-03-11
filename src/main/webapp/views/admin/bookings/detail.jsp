@@ -71,7 +71,23 @@
                             <div class="card-body p-4">
                                 <h6 class="text-muted text-uppercase small mb-2">Tổng tiền</h6>
                                 <div class="fw-bold fs-5 text-success"><fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ</div>
-                                <div class="small text-muted mt-1">Đặt cọc: <fmt:formatNumber value="${booking.deposit}" pattern="#,###"/>đ</div>
+                                <div class="small mt-1">
+                                    <c:choose>
+                                        <c:when test="${booking.paymentStatus == 'PAID'}">
+                                            <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Đã TT đủ</span>
+                                        </c:when>
+                                        <c:when test="${booking.paymentStatus == 'DEPOSITED'}">
+                                            <span class="text-info fw-bold"><i class="fas fa-shield-alt me-1"></i>Đã cọc <fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="text-danger fw-bold"><i class="fas fa-exclamation-circle me-1"></i>Chưa thanh toán</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="small text-muted mt-1">
+                                    <i class="fas fa-wallet me-1"></i>
+                                    <span class="text-uppercase fw-bold"><c:out value="${booking.paymentMethod}" default="Online"/></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -138,25 +154,110 @@
                     </div>
                 </c:if>
 
-                <!-- Update Status Form -->
-                <div class="card border-0 shadow-sm rounded-4 mb-4">
-                    <div class="card-body p-4">
-                        <h6 class="fw-bold mb-3"><i class="fas fa-exchange-alt text-primary me-2"></i>Cập nhật trạng thái</h6>
-                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="d-flex align-items-center gap-3">
-                            <input type="hidden" name="action" value="updateStatus">
-                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                            <select name="newStatus" class="form-select status-select-max" required>
-                                <option value="PENDING" ${booking.status == 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
-                                <option value="CONFIRMED" ${booking.status == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
-                                <option value="COMPLETED" ${booking.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
-                                <option value="CANCELLED" ${booking.status == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">
-                                <i class="fas fa-save me-1"></i> Cập nhật
-                            </button>
-                        </form>
+                <!-- Alerts -->
+                <c:if test="${not empty sessionScope.success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
+                    <c:remove var="success" scope="session" />
+                </c:if>
+                <c:if test="${not empty sessionScope.error}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>${sessionScope.error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <c:remove var="error" scope="session" />
+                </c:if>
+
+                <!-- Action Panels Row -->
+                <div class="row g-3 mb-4">
+                    <!-- Update Status -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-3"><i class="fas fa-exchange-alt text-primary me-2"></i>Cập nhật trạng thái</h6>
+                                <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="d-flex align-items-center gap-3">
+                                    <input type="hidden" name="action" value="updateStatus">
+                                    <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                    <select name="newStatus" class="form-select" required>
+                                        <option value="PENDING" ${booking.status == 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
+                                        <option value="CONFIRMED" ${booking.status == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
+                                        <option value="COMPLETED" ${booking.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                                        <option value="CANCELLED" ${booking.status == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">
+                                        <i class="fas fa-save me-1"></i> Cập nhật
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Service -->
+                    <c:if test="${booking.status != 'COMPLETED' && booking.status != 'CANCELLED'}">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="fw-bold mb-3"><i class="fas fa-plus-circle text-success me-2"></i>Thêm dịch vụ</h6>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings">
+                                        <input type="hidden" name="action" value="addService">
+                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                        <div class="row g-2 align-items-end">
+                                            <div class="col">
+                                                <input type="text" class="form-control form-control-sm" name="serviceDesc" placeholder="VD: 10 Bò húc, Áo bib..." required>
+                                            </div>
+                                            <div class="col-auto" style="width: 130px;">
+                                                <input type="number" class="form-control form-control-sm" name="serviceAmount" placeholder="Số tiền" required min="1000" step="1000">
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-3">
+                                                    <i class="fas fa-plus me-1"></i>Thêm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
                 </div>
+
+                <!-- Checkout / Payment Panel -->
+                <c:if test="${booking.status != 'COMPLETED' && booking.status != 'CANCELLED'}">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4" style="border-left: 4px solid #00b894 !important;">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3"><i class="fas fa-cash-register text-success me-2"></i>Thanh toán / Check-out</h6>
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <table class="table table-sm mb-0">
+                                        <tr>
+                                            <td class="border-0 text-muted">Tổng chi phí (Sân + Dịch vụ)</td>
+                                            <td class="border-0 text-end fw-bold"><fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-0 text-muted">Đã thanh toán online</td>
+                                            <td class="border-0 text-end fw-bold text-success"><fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ</td>
+                                        </tr>
+                                        <tr style="border-top: 2px solid #2d3436;">
+                                            <td class="fw-bold fs-5">CÒN PHẢI THU</td>
+                                            <td class="text-end fw-bold fs-5 text-danger"><fmt:formatNumber value="${booking.remainingAmount}" pattern="#,###"/>đ</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Xác nhận đã thu đủ tiền và hoàn thành đơn này?');">
+                                        <input type="hidden" name="action" value="checkout">
+                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                        <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
+                                            <i class="fas fa-check-double me-2"></i>Xác nhận đã thu tiền
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
 
                 <!-- Booking Details Table -->
                 <div class="card border-0 shadow-sm rounded-4">
@@ -219,5 +320,6 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

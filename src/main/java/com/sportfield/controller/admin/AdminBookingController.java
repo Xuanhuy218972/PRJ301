@@ -1,6 +1,7 @@
 package com.sportfield.controller.admin;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.sportfield.dao.BookingDAO;
@@ -74,6 +75,12 @@ public class AdminBookingController extends HttpServlet {
                 break;
             case "delete":
                 deleteBooking(request, response);
+                break;
+            case "addService":
+                addService(request, response);
+                break;
+            case "checkout":
+                checkout(request, response);
                 break;
             default:
                 response.sendRedirect(request.getContextPath() + "/admin/bookings");
@@ -170,5 +177,60 @@ public class AdminBookingController extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/admin/bookings");
+    }
+
+    private void addService(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+            BigDecimal amount = new BigDecimal(request.getParameter("serviceAmount"));
+            String description = request.getParameter("serviceDesc");
+
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                request.getSession().setAttribute("error", "Số tiền dịch vụ phải lớn hơn 0");
+            } else {
+                boolean success = bookingDAO.addServiceCharge(bookingID, amount, description != null ? description : "Dịch vụ khác");
+                if (success) {
+                    request.getSession().setAttribute("success", "Thêm dịch vụ thành công: " + amount + "đ — " + description);
+                } else {
+                    request.getSession().setAttribute("error", "Thêm dịch vụ thất bại");
+                }
+            }
+
+            response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/bookings");
+        }
+    }
+
+    private void checkout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+
+            // Get current booking to calculate total
+            Booking booking = bookingDAO.getBookingByID(bookingID);
+            if (booking == null) {
+                request.getSession().setAttribute("error", "Không tìm thấy đơn");
+                response.sendRedirect(request.getContextPath() + "/admin/bookings");
+                return;
+            }
+
+            // Mark as fully paid
+            BigDecimal totalPrice = booking.getTotalPrice();
+            boolean success = bookingDAO.updatePaymentInfo(bookingID, totalPrice, "PAID", "COMPLETED");
+
+            if (success) {
+                request.getSession().setAttribute("success", "Checkout thành công đơn #BK" + bookingID + " — Đã thu đủ " + totalPrice + "đ");
+            } else {
+                request.getSession().setAttribute("error", "Checkout thất bại");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/bookings");
+        }
     }
 }

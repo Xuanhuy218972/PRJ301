@@ -144,9 +144,13 @@
                                             %>
                                             
                                             <c:set var="isBooked" value="false" />
+                                            <c:set var="bookedCustomerName" value="" />
+                                            <c:set var="bookedBookingID" value="" />
                                             <c:forEach var="booking" items="${bookings}">
                                                 <c:if test="${booking.bookingDate eq currentDay && booking.slotID eq slot.slotID}">
                                                     <c:set var="isBooked" value="true" />
+                                                    <c:set var="bookedCustomerName" value="${booking.customerName}" />
+                                                    <c:set var="bookedBookingID" value="${booking.bookingID}" />
                                                 </c:if>
                                             </c:forEach>
 
@@ -166,10 +170,11 @@
                                                         </div>
                                                     </c:when>
                                                     <c:when test="${isBooked}">
-                                                        <div class="slot-cell slot-booked" title="Đã có khách đặt">
+                                                        <a href="${pageContext.request.contextPath}/admin/bookings?action=detail&id=${bookedBookingID}" 
+                                                           class="slot-cell slot-booked" title="${bookedCustomerName}" style="text-decoration:none; color:inherit; cursor:pointer;">
                                                             <i class="fas fa-user-check mb-1"></i>
-                                                            <span>Đã đặt</span>
-                                                        </div>
+                                                            <span style="font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px; display:block;">${not empty bookedCustomerName ? bookedCustomerName : 'Đã đặt'}</span>
+                                                        </a>
                                                     </c:when>
                                                     <c:when test="${isPast}">
                                                         <div class="slot-cell slot-past" title="Thời gian đã qua">

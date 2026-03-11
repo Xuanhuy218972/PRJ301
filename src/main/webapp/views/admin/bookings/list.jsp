@@ -121,7 +121,7 @@
                                                 <th>Khách hàng</th>
                                                 <th>Loại</th>
                                                 <th>Tổng tiền</th>
-                                                <th>Đặt cọc</th>
+                                                <th>Thanh toán</th>
                                                 <th>Trạng thái</th>
                                                 <th>Ngày tạo</th>
                                                 <th class="text-end pe-4">Thao tác</th>
@@ -160,8 +160,24 @@
                                     <td class="fw-bold text-success">
                                         <fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ
                                     </td>
-                                    <td class="text-muted">
-                                        <fmt:formatNumber value="${booking.deposit}" pattern="#,###"/>đ
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${booking.paymentStatus == 'PAID'}">
+                                                <span class="badge bg-success-subtle text-success">
+                                                    <i class="fas fa-check-circle me-1"></i>Đã TT đủ
+                                                </span>
+                                            </c:when>
+                                            <c:when test="${booking.paymentStatus == 'DEPOSITED'}">
+                                                <span class="badge bg-info-subtle text-info">
+                                                    <i class="fas fa-shield-alt me-1"></i>Đã cọc <fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge bg-danger-subtle text-danger">
+                                                    <i class="fas fa-exclamation-circle me-1"></i>Chưa TT
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>
                                         <c:choose>
@@ -212,70 +228,6 @@
                                             </button>
                                         </div>
 
-                                        <!-- Status Modal -->
-                                        <div class="modal fade" id="statusModal${booking.bookingID}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow-lg">
-                                                    <div class="modal-header bg-primary-subtle">
-                                                        <h5 class="modal-title">
-                                                            <i class="fas fa-exchange-alt me-2"></i>Cập nhật trạng thái
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Cập nhật trạng thái đơn: <strong>#BK${booking.bookingID}</strong></p>
-                                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings">
-                                                            <input type="hidden" name="action" value="updateStatus">
-                                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                                            <select name="newStatus" class="form-select mb-3" required>
-                                                                <option value="PENDING" ${booking.status == 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
-                                                                <option value="CONFIRMED" ${booking.status == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
-                                                                <option value="COMPLETED" ${booking.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
-                                                                <option value="CANCELLED" ${booking.status == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-                                                            </select>
-                                                            <div class="d-flex gap-2 justify-content-end">
-                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
-                                                                <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete Modal -->
-                                        <div class="modal fade" id="deleteModal${booking.bookingID}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow-lg confirm-delete-modal">
-                                                    <div class="confirm-delete-modal-header d-flex justify-content-between align-items-start">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                                            <div>
-                                                                <h5 class="modal-title mb-0">Xác nhận xóa đơn đặt sân</h5>
-                                                                <small>Hành động này không thể hoàn tác.</small>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="confirm-delete-modal-body">
-                                                        <p class="mb-3">Bạn có chắc chắn muốn xóa đơn: <strong>#BK${booking.bookingID}</strong>?</p>
-                                                        <p class="text-muted small mb-0">Tất cả chi tiết đặt sân liên quan cũng sẽ bị xóa.</p>
-                                                    </div>
-                                                    <div class="modal-footer confirm-delete-modal-footer">
-                                                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
-                                                            <i class="fas fa-times me-1"></i>Hủy
-                                                        </button>
-                                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="d-inline">
-                                                            <input type="hidden" name="action" value="delete">
-                                                            <input type="hidden" name="id" value="${booking.bookingID}">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class="fas fa-trash me-1"></i>Xóa ngay
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -294,6 +246,74 @@
             </div>
                         </div>
                     </div>
+
+                <%-- All modals rendered OUTSIDE table to fix Bootstrap backdrop z-index issue --%>
+                <c:forEach var="booking" items="${bookings}">
+                    <!-- Status Modal -->
+                    <div class="modal fade" id="statusModal${booking.bookingID}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-primary-subtle">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-exchange-alt me-2"></i>Cập nhật trạng thái
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Cập nhật trạng thái đơn: <strong>#BK${booking.bookingID}</strong></p>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings">
+                                        <input type="hidden" name="action" value="updateStatus">
+                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                        <select name="newStatus" class="form-select mb-3" required>
+                                            <option value="PENDING" ${booking.status == 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
+                                            <option value="CONFIRMED" ${booking.status == 'CONFIRMED' ? 'selected' : ''}>Đã xác nhận</option>
+                                            <option value="COMPLETED" ${booking.status == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                                            <option value="CANCELLED" ${booking.status == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                                        </select>
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal${booking.bookingID}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg confirm-delete-modal">
+                                <div class="confirm-delete-modal-header d-flex justify-content-between align-items-start">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <div>
+                                            <h5 class="modal-title mb-0">Xác nhận xóa đơn đặt sân</h5>
+                                            <small>Hành động này không thể hoàn tác.</small>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="confirm-delete-modal-body">
+                                    <p class="mb-3">Bạn có chắc chắn muốn xóa đơn: <strong>#BK${booking.bookingID}</strong>?</p>
+                                    <p class="text-muted small mb-0">Tất cả chi tiết đặt sân liên quan cũng sẽ bị xóa.</p>
+                                </div>
+                                <div class="modal-footer confirm-delete-modal-footer">
+                                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-1"></i>Hủy
+                                    </button>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="d-inline">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="${booking.bookingID}">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash me-1"></i>Xóa ngay
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
                 </div>
             </div>
         </div>
