@@ -132,7 +132,7 @@
                                         <i class="far fa-calendar me-1"></i>
                                         ${field.createdAt != null ? field.createdAt.toString().substring(0, 10) : 'N/A'}
                                     </td>
-                                                    <td class="text-end pe-4">
+                                    <td class="text-end pe-4">
                                         <div class="btn-group shadow-sm rounded-3 overflow-hidden">
                                             <a href="${pageContext.request.contextPath}/admin/field-schedule?fieldId=${field.fieldID}" 
                                                class="btn btn-white btn-sm border-end" 
@@ -162,70 +162,6 @@
                                                 <i class="fas fa-trash text-danger"></i>
                                             </button>
                                         </div>
-
-                                        <!-- Hide Modal -->
-                                        <div class="modal fade" id="hideModal${field.fieldID}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow-lg">
-                                                    <div class="modal-header bg-warning-subtle">
-                                                        <h5 class="modal-title">
-                                                            <i class="fas fa-eye-slash me-2"></i>Thay đổi trạng thái
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Chọn trạng thái mới cho sân: <strong>${field.fieldName}</strong></p>
-                                                        <form method="post" action="${pageContext.request.contextPath}/admin/fields">
-                                                            <input type="hidden" name="action" value="hide">
-                                                            <input type="hidden" name="id" value="${field.fieldID}">
-                                                            <select name="newStatus" class="form-select mb-3" required>
-                                                                <option value="ACTIVE" ${field.status == 'ACTIVE' ? 'selected' : ''}>Hoạt động</option>
-                                                                <option value="MAINTENANCE" ${field.status == 'MAINTENANCE' ? 'selected' : ''}>Bảo trì</option>
-                                                                <option value="HIDDEN" ${field.status == 'HIDDEN' ? 'selected' : ''}>Ẩn</option>
-                                                            </select>
-                                                            <div class="d-flex gap-2 justify-content-end">
-                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
-                                                                <button type="submit" class="btn btn-warning">Cập nhật</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete Modal -->
-                                        <div class="modal fade" id="deleteModal${field.fieldID}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow-lg confirm-delete-modal">
-                                                    <div class="confirm-delete-modal-header d-flex justify-content-between align-items-start">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                                            <div>
-                                                                <h5 class="modal-title mb-0">Xác nhận xóa sân</h5>
-                                                                <small>Hành động này không thể hoàn tác.</small>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="confirm-delete-modal-body">
-                                                        <p class="mb-3">Bạn có chắc chắn muốn xóa sân: <strong>${field.fieldName}</strong>?</p>
-                                                        <p class="text-muted small mb-0">Tất cả khung giờ của sân này cũng sẽ bị xóa.</p>
-                                                    </div>
-                                                    <div class="modal-footer confirm-delete-modal-footer">
-                                                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
-                                                            <i class="fas fa-times me-1"></i>Hủy
-                                                        </button>
-                                                        <form method="post" action="${pageContext.request.contextPath}/admin/fields" class="d-inline">
-                                                            <input type="hidden" name="action" value="delete">
-                                                            <input type="hidden" name="id" value="${field.fieldID}">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                <i class="fas fa-trash me-1"></i>Xóa ngay
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -245,6 +181,73 @@
                         </div>
                     </div>
                 </div>
+
+                <%-- Modals placed OUTSIDE table-responsive to avoid overflow clipping --%>
+                <c:forEach var="field" items="${fields}">
+                    <!-- Hide Modal -->
+                    <div class="modal fade" id="hideModal${field.fieldID}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-warning-subtle">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-eye-slash me-2"></i>Thay đổi trạng thái
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Chọn trạng thái mới cho sân: <strong>${field.fieldName}</strong></p>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/fields">
+                                        <input type="hidden" name="action" value="hide">
+                                        <input type="hidden" name="id" value="${field.fieldID}">
+                                        <select name="newStatus" class="form-select mb-3" required>
+                                            <option value="ACTIVE" ${field.status == 'ACTIVE' ? 'selected' : ''}>Hoạt động</option>
+                                            <option value="MAINTENANCE" ${field.status == 'MAINTENANCE' ? 'selected' : ''}>Bảo trì</option>
+                                            <option value="HIDDEN" ${field.status == 'HIDDEN' ? 'selected' : ''}>Ẩn</option>
+                                        </select>
+                                        <div class="d-flex gap-2 justify-content-end">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-warning">Cập nhật</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal${field.fieldID}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg confirm-delete-modal">
+                                <div class="confirm-delete-modal-header d-flex justify-content-between align-items-start">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <div>
+                                            <h5 class="modal-title mb-0">Xác nhận xóa sân</h5>
+                                            <small>Hành động này không thể hoàn tác.</small>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="confirm-delete-modal-body">
+                                    <p class="mb-3">Bạn có chắc chắn muốn xóa sân: <strong>${field.fieldName}</strong>?</p>
+                                    <p class="text-muted small mb-0">Tất cả khung giờ của sân này cũng sẽ bị xóa.</p>
+                                </div>
+                                <div class="modal-footer confirm-delete-modal-footer">
+                                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-1"></i>Hủy
+                                    </button>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/fields" class="d-inline">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="${field.fieldID}">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash me-1"></i>Xóa ngay
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
         </div>
     </div>

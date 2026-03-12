@@ -7,6 +7,7 @@ import com.sportfield.dao.BookingDAO;
 import com.sportfield.dao.UserDAO;
 import com.sportfield.model.BookingDetail;
 import com.sportfield.model.User;
+import com.sportfield.utils.SecurityUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -113,9 +114,12 @@ public class ProfileController extends HttpServlet {
         }
 
         User user = userDAO.getUserByID(account.getUserID());
-        if (user != null && user.getPassword().equals(currentPassword)) {
-            user.setPassword(newPassword);
-            if (userDAO.update(user)) {
+        String hashedCurrentPassword = SecurityUtils.hashPassword(currentPassword);
+        if (user != null && user.getPassword().equals(hashedCurrentPassword)) {
+            String hashedNewPassword = SecurityUtils.hashPassword(newPassword);
+            if (userDAO.updatePassword(user.getUserID(), hashedNewPassword)) {
+                user.setPassword(hashedNewPassword);
+                request.getSession().setAttribute("account", user);
                 request.getSession().setAttribute("success", "Đổi mật khẩu thành công!");
             } else {
                 request.getSession().setAttribute("error", "Đổi mật khẩu thất bại!");
