@@ -39,6 +39,14 @@
                             </p>
                         </div>
 
+                        <c:if test="${not empty sessionScope.success}">
+                            <div class="alert alert-success d-flex align-items-center" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>${sessionScope.success}</div>
+                            </div>
+                            <c:remove var="success" scope="session"/>
+                        </c:if>
+
                         <c:if test="${not empty sessionScope.error}">
                             <div class="alert alert-warning d-flex align-items-center" role="alert">
                                 <i class="fas fa-exclamation-circle me-2"></i>
@@ -67,7 +75,7 @@
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between mb-2">
                                     <label class="form-label fw-bold text-uppercase small">Mật khẩu</label>
-                                    <a href="#" class="text-decoration-none small text-danger fw-bold">Quên mật khẩu?</a>
+                                    <a href="${pageContext.request.contextPath}/forgot-password" class="text-decoration-none small text-danger fw-bold">Quên mật khẩu?</a>
                                 </div>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
