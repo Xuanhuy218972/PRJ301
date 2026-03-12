@@ -36,6 +36,11 @@ public class RegisterValidator {
             return "Số điện thoại không hợp lệ (Phải có 10 số)!";
         }
 
+        String passwordError = ValidationUtils.validatePasswordStrength(pass);
+        if (passwordError != null) {
+            return passwordError;
+        }
+
         if (!pass.equals(repass)) {
             return "Mật khẩu xác nhận không khớp!";
         }
