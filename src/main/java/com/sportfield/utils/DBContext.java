@@ -19,7 +19,7 @@ public class DBContext {
     private static final String PORT = "1433";
     private static final String DB_NAME = "SportFields";
     private static final String USER = "sa";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "sa";
     private static final String DB_URL = "jdbc:sqlserver://localhost:" + PORT
             + ";databaseName=" + DB_NAME
             + ";encrypt=true;trustServerCertificate=true;";
