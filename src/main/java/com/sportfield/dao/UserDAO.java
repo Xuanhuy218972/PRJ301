@@ -395,4 +395,67 @@ public class UserDAO {
         }
         return null;
     }
+
+    public boolean updatePassword(int userID, String hashedPassword) {
+        String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, hashedPassword);
+                ps.setInt(2, userID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return false;
+    }
+
+    public User getUserByUsernameAndEmail(String username, String email) {
+        String sql = "SELECT * FROM Users WHERE Username = ? AND Email = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, username);
+                ps.setString(2, email);
+                rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserID(rs.getInt("UserID"));
+                    user.setUsername(rs.getString("Username"));
+                    user.setPassword(rs.getString("Password"));
+                    user.setFullName(rs.getString("FullName"));
+                    user.setEmail(rs.getString("Email"));
+                    user.setPhone(rs.getString("Phone"));
+                    user.setRole(rs.getString("Role"));
+                    user.setWalletBalance(rs.getDouble("WalletBalance"));
+                    user.setAvatar(rs.getString("Avatar"));
+                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    user.setAddress(rs.getString("Address"));
+                    user.setGender(rs.getString("Gender"));
+                    user.setDateOfBirth(rs.getString("DateOfBirth"));
+                    return user;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return null;
+    }
 }
