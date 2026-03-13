@@ -38,7 +38,7 @@
     </servlet>
     <servlet>
         <servlet-name>ContactController</servlet-name>
-        <servlet-class>com.sportfield.controller.ContactController</servlet-class>
+        <servlet-class>com.sportfield.controller.customer.ContactController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AboutController</servlet-name>
