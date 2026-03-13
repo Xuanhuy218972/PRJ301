@@ -1,0 +1,104 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8f9fa;
+}
+
+.about-hero {
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                url('https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1920&q=80') center/cover;
+    color: white;
+    padding: 120px 0 100px;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.7) 0%, rgba(39, 174, 96, 0.7) 100%);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.85; }
+}
+
+.about-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.about-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.about-hero p {
+    font-size: 1.4rem;
+    opacity: 0.95;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+}
+
+.intro-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border-left: 5px solid #27ae60;
+}
+
+.intro-card h3 {
+    color: #27ae60;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.intro-card p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4a5568;
+}
+
+.mission-card {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 20px;
+    height: 100%;
+    box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+    transition: transform 0.3s;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+}
+
+.mission-card h4 {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.mission-card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0;
+    opacity: 0.95;
+}
