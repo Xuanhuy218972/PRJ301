@@ -25,7 +25,7 @@
                         <a class="nav-link" href="${pageContext.request.contextPath}/shop">HỆ THỐNG SÂN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">LIÊN HỆ</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/contact">LIÊN HỆ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">VỀ CHÚNG TÔI</a>
