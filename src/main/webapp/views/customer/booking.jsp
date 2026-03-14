@@ -138,6 +138,26 @@
                                             </div>
                                         </label>
 
+                                        <!-- Option 3: Thanh toán tại sân -->
+                                        <label class="payment-option" for="payOnSite">
+                                            <input type="radio" name="paymentOption" id="payOnSite" value="ON_SITE"
+                                                   data-amount="${slot.price}">
+                                            <div class="payment-option-content">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="payment-icon payment-icon-onsite">
+                                                        <i class="fas fa-store"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold">Thanh toán tại sân</div>
+                                                        <div class="small text-muted">Thanh toán khi đến sân (tiền mặt hoặc chuyển khoản)</div>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <div class="fw-bold text-success"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+
                                     </div>
                                 </div>
                                 
@@ -147,6 +167,7 @@
                                         <span class="fs-4 fw-bold text-success dynamic-price">
                                             <span class="price-full-text d-none"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</span>
                                             <span class="price-deposit-text d-none"><fmt:formatNumber value="${depositAmount}" pattern="#,###"/>đ</span>
+                                            <span class="price-onsite-text d-none"><fmt:formatNumber value="${slot.price}" pattern="#,###"/>đ</span>
                                         </span>
                                     </div>
                                 </div>
@@ -155,6 +176,7 @@
                                     <i class="fas fa-bolt me-2"></i> 
                                     <span class="btn-text-full d-none">Thanh Toán & Đặt Ngay</span>
                                     <span class="btn-text-deposit d-none">Cọc</span>
+                                    <span class="btn-text-onsite d-none">Xác Nhận Đặt Sân</span>
                                 </button>
                             </form>
                         </div>

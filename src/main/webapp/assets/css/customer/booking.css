@@ -1,4 +1,4 @@
-﻿/*
+/*
 Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
 */
@@ -143,6 +143,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     color: #fff;
 }
 
+.payment-icon-onsite {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: #fff;
+}
+
 /* === Success Page === */
 .success-icon-wrapper {
     display: inline-flex;
@@ -189,15 +194,22 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     border: 1px solid #e9ecef;
 }
 /* --- CSS-driven dynamic text logic --- */
-.payment-options:has(#payFull:checked) ~ .payment-summary-box .price-full-text {
+#bookingForm:has(#payFull:checked) .price-full-text {
     display: inline !important;
 }
-.payment-options:has(#payDeposit:checked) ~ .payment-summary-box .price-deposit-text {
+#bookingForm:has(#payDeposit:checked) .price-deposit-text {
     display: inline !important;
 }
-.payment-options:has(#payFull:checked) ~ .dynamic-btn .btn-text-full {
+#bookingForm:has(#payOnSite:checked) .price-onsite-text {
     display: inline !important;
 }
-.payment-options:has(#payDeposit:checked) ~ .dynamic-btn .btn-text-deposit {
+
+#bookingForm:has(#payFull:checked) .btn-text-full {
+    display: inline !important;
+}
+#bookingForm:has(#payDeposit:checked) .btn-text-deposit {
+    display: inline !important;
+}
+#bookingForm:has(#payOnSite:checked) .btn-text-onsite {
     display: inline !important;
 }

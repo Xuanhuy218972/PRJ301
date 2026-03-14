@@ -84,20 +84,30 @@
                                         </span>
                                     </c:when>
                                     <c:when test="${sessionScope.successPaymentStatus == 'DEPOSITED'}">
-                                        <span class="badge bg-info-subtle text-info fs-6 px-4 py-2 rounded-pill">
-                                            <i class="fas fa-shield-alt me-1"></i>Đã cọc — Chỗ được giữ 100%
-                                        </span>
-                                    </c:when>
-                                </c:choose>
+                                         <span class="badge bg-info-subtle text-info fs-6 px-4 py-2 rounded-pill">
+                                             <i class="fas fa-shield-alt me-1"></i>Đã cọc — Chỗ được giữ 100%
+                                         </span>
+                                     </c:when>
+                                     <c:when test="${sessionScope.successPaymentStatus == 'UNPAID'}">
+                                         <span class="badge bg-warning-subtle text-warning fs-6 px-4 py-2 rounded-pill">
+                                             <i class="fas fa-clock me-1"></i>Chờ thanh toán tại sân
+                                         </span>
+                                     </c:when>
+                                 </c:choose>
                             </div>
 
                             <!-- Payment Method Info -->
                             <div class="text-center mt-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-wallet me-1"></i>
-                                    Phương thức: Chuyển khoản Online (VNPay)
-                                </small>
-                            </div>
+                                 <small class="text-muted">
+                                     <i class="fas fa-wallet me-1"></i>
+                                     Phương thức: 
+                                     <c:choose>
+                                         <c:when test="${sessionScope.successPaymentMethod == 'VNPAY'}">Chuyển khoản Online (VNPay)</c:when>
+                                         <c:when test="${sessionScope.successPaymentMethod == 'ON_SITE'}">Thanh toán tại sân</c:when>
+                                         <c:otherwise>${sessionScope.successPaymentMethod}</c:otherwise>
+                                     </c:choose>
+                                 </small>
+                             </div>
                         </div>
 
                         <!-- Action Buttons -->
