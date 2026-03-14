@@ -108,12 +108,10 @@ public class LoginController extends HttpServlet {
         try {
             account = userDAO.login(username.trim(), hashedPassword);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("System error when trying to login for username: " + username);
+            getServletContext().log("[LoginController] DB error during login", e);
         }
 
         if (account == null) {
-            System.out.println("Login failed for username: " + username);
             forwardWithError(request, response, "Tài khoản hoặc mật khẩu không chính xác!", username, loginType);
             return;
         }
@@ -123,14 +121,12 @@ public class LoginController extends HttpServlet {
         boolean isCustomer = ROLE_CUSTOMER.equals(role);
 
         if ("internal".equals(loginType) && !isStaff) {
-            System.out.println("Unauthorized internal login attempt by username: " + username);
             forwardWithError(request, response,
                     "Tài khoản của bạn không có quyền truy cập trang Quản trị!", username, "internal");
             return;
         }
 
         if ("customer".equals(loginType) && !isCustomer) {
-            System.out.println("Unauthorized customer login attempt by username: " + username);
             forwardWithError(request, response,
                     "Tài khoản nhân viên/ quản trị, vui lòng đăng nhập qua cổng dành cho Nhân viên!", username,
                     "customer");

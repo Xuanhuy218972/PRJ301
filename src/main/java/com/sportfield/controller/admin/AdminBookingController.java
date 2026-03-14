@@ -83,6 +83,9 @@ public class AdminBookingController extends HttpServlet {
             case "addService":
                 addService(request, response);
                 break;
+            case "removeService":
+                removeService(request, response);
+                break;
             case "checkout":
                 checkout(request, response);
                 break;
@@ -136,8 +139,22 @@ public class AdminBookingController extends HttpServlet {
 
             if (booking != null) {
                 List<BookingDetail> details = bookingDAO.getDetailsByBookingID(bookingID);
+
+                // Calculate field price (sum of slot prices) and service amount
+                java.math.BigDecimal fieldPrice = details.stream()
+                    .map(d -> d.getPrice() != null ? d.getPrice() : java.math.BigDecimal.ZERO)
+                    .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                java.math.BigDecimal serviceAmount = booking.getTotalPrice() != null
+                    ? booking.getTotalPrice().subtract(fieldPrice)
+                    : java.math.BigDecimal.ZERO;
+                if (serviceAmount.compareTo(java.math.BigDecimal.ZERO) < 0) {
+                    serviceAmount = java.math.BigDecimal.ZERO;
+                }
+
                 request.setAttribute("booking", booking);
                 request.setAttribute("details", details);
+                request.setAttribute("fieldPrice", fieldPrice);
+                request.setAttribute("serviceAmount", serviceAmount);
                 request.getRequestDispatcher("/views/admin/bookings/detail.jsp").forward(request, response);
             } else {
                 request.getSession().setAttribute("error", "Không tìm thấy đơn đặt sân");
@@ -204,6 +221,23 @@ public class AdminBookingController extends HttpServlet {
                 }
             }
 
+            response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/bookings");
+        }
+    }
+
+    private void removeService(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+            boolean success = bookingDAO.resetServiceCharges(bookingID);
+            if (success) {
+                request.getSession().setAttribute("success", "Đã xóa toàn bộ dịch vụ, tổng tiền đã được reset về giá sân.");
+            } else {
+                request.getSession().setAttribute("error", "Xóa dịch vụ thất bại");
+            }
             response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
         } catch (Exception e) {
             request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());

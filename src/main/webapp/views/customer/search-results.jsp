@@ -63,7 +63,7 @@
 
                 <div class="row g-4">
                     <c:forEach var="result" items="${searchResults}">
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 reveal">
                             <div class="result-card h-100">
                                 <div class="row g-0 h-100">
                                     <div class="col-md-5">

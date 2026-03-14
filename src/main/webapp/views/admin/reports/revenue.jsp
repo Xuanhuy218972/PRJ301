@@ -12,7 +12,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet"></head>
+    <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
+</head>
 <body class="bg-light">
 
     <div class="admin-layout">
@@ -33,27 +34,36 @@
                         <h2 class="fw-bold mb-0 text-dark">Báo Cáo Doanh Thu</h2>
                     </div>
 
-                    <!-- Unified Filter Bar -->
-                    <form action="${pageContext.request.contextPath}/admin/reports" method="GET" class="unified-filter-bar d-flex align-items-center gap-3">
-                        <input type="hidden" name="action" value="revenue">
-                        <div class="d-flex align-items-center">
-                            <label for="monthFilter" class="form-label mb-0 fw-medium text-muted me-2 small uppercase">Tháng</label>
-                            <select name="month" id="monthFilter" class="form-select border-0 shadow-none bg-light" style="width: auto; cursor:pointer;" onchange="this.form.submit()">
-                                <c:forEach var="m" begin="1" end="12">
-                                    <option value="${m}" ${m == selectedMonth ? 'selected' : ''}>Tháng ${m}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        <div class="d-flex align-items-center border-start ps-3">
-                            <label for="yearFilter" class="form-label mb-0 fw-medium text-muted me-2 small uppercase">Năm</label>
-                            <select name="year" id="yearFilter" class="form-select border-0 shadow-none bg-light" style="width: auto; cursor:pointer;" onchange="this.form.submit()">
-                                <c:forEach var="y" begin="2024" end="2030">
-                                    <option value="${y}" ${y == selectedYear ? 'selected' : ''}>${y}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </form>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Export Excel Button -->
+                        <a href="${pageContext.request.contextPath}/admin/reports?action=exportExcel&month=${selectedMonth}&year=${selectedYear}" 
+                           class="btn btn-success shadow-sm rounded-pill px-4" id="exportExcelBtn">
+                            <i class="fas fa-file-excel me-2"></i>Xuất Excel
+                        </a>
+
+                        <!-- Filter Bar -->
+                        <form action="${pageContext.request.contextPath}/admin/reports" method="GET" class="unified-filter-bar d-flex align-items-center gap-3">
+                            <input type="hidden" name="action" value="revenue">
+                            <div class="d-flex align-items-center">
+                                <label for="monthFilter" class="form-label mb-0 fw-medium text-muted me-2 small uppercase">Tháng</label>
+                                <select name="month" id="monthFilter" class="form-select border-0 shadow-none bg-light" style="width: auto; cursor:pointer;" onchange="this.form.submit()">
+                                    <c:forEach var="m" begin="1" end="12">
+                                        <option value="${m}" ${m == selectedMonth ? 'selected' : ''}>Tháng ${m}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center border-start ps-3">
+                                <label for="yearFilter" class="form-label mb-0 fw-medium text-muted me-2 small uppercase">Năm</label>
+                                <select name="year" id="yearFilter" class="form-select border-0 shadow-none bg-light" style="width: auto; cursor:pointer;" onchange="this.form.submit()">
+                                    <c:forEach var="y" begin="2024" end="2030">
+                                        <option value="${y}" ${y == selectedYear ? 'selected' : ''}>${y}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+
                 <!-- Clean Stats Row -->
                 <div class="row g-4 mb-5">
                     <div class="col-md-6 col-lg-3">
@@ -83,8 +93,9 @@
                         </a>
                     </div>
                 </div>
-                   <div class="row g-4 mb-4">
-                    <!-- Pure CSS Monthly Revenue Chart -->
+
+                <div class="row g-4 mb-4">
+                    <!-- Daily Revenue Chart -->
                     <div class="col-lg-8">
                         <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
                             <div class="d-flex justify-content-between align-items-center mb-5">
@@ -92,17 +103,7 @@
                                 <span class="badge bg-light text-dark border">Tháng ${selectedMonth}/${selectedYear}</span>
                             </div>
 
-                            <c:set var="maxRevenue" value="0" />
-                            <c:forEach var="entry" items="${dailyChart}">
-                                <c:if test="${entry.value > maxRevenue}">
-                                    <c:set var="maxRevenue" value="${entry.value}" />
-                                </c:if>
-                            </c:forEach>
-                            <c:if test="${maxRevenue == 0}">
-                                <c:set var="maxRevenue" value="1" />
-                            </c:if>
-
-                            <div class="css-chart-container">
+                            <div class="css-chart-container" id="dailyChartContainer">
                                 <!-- Grid lines -->
                                 <div class="css-chart-grid">
                                     <div class="css-chart-grid-line"></div>
@@ -112,31 +113,18 @@
                                     <div class="css-chart-grid-line"></div>
                                 </div>
 
-                                <!-- Bars -->
+                                <!-- Bars — heights set by JS for correct proportions -->
                                 <c:forEach var="entry" items="${dailyChart}" varStatus="status">
-                                    <c:set var="pct" value="${(entry.value / maxRevenue) * 100}" />
-                                    <!-- Xác định hôm nay (cùng năm/tháng/ngày hiện tại) -->
-                                    <c:set var="isToday" value="false" />
-                                    <jsp:useBean id="now" class="java.util.Date" />
-                                    <fmt:formatDate var="currentDay" value="${now}" pattern="d" />
-                                    <fmt:formatDate var="currentMonth" value="${now}" pattern="M" />
-                                    <fmt:formatDate var="currentYear" value="${now}" pattern="yyyy" />
-                                    
-                                    <c:if test="${selectedYear == currentYear && selectedMonth == currentMonth && entry.key.toString() == currentDay}">
-                                        <c:set var="isToday" value="true" />
-                                    </c:if>
-                                    
                                     <div class="css-chart-bar-wrapper">
-                                        <div class="css-chart-bar daily-bar ${isToday ? 'active' : 'inactive'}" style="height: ${pct > 0 ? pct : 0}%;">
+                                        <div class="css-chart-bar daily-bar" data-value="${entry.value}" data-day="${entry.key}" style="height: 2px;">
                                             <div class="css-chart-tooltip">
                                                 Ngày ${entry.key}: <fmt:formatNumber value="${entry.value}" pattern="#,###"/> đ
                                             </div>
                                         </div>
                                         
-                                        <!-- Show label only every 2nd or 3rd day, or specifically important days to prevent overlap -->
                                         <c:choose>
                                             <c:when test="${entry.key == 1 || entry.key % 5 == 0 || status.last}">
-                                               <div class="css-chart-label ${isToday ? 'fw-bold text-dark' : ''}" style="font-size: 0.7rem;">${entry.key}</div>
+                                               <div class="css-chart-label" style="font-size: 0.7rem;">${entry.key}</div>
                                             </c:when>
                                             <c:otherwise>
                                                <div class="css-chart-label" style="opacity: 0;">-</div>
@@ -229,9 +217,170 @@
                     </div>
                 </div>
 
+                <!-- Bottom Section: Top days + Quick actions -->
+                <div class="row g-4 mb-4">
+                    <!-- Top revenue days -->
+                    <div class="col-lg-7">
+                        <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
+                            <h6 class="fw-bold text-dark mb-4"><i class="fas fa-calendar-star text-primary me-2"></i>Top ngày doanh thu cao nhất — Tháng ${selectedMonth}</h6>
+                            <c:choose>
+                                <c:when test="${empty dailyChart}">
+                                    <div class="text-center py-4 text-muted small">Chưa có dữ liệu.</div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div id="topDaysContainer">
+                                        <!-- Rendered by JS from dailyChart data -->
+                                    </div>
+                                    <!-- Hidden data for JS -->
+                                    <div id="dailyChartData" style="display:none;">
+                                        <c:forEach var="entry" items="${dailyChart}">
+                                            <span data-day="${entry.key}" data-value="${entry.value}"></span>
+                                        </c:forEach>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+
+                    <!-- Quick actions for manager -->
+                    <div class="col-lg-5">
+                        <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
+                            <h6 class="fw-bold text-dark mb-4"><i class="fas fa-bolt text-warning me-2"></i>Thao tác nhanh</h6>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="${pageContext.request.contextPath}/admin/bookings" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#eef2ff';this.style.borderColor='#6366f1'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#eef2ff;flex-shrink:0;">
+                                        <i class="fas fa-calendar-check text-primary" style="font-size:0.9rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark small">Xem tất cả booking</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Quản lý & xác nhận đơn đặt sân</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/reports?action=exportExcel&month=${selectedMonth}&year=${selectedYear}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#10b981'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#dcfce7;flex-shrink:0;">
+                                        <i class="fas fa-file-excel text-success" style="font-size:0.9rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark small">Xuất Excel tháng ${selectedMonth}</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Tải báo cáo doanh thu chi tiết</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/users?type=new_customers&month=${selectedMonth}&year=${selectedYear}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#3b82f6'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#dbeafe;flex-shrink:0;">
+                                        <i class="fas fa-user-plus text-primary" style="font-size:0.9rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark small">Khách mới tháng ${selectedMonth}</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">${newCustomers} khách đăng ký — xem danh sách</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/contacts" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#fefce8';this.style.borderColor='#f59e0b'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fef9c3;flex-shrink:0;">
+                                        <i class="fas fa-envelope text-warning" style="font-size:0.9rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark small">Tin nhắn liên hệ</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">Xem & xử lý yêu cầu từ khách hàng</div>
+                                    </div>
+                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Fix: Use JS to calculate bar heights correctly (avoids JSTL integer division) -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ===== Daily chart bars =====
+        var container = document.getElementById('dailyChartContainer');
+        if (container) {
+            var bars = container.querySelectorAll('.css-chart-bar');
+            var maxVal = 0;
+            bars.forEach(function(bar) {
+                var val = parseFloat(bar.getAttribute('data-value')) || 0;
+                if (val > maxVal) maxVal = val;
+            });
+
+            if (maxVal > 0) {
+                var today = new Date();
+                var currentDay = today.getDate();
+                var currentMonth = today.getMonth() + 1;
+                var currentYear = today.getFullYear();
+                var selectedMonth = parseInt('${selectedMonth}') || 0;
+                var selectedYear = parseInt('${selectedYear}') || 0;
+
+                bars.forEach(function(bar) {
+                    var val = parseFloat(bar.getAttribute('data-value')) || 0;
+                    var day = parseInt(bar.getAttribute('data-day')) || 0;
+                    var pct = (val / maxVal) * 100;
+                    bar.style.height = Math.max(pct, 0.5) + '%';
+
+                    if (selectedYear === currentYear && selectedMonth === currentMonth && day === currentDay) {
+                        bar.classList.add('active');
+                        var label = bar.parentElement.querySelector('.css-chart-label');
+                        if (label) { label.classList.add('fw-bold', 'text-dark'); label.style.opacity = '1'; }
+                    } else {
+                        bar.classList.add('inactive');
+                    }
+                });
+            }
+        }
+
+        // ===== Top 5 days by revenue =====
+        var dataContainer = document.getElementById('dailyChartData');
+        var topDaysContainer = document.getElementById('topDaysContainer');
+        if (dataContainer && topDaysContainer) {
+            var spans = dataContainer.querySelectorAll('span[data-day]');
+            var days = [];
+            spans.forEach(function(s) {
+                var v = parseFloat(s.getAttribute('data-value')) || 0;
+                if (v > 0) days.push({ day: parseInt(s.getAttribute('data-day')), value: v });
+            });
+            days.sort(function(a, b) { return b.value - a.value; });
+            var top5 = days.slice(0, 5);
+
+            if (top5.length === 0) {
+                topDaysContainer.innerHTML = '<div class="text-center py-3 text-muted small">Chưa có ngày nào có doanh thu.</div>';
+                return;
+            }
+
+            var maxTopVal = top5[0].value;
+            var medals = ['🥇','🥈','🥉','4.','5.'];
+            var colors = ['#4f46e5','#6366f1','#818cf8','#a5b4fc','#c7d2fe'];
+            var html = '<div class="d-flex flex-column gap-2">';
+            top5.forEach(function(item, i) {
+                var pct = Math.round((item.value / maxTopVal) * 100);
+                var formatted = item.value >= 1000000
+                    ? (item.value / 1000000).toFixed(1).replace(/\.0$/, '') + ' triệu đ'
+                    : item.value.toLocaleString('vi-VN') + 'đ';
+                html += '<div class="d-flex align-items-center gap-3">'
+                    + '<div style="width:28px;text-align:center;font-size:1rem;flex-shrink:0;">' + medals[i] + '</div>'
+                    + '<div style="width:60px;flex-shrink:0;" class="text-muted small fw-medium">Ngày ' + item.day + '</div>'
+                    + '<div class="flex-fill">'
+                    +   '<div class="d-flex justify-content-between mb-1">'
+                    +     '<div class="progress rounded-pill flex-fill me-2" style="height:8px;">'
+                    +       '<div class="progress-bar rounded-pill" style="width:' + pct + '%;background:' + colors[i] + ';"></div>'
+                    +     '</div>'
+                    +     '<span class="fw-bold text-dark" style="font-size:0.78rem;white-space:nowrap;">' + formatted + '</span>'
+                    +   '</div>'
+                    + '</div>'
+                    + '</div>';
+            });
+            html += '</div>';
+            topDaysContainer.innerHTML = html;
+        }
+    });
+    </script>
 
 </body>
 </html>

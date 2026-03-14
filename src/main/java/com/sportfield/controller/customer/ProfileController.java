@@ -1,6 +1,11 @@
 package com.sportfield.controller.customer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.sportfield.dao.BookingDAO;
@@ -11,12 +16,6 @@ import com.sportfield.model.User;
 import com.sportfield.utils.EmailService;
 import com.sportfield.utils.EmailTemplates;
 import com.sportfield.utils.SecurityUtils;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -234,8 +233,8 @@ public class ProfileController extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            request.getSession().setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            getServletContext().log("[ProfileController] cancelBooking error", e);
+            request.getSession().setAttribute("error", "Có lỗi xảy ra. Vui lòng thử lại sau!");
         }
 
         response.sendRedirect(request.getContextPath() + "/profile");

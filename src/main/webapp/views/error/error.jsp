@@ -1,6 +1,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true"%>
 <%
+    // Suppress exception details from being exposed
+    if (exception != null) {
+        // Log it server-side only, never expose to client
+        pageContext.getServletContext().log("Unhandled exception", exception);
+    }
     int code = response.getStatus();
+    if (code == 200 && exception != null) {
+        code = 500; // exception-type mapping comes in with 200
+    }
     String bodyClass = (code >= 500) ? "error-5xx" : "error-4xx";
 
     String title;

@@ -13,13 +13,21 @@
         <link href="${pageContext.request.contextPath}/assets/css/admin/admin.css" rel="stylesheet">
     </head>
     <body>
-        <div class="admin-wrapper">
+        <div class="admin-layout">
             <jsp:include page="../common/sidebar.jsp" />
 
-            <div class="admin-content">
-                <div class="container-fluid">
+            <div class="main-content">
+                <div class="container-fluid px-0">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="fw-bold"><i class="fas fa-envelope me-2"></i>Quản Lý Liên Hệ</h2>
+                        <div>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-1">
+                                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin/dashboard" class="text-decoration-none text-muted">Hệ thống</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Quản lý liên hệ</li>
+                                </ol>
+                            </nav>
+                            <h2 class="fw-bold mb-0 text-dark"><i class="fas fa-envelope me-2 text-info"></i>Quản Lý Liên Hệ</h2>
+                        </div>
                     </div>
 
                     <c:if test="${not empty successMessage}">
@@ -36,156 +44,136 @@
                         </div>
                     </c:if>
 
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Họ Tên</th>
-                                            <th>Email</th>
-                                            <th>SĐT</th>
-                                            <th>Chủ Đề</th>
-                                            <th>Nội Dung</th>
-                                            <th>Ngày Gửi</th>
-                                            <th>Trạng Thái</th>
-                                            <th>Thao Tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="msg" items="${contactMessages}">
-                                            <tr>
-                                                <td>${msg.contactID}</td>
-                                                <td>${msg.fullName}</td>
-                                                <td>${msg.email}</td>
-                                                <td>${msg.phone}</td>
-                                                <td><span class="badge bg-info">${msg.subject}</span></td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${msg.message.length() > 50}">
-                                                            ${msg.message.substring(0, 50)}...
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            ${msg.message}
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                                <td>
-                                                    <fmt:formatDate value="${msg.createdAt}" pattern="dd/MM/yyyy HH:mm" />
-                                                </td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${msg.status == 'NEW'}">
-                                                            <span class="badge bg-primary">Mới</span>
-                                                        </c:when>
-                                                        <c:when test="${msg.status == 'IN_PROGRESS'}">
-                                                            <span class="badge bg-warning">Đang xử lý</span>
-                                                        </c:when>
-                                                        <c:when test="${msg.status == 'RESOLVED'}">
-                                                            <span class="badge bg-success">Đã giải quyết</span>
-                                                        </c:when>
-                                                        <c:when test="${msg.status == 'CLOSED'}">
-                                                            <span class="badge bg-secondary">Đã đóng</span>
-                                                        </c:when>
-                                                    </c:choose>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn btn-sm btn-primary" 
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#detailModal${msg.contactID}">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-secondary dropdown-toggle" 
-                                                                    type="button" data-bs-toggle="dropdown">
-                                                                <i class="fas fa-edit"></i>
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li>
-                                                                    <a class="dropdown-item" 
-                                                                       href="?action=updateStatus&id=${msg.contactID}&status=IN_PROGRESS">
-                                                                        Đang xử lý
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a class="dropdown-item" 
-                                                                       href="?action=updateStatus&id=${msg.contactID}&status=RESOLVED">
-                                                                        Đã giải quyết
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a class="dropdown-item" 
-                                                                       href="?action=updateStatus&id=${msg.contactID}&status=CLOSED">
-                                                                        Đóng
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
+                    <div class="bg-white rounded-3 border border-light shadow-sm">
+                        <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col style="width: 120px;">
+                                <col style="width: 200px;">
+                                <col style="width: 120px;">
+                                <col style="width: 130px;">
+                                <col style="width: 130px;">
+                                <col style="width: 110px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">ID</th>
+                                    <th>Họ Tên</th>
+                                    <th>Email</th>
+                                    <th>SĐT</th>
+                                    <th>Chủ Đề</th>
+                                    <th>Ngày Gửi</th>
+                                    <th>Trạng Thái</th>
+                                    <th class="text-end pe-3">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="msg" items="${contactMessages}">
+                                    <tr>
+                                        <td class="ps-3 text-muted small">#${msg.contactID}</td>
+                                        <td class="fw-medium text-dark text-truncate" style="max-width:120px;" title="${msg.fullName}">${msg.fullName}</td>
+                                        <td class="text-truncate text-muted small" style="max-width:200px;" title="${msg.email}">${msg.email}</td>
+                                        <td class="small">${msg.phone}</td>
+                                        <td><span class="badge bg-info text-truncate d-inline-block" style="max-width:120px;" title="${msg.subject}">${msg.subject}</span></td>
+                                        <td class="small text-muted">
+                                            <fmt:formatDate value="${msg.createdAtAsDate}" pattern="dd/MM/yyyy HH:mm" />
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${msg.status == 'NEW'}"><span class="badge bg-primary">Mới</span></c:when>
+                                                <c:when test="${msg.status == 'IN_PROGRESS'}"><span class="badge bg-warning text-dark">Đang xử lý</span></c:when>
+                                                <c:when test="${msg.status == 'RESOLVED'}"><span class="badge bg-success">Đã giải quyết</span></c:when>
+                                                <c:when test="${msg.status == 'CLOSED'}"><span class="badge bg-secondary">Đã đóng</span></c:when>
+                                            </c:choose>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <div class="d-flex gap-1 justify-content-end">
+                                                <button type="button" class="btn btn-sm btn-light border" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#detailModal${msg.contactID}" title="Xem chi tiết">
+                                                    <i class="fas fa-eye text-primary"></i>
+                                                </button>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-light border dropdown-toggle" 
+                                                            type="button" data-bs-toggle="dropdown" title="Đổi trạng thái">
+                                                        <i class="fas fa-edit text-secondary"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=IN_PROGRESS"><i class="fas fa-spinner text-warning me-2"></i>Đang xử lý</a></li>
+                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=RESOLVED"><i class="fas fa-check text-success me-2"></i>Đã giải quyết</a></li>
+                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=CLOSED"><i class="fas fa-times text-secondary me-2"></i>Đóng</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Detail Modal -->
+                                    <div class="modal fade" id="detailModal${msg.contactID}" tabindex="-1">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"><i class="fas fa-envelope me-2 text-info"></i>Chi Tiết Liên Hệ #${msg.contactID}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row g-3 mb-3">
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">Họ tên</div>
+                                                            <div class="fw-medium">${msg.fullName}</div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">Email</div>
+                                                            <div class="fw-medium">${msg.email}</div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">SĐT</div>
+                                                            <div class="fw-medium">${msg.phone}</div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">Chủ đề</div>
+                                                            <span class="badge bg-info">${msg.subject}</span>
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-
-                                            <!-- Detail Modal -->
-                                            <div class="modal fade" id="detailModal${msg.contactID}" tabindex="-1">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Chi Tiết Liên Hệ #${msg.contactID}</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    <div class="mb-3">
+                                                        <div class="text-muted small mb-1">Nội dung</div>
+                                                        <div class="p-3 bg-light rounded border">${msg.message}</div>
+                                                    </div>
+                                                    <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">Ngày gửi</div>
+                                                            <div class="fw-medium"><fmt:formatDate value="${msg.createdAtAsDate}" pattern="dd/MM/yyyy HH:mm:ss" /></div>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <div class="row mb-3">
-                                                                <div class="col-md-6">
-                                                                    <strong>Họ tên:</strong> ${msg.fullName}
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <strong>Email:</strong> ${msg.email}
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-3">
-                                                                <div class="col-md-6">
-                                                                    <strong>SĐT:</strong> ${msg.phone}
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <strong>Chủ đề:</strong> ${msg.subject}
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <strong>Nội dung:</strong>
-                                                                <p class="mt-2 p-3 bg-light rounded">${msg.message}</p>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <strong>Ngày gửi:</strong> 
-                                                                    <fmt:formatDate value="${msg.createdAt}" pattern="dd/MM/yyyy HH:mm:ss" />
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <strong>Trạng thái:</strong> ${msg.status}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                        <div class="col-md-6">
+                                                            <div class="text-muted small mb-1">Trạng thái</div>
+                                                            <c:choose>
+                                                                <c:when test="${msg.status == 'NEW'}"><span class="badge bg-primary">Mới</span></c:when>
+                                                                <c:when test="${msg.status == 'IN_PROGRESS'}"><span class="badge bg-warning text-dark">Đang xử lý</span></c:when>
+                                                                <c:when test="${msg.status == 'RESOLVED'}"><span class="badge bg-success">Đã giải quyết</span></c:when>
+                                                                <c:when test="${msg.status == 'CLOSED'}"><span class="badge bg-secondary">Đã đóng</span></c:when>
+                                                            </c:choose>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                </div>
                                             </div>
-                                        </c:forEach>
+                                        </div>
+                                    </div>
+                                </c:forEach>
 
-                                        <c:if test="${empty contactMessages}">
-                                            <tr>
-                                                <td colspan="9" class="text-center py-4">
-                                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                                    <p class="text-muted">Chưa có tin nhắn liên hệ nào</p>
-                                                </td>
-                                            </tr>
-                                        </c:if>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                <c:if test="${empty contactMessages}">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5 text-muted">
+                                            <i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+                                            Chưa có tin nhắn liên hệ nào
+                                        </td>
+                                    </tr>
+                                </c:if>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -228,47 +228,70 @@
                     <div class="card border-0 shadow-sm rounded-4 mb-4" style="border-left: 4px solid #00b894 !important;">
                         <div class="card-body p-4">
                             <h6 class="fw-bold mb-3"><i class="fas fa-cash-register text-success me-2"></i>Thanh toán / Check-out</h6>
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
+                            <div class="row align-items-end">
+                                <div class="col-md-7">
                                     <table class="table table-sm mb-0">
                                         <tr>
-                                            <td class="border-0 text-muted">Tổng chi phí (Sân + Dịch vụ)</td>
-                                            <td class="border-0 text-end fw-bold"><fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ</td>
+                                            <td class="border-0 text-muted ps-0">Tiền sân</td>
+                                            <td class="border-0 text-end fw-semibold"><fmt:formatNumber value="${fieldPrice}" pattern="#,###"/>đ</td>
                                         </tr>
                                         <tr>
-                                            <td class="border-0 text-muted">Đã thanh toán online</td>
-                                            <td class="border-0 text-end fw-bold text-success"><fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ</td>
+                                            <td class="border-0 ps-0">
+                                                <span class="text-muted">Dịch vụ</span>
+                                                <c:if test="${serviceAmount > 0}">
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
+                                                          class="d-inline ms-2"
+                                                          onsubmit="return confirm('Xóa toàn bộ dịch vụ và reset về giá sân?');">
+                                                        <input type="hidden" name="action" value="removeService">
+                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                        <button type="submit" class="btn btn-link btn-sm text-danger p-0 lh-1" title="Xóa dịch vụ">
+                                                            <i class="fas fa-times-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:if>
+                                            </td>
+                                            <td class="border-0 text-end fw-semibold">
+                                                <c:choose>
+                                                    <c:when test="${serviceAmount > 0}">
+                                                        <span class="text-warning">+<fmt:formatNumber value="${serviceAmount}" pattern="#,###"/>đ</span>
+                                                    </c:when>
+                                                    <c:otherwise><span class="text-muted">—</span></c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border-0 text-muted ps-0 pb-1" style="border-top: 1px dashed #dee2e6 !important;">Đã thanh toán online</td>
+                                            <td class="border-0 text-end fw-bold text-success pb-1" style="border-top: 1px dashed #dee2e6 !important;">
+                                                <fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ
+                                            </td>
                                         </tr>
                                         <tr style="border-top: 2px solid #2d3436;">
-                                            <td class="fw-bold fs-5">CÒN PHẢI THU</td>
+                                            <td class="fw-bold fs-5 ps-0">CÒN PHẢI THU</td>
                                             <td class="text-end fw-bold fs-5 text-danger"><fmt:formatNumber value="${booking.remainingAmount}" pattern="#,###"/>đ</td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="col-md-5 text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <!-- VNPay Option -->
-                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Tạo thanh toán VNPay cho đơn này?');" class="m-0">
-                                            <input type="hidden" name="action" value="vnpayCheckout">
-                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                            <button type="submit" class="btn btn-outline-primary btn-lg rounded-pill px-3 shadow-sm">
-                                                <i class="fas fa-credit-card me-2"></i>Link VNPay
-                                            </button>
-                                        </form>
-
-                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Xác nhận đã thu đủ tiền mặt và hoàn thành đơn này?');" class="m-0">
-                                            <input type="hidden" name="action" value="checkout">
-                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
-                                                <i class="fas fa-hand-holding-usd me-2"></i>Thu tiền mặt
-                                            </button>
-                                        </form>
-                                    </div>
+                                <div class="col-md-5 d-flex justify-content-end align-items-end gap-2 mt-3 mt-md-0">
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
+                                          onsubmit="return confirm('Tạo thanh toán VNPay cho đơn này?');" class="m-0">
+                                        <input type="hidden" name="action" value="vnpayCheckout">
+                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                        <button type="submit" class="btn btn-outline-primary btn-lg rounded-pill px-3 shadow-sm">
+                                            <i class="fas fa-credit-card me-2"></i>Link VNPay
+                                        </button>
+                                    </form>
+                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
+                                          onsubmit="return confirm('Xác nhận đã thu đủ tiền mặt và hoàn thành đơn này?');" class="m-0">
+                                        <input type="hidden" name="action" value="checkout">
+                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                        <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
+                                            <i class="fas fa-hand-holding-usd me-2"></i>Thu tiền mặt
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </c:if>
 
                 <!-- Booking Details Table -->
