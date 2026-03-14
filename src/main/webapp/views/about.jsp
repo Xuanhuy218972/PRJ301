@@ -35,14 +35,21 @@
         <div class="intro-card">
             <h3><i class="fas fa-building me-2"></i>Giới Thiệu Công Ty</h3>
             <p>
-                <strong>Sport Field</strong> là hệ thống sân bóng đá chuyên nghiệp được thành lập vào năm <strong>2020</strong> tại <strong>Đà Nẵng</strong>. 
-                Với mục tiêu mang đến trải nghiệm thể thao tốt nhất cho cộng đồng yêu bóng đá, chúng tôi không ngừng 
-                phát triển và cải tiến chất lượng dịch vụ.
+                <strong>Sport Field</strong> là hệ thống sân bóng đá chuyên nghiệp được thành lập vào năm <strong>2020</strong> tại <strong>Đà Nẵng</strong>,
+                với sứ mệnh mang đến không gian thể thao chất lượng và trải nghiệm bóng đá tốt nhất cho cộng đồng đam mê thể thao.
+            </p>
+            <p>
+                Sau nhiều năm phát triển, Sport Field hiện sở hữu hơn <strong>15 sân bóng</strong> tiêu chuẩn phân bố khắp thành phố Đà Nẵng.
+                Tất cả sân đều được trang bị cỏ nhân tạo cao cấp, hệ thống đèn chiếu sáng hiện đại và cơ sở vật chất đạt chuẩn,
+                đảm bảo mang lại trải nghiệm thi đấu thoải mái và an toàn cho người chơi.
+            </p>
+            <p>
+                Đến nay, Sport Field đã phục vụ hơn <strong>10.000 khách hàng</strong> với mức đánh giá trung bình <strong>4.8/5 sao</strong>,
+                trở thành một trong những hệ thống sân bóng được yêu thích và tin tưởng hàng đầu tại Đà Nẵng.
             </p>
             <p class="mb-0">
-                Hiện tại, Sport Field sở hữu hơn <strong>15 sân bóng</strong> trải dài khắp Đà Nẵng, được trang bị hiện đại với cỏ nhân tạo cao cấp, 
-                hệ thống đèn chiếu sáng chuyên nghiệp và đã phục vụ hơn <strong>10,000 khách hàng</strong> với đánh giá 
-                <strong>4.8/5 sao</strong>. Chúng tôi tự hào là đơn vị hàng đầu trong lĩnh vực cho thuê sân bóng tại thành phố biển xinh đẹp.
+                Chúng tôi luôn không ngừng cải tiến dịch vụ, nâng cấp cơ sở hạ tầng và xây dựng cộng đồng bóng đá năng động,
+                nhằm mang lại những trận đấu trọn vẹn và đáng nhớ cho mọi khách hàng.
             </p>
         </div>
 
@@ -116,7 +123,7 @@
                 <li><strong>Bảo trì định kỳ:</strong> Sân được kiểm tra và bảo dưỡng thường xuyên</li>
                 <li><strong>Giá cả minh bạch:</strong> Không phát sinh chi phí ẩn</li>
                 <li><strong>Hỗ trợ 24/7:</strong> Đội ngũ chăm sóc khách hàng luôn sẵn sàng</li>
-                <li><strong>Chính sách linh hoạt:</strong> Hủy miễn phí trước 24h</li>
+                <li><strong>Chính sách linh hoạt:</strong> Hủy miễn phí trước 24 giờ</li>
             </ul>
         </div>
 
@@ -150,10 +157,10 @@
                 <div class="col-md-6 mb-3">
                     <h5 style="color: #27ae60; font-weight: 700;"><i class="fas fa-clock me-2"></i>Đặt Sân & Hủy Sân</h5>
                     <ul style="font-size: 0.95rem; line-height: 1.8;">
-                        <li>Đặt sân trước tối thiểu 2 tiếng</li>
-                        <li>Hủy miễn phí trước 24 tiếng</li>
-                        <li>Hủy trong 24h tính phí 50%</li>
-                        <li>Không hủy được trong 2h trước giờ chơi</li>
+                        <li>Đặt sân trước tối thiểu 2 giờ</li>
+                        <li>Hủy sân miễn phí trước 24 giờ</li>
+                        <li>Hủy sân trong 24 giờ tính phí 50%</li>
+                        <li>Không được phép huỷ sân trong 2 giờ trước giờ chơi</li>
                     </ul>
                 </div>
                 <div class="col-md-6 mb-3">
