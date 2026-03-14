@@ -130,6 +130,93 @@
             </div>
         </section>
 
+        <!-- Map Section -->
+        <section class="contact-map-section">
+            <div class="container-fluid px-0">
+                <div class="map-section-header text-center">
+                    <h2 class="contact-map-title"><i class="fas fa-map-marker-alt me-2"></i>Tìm Chúng Tôi</h2>
+                    <p class="text-muted mb-0">Ghé thăm chúng tôi tại Khu đô thị FPT City, Đà Nẵng</p>
+                </div>
+
+                <div class="map-layout-wrapper">
+                    <!-- Left: Info Panel -->
+                    <div class="map-info-panel">
+                        <div class="map-info-logo">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        <h3 class="map-info-name">SportFieldHub</h3>
+                        <p class="map-info-tagline">Hệ thống đặt sân bóng đá hàng đầu</p>
+
+                        <div class="map-info-divider"></div>
+
+                        <div class="map-info-item">
+                            <div class="map-info-icon-box">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <div class="map-info-label">Địa chỉ</div>
+                                <div class="map-info-value">Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng 550000</div>
+                            </div>
+                        </div>
+
+                        <div class="map-info-item">
+                            <div class="map-info-icon-box">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <div class="map-info-label">Hotline</div>
+                                <div class="map-info-value">0901 234 567</div>
+                            </div>
+                        </div>
+
+                        <div class="map-info-item">
+                            <div class="map-info-icon-box">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <div class="map-info-label">Email</div>
+                                <div class="map-info-value">support@sportbooking.com</div>
+                            </div>
+                        </div>
+
+                        <div class="map-info-item">
+                            <div class="map-info-icon-box">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div class="map-info-label">Giờ làm việc</div>
+                                <div class="map-info-value">7:00 - 22:00 (Tất cả các ngày)</div>
+                            </div>
+                        </div>
+
+                        <div class="map-info-divider"></div>
+
+                        <div class="map-action-buttons">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=FPT+University+Da+Nang" 
+                               target="_blank" class="btn map-btn-primary">
+                                <i class="fas fa-route me-2"></i>Chỉ Đường
+                            </a>
+                            <a href="https://maps.google.com/?q=FPT+University+Da+Nang" 
+                               target="_blank" class="btn map-btn-secondary">
+                                <i class="fab fa-google me-2"></i>Mở Google Maps
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Map -->
+                    <div class="map-embed-wrapper">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.3!2d108.2540!3d15.9689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142116949840599%3A0x365b35578b9a9d5e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgxJDDoCBO4bq1bmc!5e0!3m2!1svi!2svn!4v1234567890"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Vị trí SportFieldHub">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <jsp:include page="../common/footer.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
