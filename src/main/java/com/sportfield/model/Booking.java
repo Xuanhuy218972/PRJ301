@@ -24,6 +24,8 @@ public class Booking {
 
     private String customerName;
     private String customerPhone;
+    private BigDecimal refundAmount;
+    private String cancelReason;
 
     public Booking() {
     }
@@ -153,6 +155,22 @@ public class Booking {
 
     public void setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
+    }
+
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 
     @Override

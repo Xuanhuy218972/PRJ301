@@ -230,6 +230,52 @@ public class BookingController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/field-detail?id=" + fieldID);
                 }
 
+            } else if ("ON_SITE".equals(paymentOption)) {
+                // ============================================
+                // ON-SITE FLOW: Create CONFIRMED booking, pay at field
+                // ============================================
+                Booking booking = new Booking();
+                booking.setCustomerID(account.getUserID());
+                booking.setBookingType("RETAIL");
+                booking.setTotalPrice(slotPrice);
+                booking.setDeposit(BigDecimal.ZERO);
+                booking.setStatus("CONFIRMED");
+                booking.setNote(note);
+                booking.setPaymentMethod("ON_SITE");
+                booking.setPaymentStatus("UNPAID");
+                booking.setPaidAmount(BigDecimal.ZERO);
+
+                int newBookingID = bookingDAO.insertBookingWithDetails(booking, slotID, bookingDate, slotPrice);
+
+                if (newBookingID > 0) {
+                    session.setAttribute("bookingSuccess", true);
+                    session.setAttribute("successBookingID", newBookingID);
+                    session.setAttribute("successFieldName", field.getFieldName());
+                    session.setAttribute("successFieldType", field.getFieldType());
+                    session.setAttribute("successDate", bookingDate.toString());
+                    session.setAttribute("successSlotTime", slot.getStartTime().toString().substring(0, 5)
+                            + " - " + slot.getEndTime().toString().substring(0, 5));
+                    session.setAttribute("successTotalPrice", slotPrice);
+                    session.setAttribute("successPaidAmount", BigDecimal.ZERO);
+                    session.setAttribute("successPaymentStatus", "UNPAID");
+                    session.setAttribute("successPaymentMethod", "ON_SITE");
+
+                    // Send confirmation email
+                    String email = request.getParameter("customerEmail");
+                    if (email == null || email.isEmpty()) {
+                        email = account.getEmail();
+                    }
+                    String slotTimeStr = slot.getStartTime().toString().substring(0, 5) + " - " + slot.getEndTime().toString().substring(0, 5);
+                    String emailContent = com.sportfield.utils.EmailTemplates.bookingConfirmed(
+                            account.getFullName(), field.getFieldName(), bookingDate.toString(), slotTimeStr, slotPrice);
+                    com.sportfield.utils.EmailService.sendAsync(email, "Xác nhận đặt sân - SpotFieldHub", emailContent);
+
+                    response.sendRedirect(request.getContextPath() + "/booking?action=success");
+                } else {
+                    session.setAttribute("error", "Đặt sân thất bại. Vui lòng thử lại!");
+                    response.sendRedirect(request.getContextPath() + "/field-detail?id=" + fieldID);
+                }
+
             } else {
                 session.setAttribute("error", "Phương thức thanh toán không hợp lệ!");
                 response.sendRedirect(request.getContextPath() + "/shop");

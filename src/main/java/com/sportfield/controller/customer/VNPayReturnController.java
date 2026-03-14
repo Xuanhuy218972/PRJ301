@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.sportfield.dao.BookingDAO;
 import com.sportfield.model.Booking;
+import com.sportfield.model.User;
 import com.sportfield.vnpay.VNPayUtil;
 
 import jakarta.servlet.ServletException;
@@ -100,6 +101,26 @@ public class VNPayReturnController extends HttpServlet {
                     // Try to get field/slot info from the order info or session
                     if (session.getAttribute("successFieldName") == null) {
                         session.setAttribute("successFieldName", vnpOrderInfo);
+                    }
+
+                    // Send confirmation email
+                    User account = (User) session.getAttribute("account");
+                    if (account != null) {
+                        String slotTimeStr = "";
+                        // Try to find the slot time from the session or order info
+                        slotTimeStr = (String) session.getAttribute("successSlotTime");
+                        if (slotTimeStr == null) slotTimeStr = "Đã xác nhận";
+                        String emailContent;
+                        if ("DEPOSITED".equals(paymentStatus)) {
+                            emailContent = com.sportfield.utils.EmailTemplates.depositConfirmed(
+                                account.getFullName(), (String)session.getAttribute("successFieldName"), 
+                                (String)session.getAttribute("successDate"), slotTimeStr, paidAmount, booking.getRemainingAmount());
+                        } else {
+                            emailContent = com.sportfield.utils.EmailTemplates.bookingConfirmed(
+                                account.getFullName(), (String)session.getAttribute("successFieldName"), 
+                                (String)session.getAttribute("successDate"), slotTimeStr, booking.getTotalPrice());
+                        }
+                        com.sportfield.utils.EmailService.sendAsync(account.getEmail(), "Xác nhận thanh toán đặt sân - SpotFieldHub", emailContent);
                     }
 
                     response.sendRedirect(request.getContextPath() + "/booking?action=success");

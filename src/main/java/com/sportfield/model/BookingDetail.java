@@ -18,6 +18,9 @@ public class BookingDetail {
     private String slotEndTime;
     private String customerName;
     private String customerPhone;
+    private String bookingStatus;
+    private String paymentStatus;
+    private BigDecimal paidAmount;
 
     public BookingDetail() {
     }
@@ -109,6 +112,30 @@ public class BookingDetail {
 
     public void setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
+    }
+
+    public String getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(String bookingStatus) {
+        this.bookingStatus = bookingStatus;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
     }
 
     @Override

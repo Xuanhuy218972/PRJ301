@@ -654,7 +654,7 @@ public class BookingDAO {
     public List<BookingDetail> getBookingsByUserID(int userID) {
         List<BookingDetail> details = new ArrayList<>();
         
-        String sql = "SELECT bd.*, b.BookingID, b.Status AS BookingStatus, b.CreatedAt, "
+        String sql = "SELECT bd.*, b.BookingID, b.Status AS BookingStatus, b.PaymentStatus, b.PaidAmount, b.CreatedAt, "
                    + "f.FieldName, f.FieldType, fs.StartTime, fs.EndTime "
                    + "FROM BookingDetails bd "
                    + "INNER JOIN Bookings b ON bd.BookingID = b.BookingID "
@@ -697,8 +697,10 @@ public class BookingDAO {
                         detail.setSlotEndTime(endTime.toString().substring(0, 5));
                     }
                     
-                    // Set booking status for display
-                    detail.setCustomerName(rs.getString("BookingStatus"));
+                    // Set booking status in dedicated field (fixed: was using customerName hack)
+                    detail.setBookingStatus(rs.getString("BookingStatus"));
+                    detail.setPaymentStatus(rs.getString("PaymentStatus"));
+                    detail.setPaidAmount(rs.getBigDecimal("PaidAmount"));
                     
                     details.add(detail);
                 }
@@ -727,11 +729,161 @@ public class BookingDAO {
         booking.setPaymentStatus(rs.getString("PaymentStatus"));
         booking.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 
+        // Cancel fields
+        try {
+            booking.setRefundAmount(rs.getBigDecimal("RefundAmount"));
+            booking.setCancelReason(rs.getString("CancelReason"));
+        } catch (Exception ignored) {
+            // Columns may not exist yet before migration
+        }
+
         Timestamp createdAt = rs.getTimestamp("CreatedAt");
         if (createdAt != null) {
             booking.setCreatedAt(createdAt.toLocalDateTime());
         }
 
         return booking;
+    }
+
+    /**
+     * Lấy BookingDetail đầu tiên của một booking (dùng để tính thời gian hủy).
+     */
+    public BookingDetail getFirstDetailByBookingID(int bookingID) {
+        String sql = "SELECT TOP 1 bd.*, f.FieldName, fs.StartTime AS SlotStart, fs.EndTime AS SlotEnd "
+                   + "FROM BookingDetails bd "
+                   + "LEFT JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "LEFT JOIN Fields f ON fs.FieldID = f.FieldID "
+                   + "WHERE bd.BookingID = ? ORDER BY bd.BookingDate, fs.StartTime";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, bookingID);
+                rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    BookingDetail detail = new BookingDetail();
+                    detail.setDetailID(rs.getInt("DetailID"));
+                    detail.setBookingID(rs.getInt("BookingID"));
+                    detail.setSlotID(rs.getInt("SlotID"));
+
+                    Date bookingDate = rs.getDate("BookingDate");
+                    if (bookingDate != null) {
+                        detail.setBookingDate(bookingDate.toLocalDate());
+                    }
+
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    detail.setFieldName(rs.getString("FieldName"));
+
+                    java.sql.Time startTime = rs.getTime("SlotStart");
+                    java.sql.Time endTime = rs.getTime("SlotEnd");
+                    if (startTime != null) {
+                        detail.setSlotStartTime(startTime.toString().substring(0, 5));
+                    }
+                    if (endTime != null) {
+                        detail.setSlotEndTime(endTime.toString().substring(0, 5));
+                    }
+
+                    return detail;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+
+        return null;
+    }
+
+    /**
+     * Hủy booking + ghi lý do + số tiền hoàn.
+     */
+    public boolean cancelBooking(int bookingID, String cancelReason, BigDecimal refundAmount) {
+        String sql = "UPDATE Bookings SET Status = 'CANCELLED', PaymentStatus = 'REFUNDED', "
+                   + "RefundAmount = ?, CancelReason = ?, "
+                   + "Note = ISNULL(Note,'') + CHAR(10) + ? "
+                   + "WHERE BookingID = ?";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                String cancelNote = "[HỦY] " + cancelReason;
+                ps = conn.prepareStatement(sql);
+                ps.setBigDecimal(1, refundAmount);
+                ps.setString(2, cancelReason);
+                ps.setString(3, cancelNote);
+                ps.setInt(4, bookingID);
+
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+
+        return false;
+    }
+
+    /**
+     * Auto-cancel PENDING bookings > 30 phút.
+     */
+    public int autoCancelExpiredPendingBookings() {
+        String sql = "UPDATE Bookings SET Status = 'CANCELLED', "
+                   + "Note = ISNULL(Note,'') + CHAR(10) + '[AUTO] Hủy do quá thời gian thanh toán' "
+                   + "WHERE Status = 'PENDING' AND DATEDIFF(MINUTE, CreatedAt, GETDATE()) > 30";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                return ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return 0;
+    }
+
+    /**
+     * Auto-complete bookings đã qua ngày đá.
+     */
+    public int autoCompletePassedBookings() {
+        String sql = "UPDATE b SET b.Status = 'COMPLETED' FROM Bookings b "
+                   + "INNER JOIN BookingDetails bd ON b.BookingID = bd.BookingID "
+                   + "INNER JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "WHERE b.Status = 'CONFIRMED' "
+                   + "AND CAST(bd.BookingDate AS DATETIME) + CAST(fs.EndTime AS DATETIME) < GETDATE()";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                return ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBContext.close(conn, ps, null);
+        }
+        return 0;
     }
 }
