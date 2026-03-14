@@ -30,6 +30,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     margin-top: 0px;
     position: relative;
     z-index: 10;
+    animation: fade-in 1s ease-out;
+}
+.schedule-card .table thead th {
+    position: sticky;
+    top: 79px; /* adjust to main-header height */
+    z-index: 20;
+    background: #2d3436 !important;
+    color: white !important;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .schedule-card .table th {
     background: #2d3436 !important;

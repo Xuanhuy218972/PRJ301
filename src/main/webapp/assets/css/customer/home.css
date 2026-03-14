@@ -22,6 +22,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     letter-spacing: -1px;
     color: #ffffff;
     text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+    animation: fade-in 1s ease-out;
 }
 .text-highlight {
     color: #ff4757;
@@ -42,6 +43,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     padding: 30px 40px;
     border-top: 4px solid #ff4757;
+    animation: fade-in 1s ease-out 0.2s both;
 }
 .hot-fields-section {
     padding-top: 60px;

@@ -43,6 +43,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 100%;
 }
+
+.filter-container {
+    position: sticky;
+    top: 80px; /* main-header height is around 60-80px */
+    z-index: 900;
+    background: var(--bg-light);
+    padding: 1rem 0;
+    margin-bottom: 2rem !important;
+}
+
 .shop-field-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
