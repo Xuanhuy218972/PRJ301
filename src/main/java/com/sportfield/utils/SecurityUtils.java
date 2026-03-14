@@ -11,6 +11,8 @@ package com.sportfield.utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SecurityUtils {
 
@@ -26,7 +28,7 @@ public class SecurityUtils {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.getLogger(SecurityUtils.class.getName()).log(Level.SEVERE, "[SecurityUtils] SHA-256 not available", e);
             return null;
         }
     }

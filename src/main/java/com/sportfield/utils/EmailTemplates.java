@@ -96,4 +96,34 @@ public class EmailTemplates {
                     + "</table>";
         return wrap("Yêu cầu liên hệ mới", body);
     }
+
+    public static String lowOccupancyAlert(java.util.List<com.sportfield.model.HotSlotDTO> slots) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<p>Hôm nay vẫn còn nhiều sân trống giờ đẹp! Đặt ngay để nhận ưu đãi:</p>");
+        sb.append("<table style='width:100%; border-collapse:collapse;'>");
+        for (com.sportfield.model.HotSlotDTO slot : slots) {
+            sb.append("<tr><td style='padding:10px; border-bottom:1px solid #eee;'>")
+              .append("<strong>").append(slot.getFieldName()).append("</strong> (Sân ").append(slot.getFieldType()).append(")<br/>")
+              .append("<span style='color:#666;'>").append(slot.getStartTime()).append(" - ").append(slot.getEndTime()).append("</span>")
+              .append("</td><td style='text-align:right;'>")
+              .append("<span style='color:#da291c; font-weight:bold;'>").append(slot.getPrice()).append("đ</span>")
+              .append("</td></tr>");
+        }
+        sb.append("</table>");
+        sb.append("<div style='text-align:center; margin-top:20px;'>")
+          .append("<a href='http://localhost:8080/PRJ301/shop' style='background:#da291c; color:white; padding:12px 25px; text-decoration:none; border-radius:5px; font-weight:bold;'>ĐẶT SÂN NGAY</a>")
+          .append("</div>");
+        return wrap("🔥 Deal Hời Hôm Nay - Sân Trống Giờ Đẹp", sb.toString());
+    }
+
+    public static String dailyRevenueReport(BigDecimal dailyRev, BigDecimal weeklyRev, int dailyBookings) {
+        String body = "<p>Báo cáo doanh thu hệ thống ngày <strong>" + java.time.LocalDate.now() + "</strong>:</p>"
+                    + "<div style='background:white; padding:15px; border-radius:5px; margin-bottom:10px;'>"
+                    + "<p style='margin:5px 0;'>Doanh thu hôm nay: <strong style='color:#16a34a; font-size:1.2rem;'>" + dailyRev + "đ</strong></p>"
+                    + "<p style='margin:5px 0;'>Số lượt đặt sân: <strong>" + dailyBookings + "</strong></p>"
+                    + "<p style='margin:5px 0;'>Doanh thu tuần này: <strong>" + weeklyRev + "đ</strong></p>"
+                    + "</div>"
+                    + "<p>Vào dashboard để xem chi tiết.</p>";
+        return wrap("📊 Báo Cáo Doanh Thu Hàng Ngày", body);
+    }
 }

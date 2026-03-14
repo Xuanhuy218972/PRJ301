@@ -60,7 +60,7 @@ public class VNPayUtil {
                         query.append('&');
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("URL encoding error", e);
                 }
             }
         }
@@ -98,7 +98,7 @@ public class VNPayUtil {
                         hashData.append('&');
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("URL encoding error", e);
                 }
             }
         }

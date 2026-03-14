@@ -1,13 +1,23 @@
 package com.sportfield.utils;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.*;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Email Service - gửi mail qua Gmail SMTP.
  */
 public class EmailService {
+
+    private static final Logger LOGGER = Logger.getLogger(EmailService.class.getName());
 
     /**
      * Gửi email (sync).
@@ -34,10 +44,9 @@ public class EmailService {
             message.setContent(htmlBody, "text/html; charset=UTF-8");
 
             Transport.send(message);
-            System.out.println("[EmailService] Sent to: " + toEmail);
+            LOGGER.info("[EmailService] Sent to: " + toEmail);
         } catch (Exception e) {
-            System.err.println("[EmailService] Failed to send to: " + toEmail);
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[EmailService] Failed to send to: " + toEmail, e);
         }
     }
 

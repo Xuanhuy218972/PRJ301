@@ -13,6 +13,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DBContext {
 
@@ -41,7 +43,7 @@ public class DBContext {
                 conn.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, "[DBContext] close error", e);
         }
     }
 }
