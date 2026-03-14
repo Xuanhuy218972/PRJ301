@@ -18,3 +18,25 @@
         </div>
     </div>
 </footer>
+
+<script>
+    // Smooth Reveal on Scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                // Optional: stop observing once revealed
+                // revealObserver.unobserve(entry.target);
+            } else {
+                // If you want it to hide again when scrolling up, don't unobserve
+                entry.target.classList.remove('active');
+            }
+        });
+    }, {
+        threshold: 0.1, // Trigger when 10% of element is visible
+        rootMargin: '0px 0px -50px 0px' // Slightly delay trigger for better effect
+    });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+</script>

@@ -26,7 +26,7 @@
         <section class="contact-info-section">
             <div class="container">
                 <div class="row g-4">
-                    <div class="col-md-4">
+                    <div class="col-md-4 reveal">
                         <div class="contact-info-card">
                             <div class="contact-icon-wrapper">
                                 <i class="fas fa-phone-alt contact-icon"></i>
@@ -36,7 +36,7 @@
                             <p class="contact-card-desc">Hỗ trợ đặt sân nhanh chóng</p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 reveal">
                         <div class="contact-info-card">
                             <div class="contact-icon-wrapper">
                                 <i class="fas fa-envelope contact-icon"></i>
@@ -46,7 +46,7 @@
                             <p class="contact-card-desc">Phản hồi trong vòng 24h</p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 reveal">
                         <div class="contact-info-card">
                             <div class="contact-icon-wrapper">
                                 <i class="fas fa-clock contact-icon"></i>
@@ -64,7 +64,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="contact-form-card">
+                        <div class="contact-form-card reveal">
                             <div class="text-center mb-4">
                                 <h2 class="contact-form-title">Gửi Yêu Cầu Hỗ Trợ</h2>
                                 <p class="text-muted">Điền thông tin bên dưới và chúng tôi sẽ liên hệ lại sớm nhất</p>

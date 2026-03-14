@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-wrap gap-3 mb-5 justify-content-center justify-content-md-start">
+                <div class="filter-container d-flex flex-wrap gap-3 mb-5 justify-content-center justify-content-md-start">
                     <a href="${pageContext.request.contextPath}/shop" class="btn filter-btn rounded-pill px-4 py-2 ${empty selectedType || selectedType == 'ALL' ? 'active' : ''}">
                         <i class="fas fa-layer-group me-2"></i>Tất cả
                     </a>
@@ -44,7 +44,7 @@
 
                 <div class="row g-4">
                     <c:forEach var="field" items="${fields}">
-                        <div class="col-md-6 col-lg-4">
+                        <div class="col-md-6 col-lg-4 reveal">
                             <a href="${pageContext.request.contextPath}/field-detail?id=${field.fieldID}" class="text-decoration-none text-dark d-block h-100">
                                 <div class="shop-field-card shadow-sm">
                                     <div class="shop-field-card-image">

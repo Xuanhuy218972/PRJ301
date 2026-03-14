@@ -71,7 +71,7 @@
 
                 <div class="row g-5">
                     <c:forEach var="item" items="${hotSlots}">
-                        <div class="col-md-4">
+                        <div class="col-md-4 reveal">
                             <div class="card home-field-card h-100 shadow-sm border-danger border border-2">
                                 <div class="home-field-img-wrapper">
                                     <c:set var="dateBadgeClass" value="bg-secondary text-white"/>
@@ -159,7 +159,7 @@
 
                 <div class="row g-4">
                     <c:forEach var="field" items="${hotFields}">
-                        <div class="col-md-4">
+                        <div class="col-md-4 reveal">
                             <div class="card home-field-card h-100 shadow-sm">
                                 <div class="home-field-img-wrapper">
 
