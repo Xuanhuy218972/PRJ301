@@ -11,11 +11,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.DayOfWeek;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.sportfield.model.FieldSlot;
 import com.sportfield.model.HotSlotDTO;
 import com.sportfield.utils.DBContext;
 
 public class FieldSlotDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(FieldSlotDAO.class.getName());
 
     public List<FieldSlot> getByFieldID(int fieldID) {
         List<FieldSlot> slots = new ArrayList<>();
@@ -43,7 +48,7 @@ public class FieldSlotDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -75,7 +80,7 @@ public class FieldSlotDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -101,7 +106,7 @@ public class FieldSlotDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -127,7 +132,7 @@ public class FieldSlotDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -149,7 +154,7 @@ public class FieldSlotDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -171,7 +176,7 @@ public class FieldSlotDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -271,7 +276,7 @@ public class FieldSlotDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }

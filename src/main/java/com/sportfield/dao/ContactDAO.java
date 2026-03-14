@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sportfield.model.ContactMessage;
 import com.sportfield.utils.DBContext;
 
 public class ContactDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ContactDAO.class.getName());
 
     public boolean saveContactMessage(ContactMessage contact) {
         String sql = "INSERT INTO ContactMessages (FullName, Email, Phone, Subject, Message, CreatedAt, Status) "
@@ -34,7 +38,7 @@ public class ContactDAO {
             return rows > 0;
 
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         } finally {
             DBContext.close(conn, ps, null);
@@ -73,7 +77,7 @@ public class ContactDAO {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -93,11 +97,11 @@ public class ContactDAO {
             ps.setString(1, status);
             ps.setInt(2, contactID);
 
-            int rows = ps.executeUpdate();
-            return rows > 0;
+            ps.executeUpdate();
+            return true;
 
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "updateContactStatus error: " + e.getMessage(), e);
             return false;
         } finally {
             DBContext.close(conn, ps, null);

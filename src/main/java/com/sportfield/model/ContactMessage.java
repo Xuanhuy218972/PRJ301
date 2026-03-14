@@ -73,6 +73,12 @@ public class ContactMessage {
         this.createdAt = createdAt;
     }
 
+    // Helper for JSP display (fmt:formatDate requires java.util.Date)
+    public java.util.Date getCreatedAtAsDate() {
+        if (createdAt == null) return null;
+        return java.util.Date.from(createdAt.atZone(java.time.ZoneId.systemDefault()).toInstant());
+    }
+
     public String getStatus() {
         return status;
     }

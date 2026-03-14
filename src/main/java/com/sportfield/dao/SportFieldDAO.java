@@ -5,11 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sportfield.model.SportField;
 import com.sportfield.utils.DBContext;
 
 public class SportFieldDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(SportFieldDAO.class.getName());
 
     public List<SportField> getAll() {
         List<SportField> fields = new ArrayList<>();
@@ -23,24 +27,12 @@ public class SportFieldDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    SportField field = new SportField();
-                    field.setFieldID(rs.getInt("FieldID"));
-                    field.setFieldName(rs.getString("FieldName"));
-                    field.setFieldType(rs.getInt("FieldType"));
-                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
-                    field.setImageURL(rs.getString("ImageURL"));
-                    field.setStatus(rs.getString("Status"));
-                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
-                    if (timestamp != null) {
-                        field.setCreatedAt(timestamp.toLocalDateTime());
-                    }
-                    fields.add(field);
+                    fields.add(mapField(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] getAll error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -59,24 +51,12 @@ public class SportFieldDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    SportField field = new SportField();
-                    field.setFieldID(rs.getInt("FieldID"));
-                    field.setFieldName(rs.getString("FieldName"));
-                    field.setFieldType(rs.getInt("FieldType"));
-                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
-                    field.setImageURL(rs.getString("ImageURL"));
-                    field.setStatus(rs.getString("Status"));
-                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
-                    if (timestamp != null) {
-                        field.setCreatedAt(timestamp.toLocalDateTime());
-                    }
-                    fields.add(field);
+                    fields.add(mapField(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] getActiveFields error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -96,24 +76,12 @@ public class SportFieldDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, fieldType);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    SportField field = new SportField();
-                    field.setFieldID(rs.getInt("FieldID"));
-                    field.setFieldName(rs.getString("FieldName"));
-                    field.setFieldType(rs.getInt("FieldType"));
-                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
-                    field.setImageURL(rs.getString("ImageURL"));
-                    field.setStatus(rs.getString("Status"));
-                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
-                    if (timestamp != null) {
-                        field.setCreatedAt(timestamp.toLocalDateTime());
-                    }
-                    fields.add(field);
+                    fields.add(mapField(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] getActiveFieldsByType error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -132,24 +100,12 @@ public class SportFieldDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, fieldID);
                 rs = ps.executeQuery();
-
                 if (rs.next()) {
-                    SportField field = new SportField();
-                    field.setFieldID(rs.getInt("FieldID"));
-                    field.setFieldName(rs.getString("FieldName"));
-                    field.setFieldType(rs.getInt("FieldType"));
-                    field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
-                    field.setImageURL(rs.getString("ImageURL"));
-                    field.setStatus(rs.getString("Status"));
-                    java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
-                    if (timestamp != null) {
-                        field.setCreatedAt(timestamp.toLocalDateTime());
-                    }
-                    return field;
+                    return mapField(rs);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] getByID error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -170,12 +126,11 @@ public class SportFieldDAO {
                 ps.setBigDecimal(3, field.getPricePerHour());
                 ps.setString(4, field.getImageURL());
                 ps.setString(5, field.getStatus());
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] insert error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -197,12 +152,11 @@ public class SportFieldDAO {
                 ps.setString(4, field.getImageURL());
                 ps.setString(5, field.getStatus());
                 ps.setInt(6, field.getFieldID());
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] update error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -219,12 +173,11 @@ public class SportFieldDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, fieldID);
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] delete error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -246,15 +199,29 @@ public class SportFieldDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setString(1, status);
                 ps.setInt(2, fieldID);
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] updateStatus error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
         return false;
+    }
+
+    private SportField mapField(ResultSet rs) throws Exception {
+        SportField field = new SportField();
+        field.setFieldID(rs.getInt("FieldID"));
+        field.setFieldName(rs.getString("FieldName"));
+        field.setFieldType(rs.getInt("FieldType"));
+        field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
+        field.setImageURL(rs.getString("ImageURL"));
+        field.setStatus(rs.getString("Status"));
+        java.sql.Timestamp timestamp = rs.getTimestamp("CreatedAt");
+        if (timestamp != null) {
+            field.setCreatedAt(timestamp.toLocalDateTime());
+        }
+        return field;
     }
 }

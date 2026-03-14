@@ -10,9 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.time.YearMonth;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.sportfield.utils.DBContext;
 
 public class ReportDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ReportDAO.class.getName());
 
     public BigDecimal getTotalRevenue(String year, String month) {
         String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
@@ -35,7 +40,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -61,7 +66,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -93,7 +98,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -134,7 +139,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -160,7 +165,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -187,7 +192,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -214,7 +219,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -253,7 +258,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -278,7 +283,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -309,7 +314,7 @@ public class ReportDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }

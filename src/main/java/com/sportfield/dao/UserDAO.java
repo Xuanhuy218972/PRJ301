@@ -5,11 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sportfield.model.User;
 import com.sportfield.utils.DBContext;
 
 public class UserDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
     public User login(String username, String password) {
         String sql = "SELECT * FROM Users WHERE Username = ? AND Password = ?";
@@ -26,25 +30,11 @@ public class UserDAO {
                 rs = ps.executeQuery();
 
                 if (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    return user;
+                    return mapUser(rs);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] login error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -54,10 +44,9 @@ public class UserDAO {
     public boolean register(User user) {
         String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
                    + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, ?, GETDATE(), ?, ?, ?)";
-        
         Connection conn = null;
         PreparedStatement ps = null;
-        
+
         try {
             conn = DBContext.getConnection();
             if (conn != null) {
@@ -71,12 +60,11 @@ public class UserDAO {
                 ps.setString(7, user.getAddress());
                 ps.setString(8, user.getGender());
                 ps.setString(9, user.getDateOfBirth());
-                
                 int rows = ps.executeUpdate();
-                return rows > 0; 
+                return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] register error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -92,7 +80,7 @@ public class UserDAO {
             ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] checkUserExist error", e);
         }
         return false;
     }
@@ -109,27 +97,12 @@ public class UserDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    users.add(user);
+                    users.add(mapUser(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getAll error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -149,27 +122,12 @@ public class UserDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setString(1, role);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    users.add(user);
+                    users.add(mapUser(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getUsersByRole error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -190,27 +148,12 @@ public class UserDAO {
                 ps.setInt(1, month);
                 ps.setInt(2, year);
                 rs = ps.executeQuery();
-
                 while (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    users.add(user);
+                    users.add(mapUser(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getNewCustomers error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -257,25 +200,11 @@ public class UserDAO {
 
                 rs = ps.executeQuery();
                 while (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    users.add(user);
+                    users.add(mapUser(rs));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getUsersByFilters error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -299,12 +228,11 @@ public class UserDAO {
                 ps.setString(6, user.getDateOfBirth());
                 ps.setString(7, user.getAvatar());
                 ps.setInt(8, user.getUserID());
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] update error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -321,12 +249,11 @@ public class UserDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, userID);
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] delete error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -344,12 +271,11 @@ public class UserDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setString(1, newRole);
                 ps.setInt(2, userID);
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] changeRole error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -368,27 +294,12 @@ public class UserDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, userID);
                 rs = ps.executeQuery();
-
                 if (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    return user;
+                    return mapUser(rs);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getUserByID error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -406,12 +317,11 @@ public class UserDAO {
                 ps = conn.prepareStatement(sql);
                 ps.setString(1, hashedPassword);
                 ps.setInt(2, userID);
-
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] updatePassword error", e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -431,30 +341,33 @@ public class UserDAO {
                 ps.setString(1, username);
                 ps.setString(2, email);
                 rs = ps.executeQuery();
-
                 if (rs.next()) {
-                    User user = new User();
-                    user.setUserID(rs.getInt("UserID"));
-                    user.setUsername(rs.getString("Username"));
-                    user.setPassword(rs.getString("Password"));
-                    user.setFullName(rs.getString("FullName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    user.setRole(rs.getString("Role"));
-                    user.setWalletBalance(rs.getDouble("WalletBalance"));
-                    user.setAvatar(rs.getString("Avatar"));
-                    user.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    user.setAddress(rs.getString("Address"));
-                    user.setGender(rs.getString("Gender"));
-                    user.setDateOfBirth(rs.getString("DateOfBirth"));
-                    return user;
+                    return mapUser(rs);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "[UserDAO] getUserByUsernameAndEmail error", e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
         return null;
+    }
+
+    private User mapUser(ResultSet rs) throws Exception {
+        User user = new User();
+        user.setUserID(rs.getInt("UserID"));
+        user.setUsername(rs.getString("Username"));
+        user.setPassword(rs.getString("Password"));
+        user.setFullName(rs.getString("FullName"));
+        user.setEmail(rs.getString("Email"));
+        user.setPhone(rs.getString("Phone"));
+        user.setRole(rs.getString("Role"));
+        user.setWalletBalance(rs.getDouble("WalletBalance"));
+        user.setAvatar(rs.getString("Avatar"));
+        user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        user.setAddress(rs.getString("Address"));
+        user.setGender(rs.getString("Gender"));
+        user.setDateOfBirth(rs.getString("DateOfBirth"));
+        return user;
     }
 }

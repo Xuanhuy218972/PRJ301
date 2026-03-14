@@ -6,15 +6,19 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sportfield.model.Booking;
 import com.sportfield.model.BookingDetail;
 import com.sportfield.utils.DBContext;
-import java.time.LocalDate;
 
 public class BookingDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(BookingDAO.class.getName());
 
     public List<Integer> getBookedSlotIDs(int fieldID, LocalDate date) {
         List<Integer> bookedSlotIDs = new ArrayList<>();
@@ -41,7 +45,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -73,7 +77,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -106,7 +110,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -161,7 +165,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -193,7 +197,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -247,7 +251,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -281,7 +285,7 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -344,9 +348,9 @@ public class BookingDAO {
             try {
                 if (conn != null) conn.rollback();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException("Insert booking failed: " + e.getMessage(), e);
         } finally {
             DBContext.close(null, psDetail, null);
@@ -383,7 +387,7 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -413,7 +417,7 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -446,11 +450,49 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
 
+        return false;
+    }
+
+    /**
+     * Reset TotalPrice về đúng giá sân (sum BookingDetails), xóa toàn bộ dịch vụ đã thêm.
+     */
+    public boolean resetServiceCharges(int bookingID) {
+        String sqlFieldPrice = "SELECT ISNULL(SUM(Price), 0) FROM BookingDetails WHERE BookingID = ?";
+        String sqlUpdateSimple = "UPDATE Bookings SET TotalPrice = ? WHERE BookingID = ?";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sqlFieldPrice);
+                ps.setInt(1, bookingID);
+                rs = ps.executeQuery();
+                BigDecimal fieldPrice = BigDecimal.ZERO;
+                if (rs.next()) {
+                    fieldPrice = rs.getBigDecimal(1);
+                }
+                rs.close();
+                ps.close();
+
+                ps = conn.prepareStatement(sqlUpdateSimple);
+                ps.setBigDecimal(1, fieldPrice);
+                ps.setInt(2, bookingID);
+                int rows = ps.executeUpdate();
+                return rows > 0;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "[BookingDAO] resetServiceCharges error", e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
         return false;
     }
 
@@ -471,7 +513,7 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -504,9 +546,9 @@ public class BookingDAO {
             try {
                 if (conn != null) conn.rollback();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             }
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(null, ps1, null);
             DBContext.close(conn, ps2, null);
@@ -531,7 +573,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -556,7 +598,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -580,7 +622,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -643,7 +685,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -706,7 +748,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -793,7 +835,7 @@ public class BookingDAO {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, rs);
         }
@@ -805,7 +847,8 @@ public class BookingDAO {
      * Hủy booking + ghi lý do + số tiền hoàn.
      */
     public boolean cancelBooking(int bookingID, String cancelReason, BigDecimal refundAmount) {
-        String sql = "UPDATE Bookings SET Status = 'CANCELLED', PaymentStatus = 'REFUNDED', "
+        String sql = "UPDATE Bookings SET Status = 'CANCELLED', "
+                   + "PaymentStatus = CASE WHEN PaymentStatus IN ('DEPOSITED','PAID') THEN 'PAID' ELSE PaymentStatus END, "
                    + "RefundAmount = ?, CancelReason = ?, "
                    + "Note = ISNULL(Note,'') + CHAR(10) + ? "
                    + "WHERE BookingID = ?";
@@ -827,7 +870,7 @@ public class BookingDAO {
                 return rows > 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -853,7 +896,7 @@ public class BookingDAO {
                 return ps.executeUpdate();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
@@ -880,10 +923,34 @@ public class BookingDAO {
                 return ps.executeUpdate();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);
         }
         return 0;
+    }
+
+    public BigDecimal getDailyRevenue() {
+        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
+                   + "WHERE CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE) "
+                   + "AND Status IN ('CONFIRMED', 'COMPLETED')";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getBigDecimal(1);
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, e.getMessage(), e); }
+        return BigDecimal.ZERO;
+    }
+
+    public BigDecimal getWeeklyRevenue() {
+        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
+                   + "WHERE CreatedAt >= DATEADD(day, -7, GETDATE()) "
+                   + "AND Status IN ('CONFIRMED', 'COMPLETED')";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getBigDecimal(1);
+        } catch (Exception e) { LOGGER.log(Level.SEVERE, e.getMessage(), e); }
+        return BigDecimal.ZERO;
     }
 }
