@@ -18,6 +18,7 @@
 
     <div class="sidebar-nav">
         <ul class="nav flex-column mb-auto">
+            <!-- ===== Chung cho ADMIN & STAFF ===== -->
             <li class="nav-item">
                 <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-link sidebar-link ${fn:contains(currentURI, '/views/admin/dashboard.jsp') ? 'active' : ''}">
                     <i class="fas fa-th-large"></i> Tổng quan
@@ -33,7 +34,13 @@
                     <i class="fas fa-calendar-check"></i> Quản lý Đặt Sân
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/contacts" class="nav-link sidebar-link ${fn:contains(currentURI, '/views/admin/contacts/') ? 'active' : ''}">
+                    <i class="fas fa-envelope"></i> Liên hệ
+                </a>
+            </li>
 
+            <!-- ===== Chỉ ADMIN mới thấy ===== -->
             <c:if test="${sessionScope.account.role == 'ADMIN'}">
                 <li class="nav-item">
                     <span class="sidebar-section-title d-block">Quản trị hệ thống</span>
@@ -82,3 +89,23 @@
         </div>
     </div>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    entry.target.classList.remove('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    });
+</script>

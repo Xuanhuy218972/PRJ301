@@ -799,3 +799,16 @@
 .clean-table tbody tr:hover td {
     background-color: #f8fafc;
 }
+
+/* Chart bar value label */
+.css-chart-value-label {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+    pointer-events: none;
+}

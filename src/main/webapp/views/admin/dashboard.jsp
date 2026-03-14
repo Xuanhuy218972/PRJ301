@@ -38,7 +38,23 @@
                     </div>
                 </div>
 
-                <!-- Stats Grid (Z-Pattern Priority) -->
+                <!-- ===== Alert messages ===== -->
+                <c:if test="${not empty sessionScope.error}">
+                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>${sessionScope.error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <c:remove var="error" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.success}">
+                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <c:remove var="success" scope="session"/>
+                </c:if>
+
+                <!-- Stats Grid -->
                 <div class="row g-3 mb-4">
                     <c:if test="${sessionScope.account.role == 'ADMIN'}">
                         <div class="col-md-6 col-lg-3">
@@ -67,7 +83,14 @@
                     </div>
                     
                     <div class="col-md-6 col-lg-3">
-                        <a href="${pageContext.request.contextPath}/admin/users?role=CUSTOMER" class="text-decoration-none">
+                        <c:choose>
+                            <c:when test="${sessionScope.account.role == 'ADMIN'}">
+                                <a href="${pageContext.request.contextPath}/admin/users?role=CUSTOMER" class="text-decoration-none">
+                            </c:when>
+                            <c:otherwise>
+                                <a class="text-decoration-none" style="cursor: default;">
+                            </c:otherwise>
+                        </c:choose>
                             <div class="card stat-card stat-card-warning shadow-sm h-100 border-0">
                                 <div class="card-body d-flex justify-content-between align-items-center p-4">
                                     <div>
@@ -93,7 +116,65 @@
                     </div>
                 </div>
 
-                <!-- Main content: Bookings table (70%) + Sidebar (30%) -->
+                <!-- ===== Quick Actions ===== -->
+                <div class="quick-actions-row d-flex flex-wrap gap-2 mb-4">
+                    <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-action-btn">
+                        <i class="fas fa-calendar-plus text-primary"></i> Quản lý Booking
+                    </a>
+                    <a href="${pageContext.request.contextPath}/admin/fields" class="quick-action-btn">
+                        <i class="fas fa-layer-group text-success"></i> Quản lý Sân
+                    </a>
+                    <a href="${pageContext.request.contextPath}/admin/contacts" class="quick-action-btn">
+                        <i class="fas fa-envelope text-info"></i> Liên hệ
+                    </a>
+                    <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                        <a href="${pageContext.request.contextPath}/admin/reports" class="quick-action-btn">
+                            <i class="fas fa-chart-pie text-danger"></i> Báo cáo
+                        </a>
+                        <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
+                            <i class="fas fa-user-shield text-warning"></i> Người dùng
+                        </a>
+                    </c:if>
+                </div>
+
+                <!-- ===== ADMIN: 12-Month Revenue Chart ===== -->
+                <c:if test="${sessionScope.account.role == 'ADMIN' && not empty monthlyChart}">
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="bg-white p-4 rounded-3 border border-light shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold text-dark m-0"><i class="fas fa-chart-bar text-primary me-2"></i>Doanh thu theo tháng</h5>
+                                <span class="badge bg-light text-dark border">Năm ${chartYear}</span>
+                            </div>
+
+                            <div class="css-chart-container" id="monthlyChartContainer">
+                                <!-- Grid lines -->
+                                <div class="css-chart-grid">
+                                    <div class="css-chart-grid-line"></div>
+                                    <div class="css-chart-grid-line"></div>
+                                    <div class="css-chart-grid-line"></div>
+                                    <div class="css-chart-grid-line"></div>
+                                    <div class="css-chart-grid-line"></div>
+                                </div>
+
+                                <!-- Bars rendered by JS for correct proportions -->
+                                <c:forEach var="entry" items="${monthlyChart}">
+                                    <div class="css-chart-bar-wrapper">
+                                        <div class="css-chart-bar" data-value="${entry.value}" style="height: 2px;">
+                                            <div class="css-chart-tooltip">
+                                                Tháng ${entry.key}: <fmt:formatNumber value="${entry.value}" pattern="#,###"/> đ
+                                            </div>
+                                        </div>
+                                        <div class="css-chart-label">T${entry.key}</div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </c:if>
+
+                <!-- Main content: Bookings table + Sidebar -->
                 <div class="row g-4">
                     <!-- Recent Bookings -->
                     <div class="col-lg-8">
@@ -192,6 +273,58 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart JS: calculate bar heights correctly to avoid JSTL integer division -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('monthlyChartContainer');
+        if (!container) return;
+
+        var bars = container.querySelectorAll('.css-chart-bar');
+        if (bars.length === 0) return;
+
+        // Find max value
+        var maxVal = 0;
+        bars.forEach(function(bar) {
+            var val = parseFloat(bar.getAttribute('data-value')) || 0;
+            if (val > maxVal) maxVal = val;
+        });
+
+        if (maxVal === 0) return;
+
+        // Current month (1-indexed)
+        var currentMonth = new Date().getMonth() + 1;
+
+        bars.forEach(function(bar, index) {
+            var val = parseFloat(bar.getAttribute('data-value')) || 0;
+            var pct = (val / maxVal) * 100;
+            bar.style.height = Math.max(pct, 2) + '%';
+
+            // Highlight current month
+            if (index + 1 === currentMonth) {
+                bar.classList.add('active');
+            } else {
+                bar.classList.add('inactive');
+            }
+
+            // Add value label on top of bar if > 0
+            if (val > 0) {
+                var label = document.createElement('div');
+                label.className = 'css-chart-value-label';
+                label.textContent = formatShort(val);
+                bar.appendChild(label);
+            }
+        });
+
+        function formatShort(val) {
+            if (val >= 1000000) return (val / 1000000).toFixed(1).replace(/\.0$/, '') + 'tr';
+            if (val >= 1000) return (val / 1000).toFixed(0) + 'k';
+            return val;
+        }
+    });
+    </script>
 
 </body>
 </html>
