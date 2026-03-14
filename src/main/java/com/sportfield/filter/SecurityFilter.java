@@ -29,6 +29,7 @@ public class SecurityFilter implements Filter {
         String contextPath = httpRequest.getContextPath();
         String requestURI = httpRequest.getRequestURI();
 
+        // Allow access to admin login page
         if ((contextPath + "/admin").equals(requestURI)) {
             chain.doFilter(request, response);
             return;
@@ -63,6 +64,19 @@ public class SecurityFilter implements Filter {
             return;
         }
 
+        // --- STAFF role restrictions ---
+        // STAFF cannot access Users management and Revenue reports (ADMIN only)
+        if ("STAFF".equals(account.getRole())) {
+            boolean isAdminOnly = requestURI.startsWith(contextPath + "/admin/users")
+                               || requestURI.startsWith(contextPath + "/admin/reports");
+
+            if (isAdminOnly) {
+                session.setAttribute("error", "Bạn không có quyền truy cập chức năng này. Chỉ Admin mới được phép.");
+                httpResponse.sendRedirect(contextPath + "/admin/dashboard");
+                return;
+            }
+        }
+
         chain.doFilter(request, response);
     }
 
@@ -70,4 +84,3 @@ public class SecurityFilter implements Filter {
     public void destroy() {
     }
 }
-

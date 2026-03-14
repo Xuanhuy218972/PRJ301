@@ -58,7 +58,6 @@ public class RoleBasedAccessFilter implements Filter {
         }
 
         if (isAdminOrStaff && isCustomerUrl) {
-            System.out.println("RoleBasedAccessFilter: admin/staff tried to access customer page " + requestURI);
             httpResponse.sendRedirect(contextPath + "/admin/dashboard");
             return;
         }

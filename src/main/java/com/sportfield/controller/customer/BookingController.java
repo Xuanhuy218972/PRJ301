@@ -122,7 +122,7 @@ public class BookingController extends HttpServlet {
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/shop");
         } catch (Exception e) {
-            e.printStackTrace();
+            getServletContext().log("[BookingController] doGet error", e);
             response.sendRedirect(request.getContextPath() + "/shop");
         }
     }
@@ -268,7 +268,7 @@ public class BookingController extends HttpServlet {
                     String slotTimeStr = slot.getStartTime().toString().substring(0, 5) + " - " + slot.getEndTime().toString().substring(0, 5);
                     String emailContent = com.sportfield.utils.EmailTemplates.bookingConfirmed(
                             account.getFullName(), field.getFieldName(), bookingDate.toString(), slotTimeStr, slotPrice);
-                    com.sportfield.utils.EmailService.sendAsync(email, "Xác nhận đặt sân - SpotFieldHub", emailContent);
+                    com.sportfield.utils.EmailService.sendAsync(email, "Xác nhận đặt sân - SportFieldHub", emailContent);
 
                     response.sendRedirect(request.getContextPath() + "/booking?action=success");
                 } else {
@@ -281,15 +281,10 @@ public class BookingController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/shop");
             }
 
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            session = request.getSession(true);
-            session.setAttribute("error", "Lỗi DB: " + e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/shop");
         } catch (Exception e) {
-            e.printStackTrace();
+            getServletContext().log("[BookingController] doPost error", e);
             session = request.getSession(true);
-            session.setAttribute("error", "Lỗi: " + e.getMessage());
+            session.setAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau!");
             response.sendRedirect(request.getContextPath() + "/shop");
         }
     }

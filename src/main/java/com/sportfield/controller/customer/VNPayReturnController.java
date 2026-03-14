@@ -1,6 +1,7 @@
 package com.sportfield.controller.customer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +17,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.math.BigDecimal;
 
 /**
  * Handles VNPay return callback after payment.
@@ -106,9 +105,7 @@ public class VNPayReturnController extends HttpServlet {
                     // Send confirmation email
                     User account = (User) session.getAttribute("account");
                     if (account != null) {
-                        String slotTimeStr = "";
-                        // Try to find the slot time from the session or order info
-                        slotTimeStr = (String) session.getAttribute("successSlotTime");
+                        String slotTimeStr = (String) session.getAttribute("successSlotTime");
                         if (slotTimeStr == null) slotTimeStr = "Đã xác nhận";
                         String emailContent;
                         if ("DEPOSITED".equals(paymentStatus)) {
@@ -120,17 +117,15 @@ public class VNPayReturnController extends HttpServlet {
                                 account.getFullName(), (String)session.getAttribute("successFieldName"), 
                                 (String)session.getAttribute("successDate"), slotTimeStr, booking.getTotalPrice());
                         }
-                        com.sportfield.utils.EmailService.sendAsync(account.getEmail(), "Xác nhận thanh toán đặt sân - SpotFieldHub", emailContent);
+                        com.sportfield.utils.EmailService.sendAsync(account.getEmail(), "Xác nhận thanh toán đặt sân - SportFieldHub", emailContent);
                     }
 
                     response.sendRedirect(request.getContextPath() + "/booking?action=success");
                     return;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                getServletContext().log("[VNPayReturnController] payment success processing error", e);
             }
-
-            // Fallback if something went wrong but payment was still successful
             session.setAttribute("bookingSuccess", true);
             session.setAttribute("successPaymentMethod", "VNPAY");
             session.setAttribute("successPaymentStatus", "PAID");
@@ -166,10 +161,8 @@ public class VNPayReturnController extends HttpServlet {
                     bookingDAO.updatePaymentInfo(bookingID, BigDecimal.ZERO, "UNPAID", "CANCELLED");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                getServletContext().log("[VNPayReturnController] cancel pending booking error", e);
             }
-
-            session.setAttribute("error", errorMsg);
             response.sendRedirect(request.getContextPath() + "/shop");
         }
     }
