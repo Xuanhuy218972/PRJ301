@@ -83,36 +83,7 @@
                                                 </c:choose>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="balance-card h-100 d-flex flex-column">
-                                                <div class="balance-card-title">
-                                                    <i class="fas fa-wallet me-1"></i>Số dư ví (VNĐ)
-                                                </div>
 
-                                                <c:choose>
-                                                    <c:when test="${sessionScope.account.role == 'ADMIN'}">
-                                                        <div class="mb-2">
-                                                            <div class="display-amount">
-                                                                <fmt:formatNumber value='${user.walletBalance}' type='number' groupingUsed='true'/> VNĐ
-                                                            </div>
-                                                            <div class="display-amount-label mt-1">
-                                                                Số dư hiện tại. Chỉnh sửa bên dưới nếu cần.
-                                                            </div>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="mb-2">
-                                                            <div class="display-amount">
-                                                                <fmt:formatNumber value='${user.walletBalance}' type='number' groupingUsed='true'/> VNĐ
-                                                            </div>
-                                                            <div class="display-amount-label mt-1">
-                                                                Bạn không có quyền chỉnh sửa số dư.
-                                                            </div>
-                                                        </div>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -163,16 +134,7 @@
                                             <input type="url" class="form-control" name="avatar" value="${user.avatar}" placeholder="https://example.com/avatar.jpg">
                                             <small class="text-muted">Nhập link ảnh từ Google Drive, Imgur, hoặc URL trực tiếp</small>
                                         </div>
-                                        <c:if test="${sessionScope.account.role == 'ADMIN'}">
-                                            <div class="col-md-6">
-                                                <label class="form-label">
-                                                    <i class="fas fa-wallet text-primary me-1"></i>Số dư ví (VNĐ)
-                                                </label>
-                                                <input type="number" class="form-control" name="walletBalance" 
-                                                       value="<fmt:formatNumber value='${user.walletBalance}' type='number' groupingUsed='false' maxFractionDigits='0'/>"
-                                                       step="1000" min="0">
-                                            </div>
-                                        </c:if>
+
                                         <div class="col-md-6">
                                             <label class="form-label">
                                                 <i class="fas fa-map-marker-alt text-primary me-1"></i>Địa chỉ

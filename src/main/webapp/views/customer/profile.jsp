@@ -127,7 +127,28 @@
                                         <div class="history-card bg-white">
                                             <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                                                 <span class="text-muted small fw-bold">#BK${booking.bookingID}</span>
-                                                <span class="badge bg-secondary px-3 py-2 rounded-pill">${booking.customerName}</span>
+                                                <c:choose>
+                                                    <c:when test="${booking.bookingStatus == 'CONFIRMED'}">
+                                                        <div>
+                                                            <span class="badge bg-success px-3 py-2 rounded-pill me-1">Đã xác nhận</span>
+                                                            <c:if test="${booking.paymentStatus == 'DEPOSITED'}">
+                                                                <span class="badge bg-info text-dark px-3 py-2 rounded-pill">Đã cọc sân</span>
+                                                            </c:if>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${booking.bookingStatus == 'PENDING'}">
+                                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Chờ thanh toán</span>
+                                                    </c:when>
+                                                    <c:when test="${booking.bookingStatus == 'COMPLETED'}">
+                                                        <span class="badge bg-primary px-3 py-2 rounded-pill">Hoàn thành</span>
+                                                    </c:when>
+                                                    <c:when test="${booking.bookingStatus == 'CANCELLED'}">
+                                                        <span class="badge bg-danger px-3 py-2 rounded-pill">Đã hủy</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">${booking.bookingStatus}</span>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                             <h5 class="fw-bold text-dark mb-3"><i class="fas fa-map-marker-alt text-danger me-2"></i>${booking.fieldName}</h5>
                                             <div class="row g-2 text-dark">
@@ -140,10 +161,28 @@
                                                     <div class="fw-bold">${booking.slotStartTime} - ${booking.slotEndTime}</div>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <div class="small text-muted mb-1">Đã chi</div>
-                                                    <div class="fw-bold text-success fs-5"><fmt:formatNumber value="${booking.price}" pattern="#,###"/>đ</div>
+                                                    <div class="small text-muted mb-1">Đã trả / Tổng</div>
+                                                    <div class="fw-bold text-success fs-5">
+                                                        <fmt:formatNumber value="${booking.paidAmount != null ? booking.paidAmount : 0}" pattern="#,###"/>đ 
+                                                        <span class="fs-6 text-muted">/ <fmt:formatNumber value="${booking.price}" pattern="#,###"/>đ</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <c:if test="${booking.bookingStatus == 'CONFIRMED'}">
+                                                <div class="mt-3 pt-3 border-top">
+                                                    <form method="post" action="${pageContext.request.contextPath}/profile" class="d-flex gap-2 align-items-end">
+                                                        <input type="hidden" name="action" value="cancelBooking">
+                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                        <div class="flex-grow-1">
+                                                            <input type="text" class="form-control form-control-sm" name="cancelReason" placeholder="Lý do hủy (tùy chọn)">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                                onclick="return confirm('Bạn chắc chắn muốn hủy sân này?');">
+                                                            <i class="fas fa-times me-1"></i>Hủy sân
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </c:if>
                                         </div>
                                     </c:forEach>
                                 </c:otherwise>

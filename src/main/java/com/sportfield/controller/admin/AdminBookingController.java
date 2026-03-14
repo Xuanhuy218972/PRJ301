@@ -8,6 +8,10 @@ import com.sportfield.dao.BookingDAO;
 import com.sportfield.model.Booking;
 import com.sportfield.model.BookingDetail;
 import com.sportfield.model.User;
+import com.sportfield.vnpay.VNPayConfig;
+import com.sportfield.vnpay.VNPayUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -81,6 +85,9 @@ public class AdminBookingController extends HttpServlet {
                 break;
             case "checkout":
                 checkout(request, response);
+                break;
+            case "vnpayCheckout":
+                vnpayCheckout(request, response);
                 break;
             default:
                 response.sendRedirect(request.getContextPath() + "/admin/bookings");
@@ -228,6 +235,58 @@ public class AdminBookingController extends HttpServlet {
             }
 
             response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
+        } catch (Exception e) {
+            request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/admin/bookings");
+        }
+    }
+
+    private void vnpayCheckout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int bookingID = Integer.parseInt(request.getParameter("bookingID"));
+            Booking booking = bookingDAO.getBookingByID(bookingID);
+
+            if (booking == null) {
+                request.getSession().setAttribute("error", "Không tìm thấy đơn");
+                response.sendRedirect(request.getContextPath() + "/admin/bookings");
+                return;
+            }
+
+            BigDecimal remainingAmount = booking.getRemainingAmount();
+            if (remainingAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                request.getSession().setAttribute("error", "Đơn này đã thanh toán đủ");
+                response.sendRedirect(request.getContextPath() + "/admin/bookings?action=detail&id=" + bookingID);
+                return;
+            }
+
+            long vnpAmount = remainingAmount.longValue() * 100;
+            String vnpTxnRef = bookingID + "_" + System.currentTimeMillis();
+            String orderInfo = "Thanh toan don BK" + bookingID;
+
+            String returnUrl = request.getScheme() + "://" + request.getServerName()
+                    + ":" + request.getServerPort()
+                    + request.getContextPath() + VNPayConfig.VNP_RETURN_URL_PATH;
+
+            Map<String, String> vnpParams = new HashMap<>();
+            vnpParams.put("vnp_Version", VNPayConfig.VNP_VERSION);
+            vnpParams.put("vnp_Command", VNPayConfig.VNP_COMMAND);
+            vnpParams.put("vnp_TmnCode", VNPayConfig.VNP_TMN_CODE);
+            vnpParams.put("vnp_Amount", String.valueOf(vnpAmount));
+            vnpParams.put("vnp_CurrCode", VNPayConfig.VNP_CURRENCY_CODE);
+            vnpParams.put("vnp_TxnRef", vnpTxnRef);
+            vnpParams.put("vnp_OrderInfo", orderInfo);
+            vnpParams.put("vnp_OrderType", VNPayConfig.VNP_ORDER_TYPE);
+            vnpParams.put("vnp_Locale", VNPayConfig.VNP_LOCALE);
+            vnpParams.put("vnp_ReturnUrl", returnUrl);
+            vnpParams.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+            vnpParams.put("vnp_CreateDate", VNPayUtil.getCurrentTimestamp());
+            vnpParams.put("vnp_ExpireDate", VNPayUtil.getExpireTimestamp());
+
+            String paymentUrl = VNPayUtil.buildPaymentUrl(vnpParams);
+
+            response.sendRedirect(paymentUrl);
+
         } catch (Exception e) {
             request.getSession().setAttribute("error", "Lỗi: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/admin/bookings");

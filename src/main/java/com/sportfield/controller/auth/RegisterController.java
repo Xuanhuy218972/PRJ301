@@ -105,6 +105,13 @@ public class RegisterController extends HttpServlet {
                 newSession.setAttribute("userRole", account.getRole());
                 newSession.setMaxInactiveInterval(30 * 60);
 
+                // Send registration email
+                com.sportfield.utils.EmailService.sendAsync(
+                    email,
+                    "Chào mừng bạn đến với SportFieldHub!",
+                    com.sportfield.utils.EmailTemplates.registrationSuccess(fullname)
+                );
+
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 response.sendRedirect("views/auth/login.jsp");

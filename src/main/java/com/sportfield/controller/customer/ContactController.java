@@ -56,6 +56,16 @@ public class ContactController extends HttpServlet {
 
         if (success) {
             request.setAttribute("successMessage", "Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại sớm nhất.");
+
+            // Send email notification to admin
+            com.sportfield.utils.EmailService.sendAsync(
+                com.sportfield.utils.EmailConfig.ADMIN_EMAIL,
+                "Yêu cầu liên hệ từ " + fullName.trim(),
+                com.sportfield.utils.EmailTemplates.contactRequest(
+                    fullName.trim(), email.trim(), phone.trim(),
+                    subject.trim(), message.trim()
+                )
+            );
         } else {
             request.setAttribute("errorMessage", "Có lỗi xảy ra. Vui lòng thử lại sau!");
         }

@@ -283,7 +283,7 @@ public class UserDAO {
     }
 
     public boolean update(User user) {
-        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ?, WalletBalance = ? WHERE UserID = ?";
+        String sql = "UPDATE Users SET FullName = ?, Email = ?, Phone = ?, Address = ?, Gender = ?, DateOfBirth = ?, Avatar = ? WHERE UserID = ?";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -298,8 +298,7 @@ public class UserDAO {
                 ps.setString(5, user.getGender());
                 ps.setString(6, user.getDateOfBirth());
                 ps.setString(7, user.getAvatar());
-                ps.setDouble(8, user.getWalletBalance());
-                ps.setInt(9, user.getUserID());
+                ps.setInt(8, user.getUserID());
 
                 int rows = ps.executeUpdate();
                 return rows > 0;

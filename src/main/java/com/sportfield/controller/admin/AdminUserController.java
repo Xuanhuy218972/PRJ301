@@ -171,7 +171,6 @@ public class AdminUserController extends HttpServlet {
             String gender = request.getParameter("gender");
             String dateOfBirth = request.getParameter("dateOfBirth");
             String avatar = request.getParameter("avatar");
-            String walletBalanceParam = request.getParameter("walletBalance");
 
             User user = new User();
             user.setUserID(userID);
@@ -185,17 +184,6 @@ public class AdminUserController extends HttpServlet {
             // Set avatar URL nếu có
             if (avatar != null && !avatar.trim().isEmpty()) {
                 user.setAvatar(avatar.trim());
-            }
-
-            if (walletBalanceParam != null && !walletBalanceParam.trim().isEmpty()) {
-                try {
-                    double walletBalance = Double.parseDouble(walletBalanceParam);
-                    if (walletBalance < 0) {
-                        walletBalance = 0;
-                    }
-                    user.setWalletBalance(walletBalance);
-                } catch (NumberFormatException ignored) {
-                }
             }
 
             boolean success = userDAO.update(user);

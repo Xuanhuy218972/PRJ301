@@ -245,18 +245,30 @@
                                         </tr>
                                     </table>
                                 </div>
-                                <div class="col-md-4 text-end">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Xác nhận đã thu đủ tiền và hoàn thành đơn này?');">
-                                        <input type="hidden" name="action" value="checkout">
-                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                        <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
-                                            <i class="fas fa-check-double me-2"></i>Xác nhận đã thu tiền
-                                        </button>
-                                    </form>
+                                <div class="col-md-5 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <!-- VNPay Option -->
+                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Tạo thanh toán VNPay cho đơn này?');" class="m-0">
+                                            <input type="hidden" name="action" value="vnpayCheckout">
+                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                            <button type="submit" class="btn btn-outline-primary btn-lg rounded-pill px-3 shadow-sm">
+                                                <i class="fas fa-credit-card me-2"></i>Link VNPay
+                                            </button>
+                                        </form>
+
+                                        <form method="post" action="${pageContext.request.contextPath}/admin/bookings" onsubmit="return confirm('Xác nhận đã thu đủ tiền mặt và hoàn thành đơn này?');" class="m-0">
+                                            <input type="hidden" name="action" value="checkout">
+                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                            <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
+                                                <i class="fas fa-hand-holding-usd me-2"></i>Thu tiền mặt
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </c:if>
 
                 <!-- Booking Details Table -->
