@@ -42,8 +42,8 @@ public class UserDAO {
     }
 
     public boolean register(User user) {
-        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, WalletBalance, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
-                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', 0, ?, GETDATE(), ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
+                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', ?, GETDATE(), ?, ?, ?)";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -362,7 +362,6 @@ public class UserDAO {
         user.setEmail(rs.getString("Email"));
         user.setPhone(rs.getString("Phone"));
         user.setRole(rs.getString("Role"));
-        user.setWalletBalance(rs.getDouble("WalletBalance"));
         user.setAvatar(rs.getString("Avatar"));
         user.setCreatedAt(rs.getTimestamp("CreatedAt"));
         user.setAddress(rs.getString("Address"));

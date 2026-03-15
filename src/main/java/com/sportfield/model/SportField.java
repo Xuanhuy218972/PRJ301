@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
  */
 public class SportField {
     private int fieldID;
+    private Integer ownerID;
     private String fieldName;
     private int fieldType;
     private BigDecimal pricePerHour;
@@ -19,9 +20,10 @@ public class SportField {
     public SportField() {
     }
 
-    public SportField(int fieldID, String fieldName, int fieldType, BigDecimal pricePerHour, 
+    public SportField(int fieldID, Integer ownerID, String fieldName, int fieldType, BigDecimal pricePerHour, 
                       String imageURL, String status, LocalDateTime createdAt) {
         this.fieldID = fieldID;
+        this.ownerID = ownerID;
         this.fieldName = fieldName;
         this.fieldType = fieldType;
         this.pricePerHour = pricePerHour;
@@ -37,6 +39,14 @@ public class SportField {
 
     public void setFieldID(int fieldID) {
         this.fieldID = fieldID;
+    }
+
+    public Integer getOwnerID() {
+        return ownerID;
+    }
+
+    public void setOwnerID(Integer ownerID) {
+        this.ownerID = ownerID;
     }
 
     public String getFieldName() {
@@ -91,6 +101,7 @@ public class SportField {
     public String toString() {
         return "SportField{" +
                 "fieldID=" + fieldID +
+                ", ownerID=" + ownerID +
                 ", fieldName='" + fieldName + '\'' +
                 ", fieldType=" + fieldType +
                 ", pricePerHour=" + pricePerHour +

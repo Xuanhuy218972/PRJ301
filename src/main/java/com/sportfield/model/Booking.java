@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Booking {
     private int bookingID;
     private int customerID;
-    private String bookingType; // RETAIL, EVENT
+    private String bookingType; // RETAIL
     private BigDecimal totalPrice;
     private BigDecimal deposit;
     private String status; // PENDING, CONFIRMED, COMPLETED, CANCELLED
@@ -18,7 +18,7 @@ public class Booking {
     private LocalDateTime createdAt;
 
     // Payment fields
-    private String paymentMethod;  // VNPAY, MOMO
+    private String paymentMethod;  // VNPAY, CASH
     private String paymentStatus;  // UNPAID, DEPOSITED, PAID
     private BigDecimal paidAmount;  // Actual amount paid so far
 

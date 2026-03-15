@@ -10,7 +10,6 @@ public class User {
     private String email;
     private String phone;
     private String role;
-    private double walletBalance;
     private String avatar;
     private Timestamp createdAt;
     private String address;
@@ -20,7 +19,7 @@ public class User {
     public User() {
     }
 
-    public User(int userID, String username, String password, String fullName, String email, String phone, String role, double walletBalance, String avatar, Timestamp createdAt, String address, String gender, String dateOfBirth) {
+    public User(int userID, String username, String password, String fullName, String email, String phone, String role, String avatar, Timestamp createdAt, String address, String gender, String dateOfBirth) {
         this.userID = userID;
         this.username = username;
         this.password = password;
@@ -28,7 +27,6 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.role = role;
-        this.walletBalance = walletBalance;
         this.avatar = avatar;
         this.createdAt = createdAt;
         this.address = address;
@@ -64,9 +62,6 @@ public class User {
     
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-    
-    public double getWalletBalance() { return walletBalance; }
-    public void setWalletBalance(double walletBalance) { this.walletBalance = walletBalance; }
     
     public String getAvatar() { return avatar; }
     public void setAvatar(String avatar) { this.avatar = avatar; }

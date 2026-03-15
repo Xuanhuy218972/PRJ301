@@ -3,6 +3,7 @@ package com.sportfield.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -113,7 +114,7 @@ public class SportFieldDAO {
     }
 
     public boolean insert(SportField field) {
-        String sql = "INSERT INTO Fields (FieldName, FieldType, PricePerHour, ImageURL, Status, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Fields (OwnerID, FieldName, FieldType, PricePerHour, ImageURL, Status, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -121,11 +122,16 @@ public class SportFieldDAO {
             conn = DBContext.getConnection();
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
-                ps.setString(1, field.getFieldName());
-                ps.setInt(2, field.getFieldType());
-                ps.setBigDecimal(3, field.getPricePerHour());
-                ps.setString(4, field.getImageURL());
-                ps.setString(5, field.getStatus());
+                if (field.getOwnerID() != null) {
+                    ps.setInt(1, field.getOwnerID());
+                } else {
+                    ps.setNull(1, Types.INTEGER);
+                }
+                ps.setString(2, field.getFieldName());
+                ps.setInt(3, field.getFieldType());
+                ps.setBigDecimal(4, field.getPricePerHour());
+                ps.setString(5, field.getImageURL());
+                ps.setString(6, field.getStatus());
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
@@ -138,7 +144,7 @@ public class SportFieldDAO {
     }
 
     public boolean update(SportField field) {
-        String sql = "UPDATE Fields SET FieldName = ?, FieldType = ?, PricePerHour = ?, ImageURL = ?, Status = ? WHERE FieldID = ?";
+        String sql = "UPDATE Fields SET OwnerID = ?, FieldName = ?, FieldType = ?, PricePerHour = ?, ImageURL = ?, Status = ? WHERE FieldID = ?";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -146,12 +152,17 @@ public class SportFieldDAO {
             conn = DBContext.getConnection();
             if (conn != null) {
                 ps = conn.prepareStatement(sql);
-                ps.setString(1, field.getFieldName());
-                ps.setInt(2, field.getFieldType());
-                ps.setBigDecimal(3, field.getPricePerHour());
-                ps.setString(4, field.getImageURL());
-                ps.setString(5, field.getStatus());
-                ps.setInt(6, field.getFieldID());
+                if (field.getOwnerID() != null) {
+                    ps.setInt(1, field.getOwnerID());
+                } else {
+                    ps.setNull(1, Types.INTEGER);
+                }
+                ps.setString(2, field.getFieldName());
+                ps.setInt(3, field.getFieldType());
+                ps.setBigDecimal(4, field.getPricePerHour());
+                ps.setString(5, field.getImageURL());
+                ps.setString(6, field.getStatus());
+                ps.setInt(7, field.getFieldID());
                 int rows = ps.executeUpdate();
                 return rows > 0;
             }
@@ -185,7 +196,28 @@ public class SportFieldDAO {
     }
 
     public List<SportField> getFieldsByOwner(int ownerID) {
-        return getAll();
+        List<SportField> fields = new ArrayList<>();
+        String sql = "SELECT * FROM Fields WHERE OwnerID = ? ORDER BY CreatedAt DESC";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, ownerID);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    fields.add(mapField(rs));
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "[SportFieldDAO] getFieldsByOwner error", e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return fields;
     }
 
     public boolean updateStatus(int fieldID, String status) {
@@ -213,6 +245,12 @@ public class SportFieldDAO {
     private SportField mapField(ResultSet rs) throws Exception {
         SportField field = new SportField();
         field.setFieldID(rs.getInt("FieldID"));
+        
+        Object ownerIdObj = rs.getObject("OwnerID");
+        if (ownerIdObj != null) {
+            field.setOwnerID(((Number) ownerIdObj).intValue());
+        }
+        
         field.setFieldName(rs.getString("FieldName"));
         field.setFieldType(rs.getInt("FieldType"));
         field.setPricePerHour(rs.getBigDecimal("PricePerHour"));
