@@ -35,11 +35,30 @@
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
-                        <!-- Export Excel Button -->
-                        <a href="${pageContext.request.contextPath}/admin/reports?action=exportExcel&month=${selectedMonth}&year=${selectedYear}" 
-                           class="btn btn-success shadow-sm rounded-pill px-4" id="exportExcelBtn">
-                            <i class="fas fa-file-excel me-2"></i>Xuất Excel
-                        </a>
+                        <!-- Daily Export (Main Action) -->
+                        <div class="dropdown">
+                            <button class="btn btn-success shadow-sm rounded-pill px-4 py-2 fw-bold transition-base border-0" 
+                                    type="button" data-bs-toggle="dropdown" 
+                                    style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);">
+                                <i class="fas fa-file-excel me-2"></i>XUẤT BÁO CÁO NGÀY
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end p-4 shadow-lg border-0 reveal active" style="width: 280px; border-radius: 1.25rem;">
+                                <form action="${pageContext.request.contextPath}/admin/reports" method="GET">
+                                    <input type="hidden" name="action" value="exportExcel">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-uppercase text-muted mb-2">Chọn ngày báo cáo</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><i class="fas fa-calendar-alt text-success"></i></span>
+                                            <input type="date" name="date" class="form-control bg-light border-0" 
+                                                   value="<%= java.time.LocalDate.now() %>" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm py-2">
+                                        TẢI FILE EXCEL
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
 
                         <!-- Filter Bar -->
                         <form action="${pageContext.request.contextPath}/admin/reports" method="GET" class="unified-filter-bar d-flex align-items-center gap-3">
