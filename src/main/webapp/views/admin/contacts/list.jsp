@@ -82,9 +82,9 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${msg.status == 'NEW'}"><span class="badge bg-primary">Mới</span></c:when>
-                                                <c:when test="${msg.status == 'IN_PROGRESS'}"><span class="badge bg-warning text-dark">Đang xử lý</span></c:when>
-                                                <c:when test="${msg.status == 'RESOLVED'}"><span class="badge bg-success">Đã giải quyết</span></c:when>
-                                                <c:when test="${msg.status == 'CLOSED'}"><span class="badge bg-secondary">Đã đóng</span></c:when>
+                                                <c:when test="${msg.status == 'READ'}"><span class="badge bg-info text-dark">Đã xem</span></c:when>
+                                                <c:when test="${msg.status == 'REPLIED'}"><span class="badge bg-success">Đã phản hồi</span></c:when>
+                                                <c:otherwise><span class="badge bg-secondary">${msg.status}</span></c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td class="text-end pe-3">
@@ -99,10 +99,16 @@
                                                             type="button" data-bs-toggle="dropdown" title="Đổi trạng thái">
                                                         <i class="fas fa-edit text-secondary"></i>
                                                     </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=IN_PROGRESS"><i class="fas fa-spinner text-warning me-2"></i>Đang xử lý</a></li>
-                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=RESOLVED"><i class="fas fa-check text-success me-2"></i>Đã giải quyết</a></li>
-                                                        <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=CLOSED"><i class="fas fa-times text-secondary me-2"></i>Đóng</a></li>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                                        <c:if test="${msg.status != 'READ'}">
+                                                            <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=READ"><i class="fas fa-check-circle text-info me-2"></i>Đã xem</a></li>
+                                                        </c:if>
+                                                        <c:if test="${msg.status != 'REPLIED'}">
+                                                            <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=REPLIED"><i class="fas fa-reply text-success me-2"></i>Đã phản hồi</a></li>
+                                                        </c:if>
+                                                        <c:if test="${msg.status != 'NEW'}">
+                                                            <li><a class="dropdown-item small" href="${pageContext.request.contextPath}/admin/contacts?action=updateStatus&id=${msg.contactID}&status=NEW"><i class="fas fa-undo text-secondary me-2"></i>Đánh dấu chưa đọc</a></li>
+                                                        </c:if>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -149,9 +155,9 @@
                                                             <div class="text-muted small mb-1">Trạng thái</div>
                                                             <c:choose>
                                                                 <c:when test="${msg.status == 'NEW'}"><span class="badge bg-primary">Mới</span></c:when>
-                                                                <c:when test="${msg.status == 'IN_PROGRESS'}"><span class="badge bg-warning text-dark">Đang xử lý</span></c:when>
-                                                                <c:when test="${msg.status == 'RESOLVED'}"><span class="badge bg-success">Đã giải quyết</span></c:when>
-                                                                <c:when test="${msg.status == 'CLOSED'}"><span class="badge bg-secondary">Đã đóng</span></c:when>
+                                                                <c:when test="${msg.status == 'READ'}"><span class="badge bg-info text-dark">Đã xem</span></c:when>
+                                                                <c:when test="${msg.status == 'REPLIED'}"><span class="badge bg-success">Đã phản hồi</span></c:when>
+                                                                <c:otherwise><span class="badge bg-secondary">${msg.status}</span></c:otherwise>
                                                             </c:choose>
                                                         </div>
                                                     </div>

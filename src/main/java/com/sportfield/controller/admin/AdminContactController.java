@@ -39,16 +39,41 @@ public class AdminContactController extends HttpServlet {
         String action = request.getParameter("action");
         
         if ("updateStatus".equals(action)) {
+            HttpSession session = request.getSession();
             try {
                 int contactID = Integer.parseInt(request.getParameter("id"));
                 String status = request.getParameter("status");
-                contactDAO.updateContactStatus(contactID, status);
+                
+                // Validate status
+                if (status != null && (status.equals("NEW") || status.equals("READ") || status.equals("REPLIED"))) {
+                    boolean updated = contactDAO.updateContactStatus(contactID, status);
+                    if (updated) {
+                        session.setAttribute("successMessage", "Đã cập nhật trạng thái liên hệ thành công!");
+                    } else {
+                        session.setAttribute("errorMessage", "Không thể cập nhật trạng thái. Vui lòng thử lại!");
+                    }
+                } else {
+                    session.setAttribute("errorMessage", "Trạng thái không hợp lệ!");
+                }
             } catch (Exception e) {
-                // log but continue
+                session.setAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
             }
             // Redirect to avoid re-submit and ensure fresh data
             response.sendRedirect(request.getContextPath() + "/admin/contacts");
             return;
+        }
+        
+        // Retrieve and clear flash messages from session
+        HttpSession session = request.getSession();
+        String success = (String) session.getAttribute("successMessage");
+        String error = (String) session.getAttribute("errorMessage");
+        if (success != null) {
+            request.setAttribute("successMessage", success);
+            session.removeAttribute("successMessage");
+        }
+        if (error != null) {
+            request.setAttribute("errorMessage", error);
+            session.removeAttribute("errorMessage");
         }
         
         List<ContactMessage> messages = contactDAO.getAllContactMessages();
