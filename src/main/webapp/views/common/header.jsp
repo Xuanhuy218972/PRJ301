@@ -30,11 +30,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/about">VỀ CHÚNG TÔI</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/ai-booking">
-                            <i class="fas fa-robot me-1"></i>AI BOOKING
-                        </a>
-                    </li>
                 </ul>
                 
                 <!-- User Actions -->
