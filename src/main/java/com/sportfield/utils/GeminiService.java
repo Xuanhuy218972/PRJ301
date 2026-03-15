@@ -78,26 +78,34 @@ public class GeminiService {
             }
 
             int responseCode = conn.getResponseCode();
-            BufferedReader reader;
-            if (responseCode >= 200 && responseCode < 300) {
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            } else {
-                reader = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
-            }
+            BufferedReader reader = null;
+            try {
+                if (responseCode >= 200 && responseCode < 300) {
+                    reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                } else {
+                    java.io.InputStream errorStream = conn.getErrorStream();
+                    if (errorStream == null) {
+                        LOGGER.log(Level.SEVERE, "[GeminiService] API error: " + responseCode + " (no error body)");
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
+                }
 
-            StringBuilder responseText = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                responseText.append(line);
-            }
-            reader.close();
-            conn.disconnect();
+                StringBuilder responseText = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseText.append(line);
+                }
 
-            if (responseCode >= 200 && responseCode < 300) {
-                return extractTextFromResponse(responseText.toString());
-            } else {
-                LOGGER.log(Level.SEVERE, "[GeminiService] API error: " + responseCode + " - " + responseText);
-                return null;
+                if (responseCode >= 200 && responseCode < 300) {
+                    return extractTextFromResponse(responseText.toString());
+                } else {
+                    LOGGER.log(Level.SEVERE, "[GeminiService] API error: " + responseCode + " - " + responseText);
+                    return null;
+                }
+            } finally {
+                if (reader != null) { try { reader.close(); } catch (Exception ignored) {} }
+                conn.disconnect();
             }
 
         } catch (Exception e) {
