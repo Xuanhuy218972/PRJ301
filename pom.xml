@@ -65,6 +65,36 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.3</version>
         </dependency>
+
+        <!-- Google Gen AI SDK for Gemini API integration -->
+        <dependency>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Jackson for JSON serialization/deserialization -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <!-- jqwik for property-based testing -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito for unit testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.5.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>PRJ301</finalName>

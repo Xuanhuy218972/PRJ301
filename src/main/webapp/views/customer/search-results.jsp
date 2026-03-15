@@ -127,5 +127,6 @@
         </main>
 
         <jsp:include page="../common/footer.jsp" />
+        <%@ include file="/views/customer/ai-chat-widget.jsp" %>
     </body>
 </html>
