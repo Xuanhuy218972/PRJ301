@@ -44,12 +44,128 @@ public class AdminReportController extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("exportExcel".equals(action)) {
-            exportExcel(request, response);
+            String date = request.getParameter("date");
+            if (date != null && !date.isEmpty()) {
+                exportDailyExcel(request, response, date);
+            } else {
+                exportExcel(request, response);
+            }
             return;
         }
 
         // Default: show revenue report page
         showRevenueReport(request, response);
+    }
+
+    private void exportDailyExcel(HttpServletRequest request, HttpServletResponse response, String dateStr)
+            throws ServletException, IOException {
+        
+        com.sportfield.dao.BookingDAO bookingDAO = new com.sportfield.dao.BookingDAO();
+        List<com.sportfield.model.BookingDetail> details = bookingDAO.getBookingDetailsByDate(dateStr);
+        
+        Workbook workbook = new XSSFWorkbook();
+        
+        // Styles
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        CellStyle subHeaderStyle = workbook.createCellStyle();
+        Font subHeaderFont = workbook.createFont();
+        subHeaderFont.setBold(true);
+        subHeaderStyle.setFont(subHeaderFont);
+        subHeaderStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        subHeaderStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        subHeaderStyle.setBorderBottom(BorderStyle.THIN);
+        subHeaderStyle.setBorderTop(BorderStyle.THIN);
+        subHeaderStyle.setBorderLeft(BorderStyle.THIN);
+        subHeaderStyle.setBorderRight(BorderStyle.THIN);
+
+        CellStyle dataStyle = workbook.createCellStyle();
+        dataStyle.setBorderBottom(BorderStyle.THIN);
+        dataStyle.setBorderTop(BorderStyle.THIN);
+        dataStyle.setBorderLeft(BorderStyle.THIN);
+        dataStyle.setBorderRight(BorderStyle.THIN);
+
+        CellStyle moneyStyle = workbook.createCellStyle();
+        moneyStyle.cloneStyleFrom(dataStyle);
+        moneyStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0"));
+
+        Sheet sheet = workbook.createSheet("Báo cáo ngày " + dateStr);
+        int rowNum = 0;
+
+        // Title
+        Row titleRow = sheet.createRow(rowNum++);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue("DANH SÁCH CHI TIẾT ĐẶT SÂN NGÀY " + dateStr);
+        titleCell.setCellStyle(headerStyle);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+
+        rowNum++; // blank
+
+        // Headers
+        String[] headers = {"Mã đơn", "Khách hàng", "Số điện thoại", "Sân được đặt", "Khung giờ", "Tổng tiền", "Trạng thái", "Ngày đá"};
+        Row headRow = sheet.createRow(rowNum++);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(subHeaderStyle);
+        }
+
+        // Data
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        for (com.sportfield.model.BookingDetail d : details) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue("#BK" + d.getBookingID());
+            row.createCell(1).setCellValue(d.getCustomerName());
+            row.createCell(2).setCellValue(d.getCustomerPhone());
+            row.createCell(3).setCellValue(d.getFieldName());
+            row.createCell(4).setCellValue(d.getSlotStartTime() + " - " + d.getSlotEndTime());
+            
+            Cell priceCell = row.createCell(5);
+            priceCell.setCellValue(d.getPrice().doubleValue());
+            priceCell.setCellStyle(moneyStyle);
+            
+            row.createCell(6).setCellValue(d.getBookingStatus());
+            row.createCell(7).setCellValue(d.getBookingDate().toString());
+
+            if ("COMPLETED".equals(d.getBookingStatus())) {
+                totalRevenue = totalRevenue.add(d.getPrice());
+            }
+            
+            // Set data style for all cells in row
+            for(int i=0; i<8; i++) {
+                if (row.getCell(i) == null) row.createCell(i);
+                row.getCell(i).setCellStyle(dataStyle);
+            }
+            row.getCell(5).setCellStyle(moneyStyle);
+        }
+
+        rowNum++;
+        Row totalRow = sheet.createRow(rowNum);
+        Cell labelCell = totalRow.createCell(4);
+        labelCell.setCellValue("TỔNG DOANH THU THỰC TẾ:");
+        labelCell.setCellStyle(subHeaderStyle);
+        
+        Cell revCell = totalRow.createCell(5);
+        revCell.setCellValue(totalRevenue.doubleValue());
+        revCell.setCellStyle(moneyStyle);
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Response
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=BaoCaoChiTietNgay_" + dateStr + ".xlsx");
+
+        try (OutputStream out = response.getOutputStream()) {
+            workbook.write(out);
+        }
+        workbook.close();
     }
 
     private void showRevenueReport(HttpServletRequest request, HttpServletResponse response)
@@ -99,13 +215,14 @@ public class AdminReportController extends HttpServlet {
         if (year == null || year.isEmpty()) year = String.valueOf(now.getYear());
         if (month == null || month.isEmpty()) month = String.valueOf(now.getMonthValue());
 
-        BigDecimal monthlyRevenue = reportDAO.getTotalRevenue(year, month);
+        BigDecimal totalRevenue = reportDAO.getTotalRevenue(year, month);
         int totalBookings = reportDAO.getTotalBookingsByMonth(year, month);
         int completedBookings = reportDAO.getCompletedBookingsByMonth(year, month);
         int cancelledBookings = reportDAO.getCancelledBookingsByMonth(year, month);
+        int pendingBookings = reportDAO.getPendingBookingsByMonth(year, month);
+        int totalCustomers = reportDAO.getTotalCustomersInMonth(year, month);
         int newCustomers = reportDAO.getNewCustomersByMonth(year, month);
-        Map<Integer, BigDecimal> dailyChart = reportDAO.getDailyRevenueByMonth(year, month);
-        List<Map<String, Object>> topFields = reportDAO.getTopFieldsByRevenue(year, month);
+        int returningCustomers = reportDAO.getReturningCustomersByMonth(year, month);
 
         // Build Excel
         Workbook workbook = new XSSFWorkbook();
@@ -161,144 +278,64 @@ public class AdminReportController extends HttpServlet {
         totalLabelStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex());
         totalLabelStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-        // ===== Sheet 1: Tổng quan =====
-        Sheet overviewSheet = workbook.createSheet("Tổng quan");
-        overviewSheet.setColumnWidth(0, 8000);
-        overviewSheet.setColumnWidth(1, 8000);
-
+        Sheet overviewSheet = workbook.createSheet("Báo cáo tháng " + month + "-" + year);
         int rowNum = 0;
 
         // Title
         Row titleRow = overviewSheet.createRow(rowNum++);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("BÁO CÁO DOANH THU - THÁNG " + month + "/" + year);
+        titleCell.setCellValue("BÁO CÁO CHỈ SỐ KINH DOANH - THÁNG " + month + "/" + year);
         titleCell.setCellStyle(headerStyle);
-        overviewSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+        overviewSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
 
         rowNum++; // blank row
 
-        // Summary data
-        String[][] summaryData = {
-            {"Doanh thu tháng", null},
-            {"Tổng đơn", String.valueOf(totalBookings)},
-            {"Đơn hoàn thành", String.valueOf(completedBookings)},
-            {"Đơn đã hủy", String.valueOf(cancelledBookings)},
-            {"Khách mới", String.valueOf(newCustomers)}
-        };
-
-        for (String[] item : summaryData) {
-            Row row = overviewSheet.createRow(rowNum++);
-            Cell labelCell = row.createCell(0);
-            labelCell.setCellValue(item[0]);
-            labelCell.setCellStyle(boldStyle);
-
-            Cell valueCell = row.createCell(1);
-            if (item[1] == null) {
-                // Revenue - use number format
-                valueCell.setCellValue(monthlyRevenue.doubleValue());
-                valueCell.setCellStyle(moneyStyle);
-            } else {
-                valueCell.setCellValue(item[1]);
-                valueCell.setCellStyle(dataStyle);
-            }
+        // Headers
+        Row headRow = overviewSheet.createRow(rowNum++);
+        String[] headers = {"Chỉ số", "Kết quả", "Ghi chú"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(subHeaderStyle);
         }
 
-        // ===== Sheet 2: Doanh thu theo ngày =====
-        Sheet dailySheet = workbook.createSheet("Doanh thu theo ngày");
-        dailySheet.setColumnWidth(0, 4000);
-        dailySheet.setColumnWidth(1, 8000);
+        // Data Rows
+        // 1. Doanh thu tháng
+        addReportRow(overviewSheet, rowNum++, "Doanh thu tháng", totalRevenue, "", moneyStyle, dataStyle);
+        
+        // 2. Giá trị trung bình/đơn
+        BigDecimal avgValue = completedBookings > 0 ? totalRevenue.divide(new BigDecimal(completedBookings), 0, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        addReportRow(overviewSheet, rowNum++, "Giá trị trung bình/đơn", avgValue, "(Dựa trên " + completedBookings + " đơn hoàn thành)", moneyStyle, dataStyle);
+        
+        // 3. Tổng tiền giảm giá
+        addReportRow(overviewSheet, rowNum++, "Tổng tiền giảm giá", BigDecimal.ZERO, "Chưa áp dụng khuyến mãi", moneyStyle, dataStyle);
+        
+        // 4. Tổng số đơn
+        addReportRow(overviewSheet, rowNum++, "Tổng số đơn", totalBookings, "", dataStyle, dataStyle);
+        
+        // 5. Đơn hoàn thành
+        double completedRate = totalBookings > 0 ? (double) completedBookings / totalBookings * 100 : 0;
+        addReportRow(overviewSheet, rowNum++, "Đơn hoàn thành", completedBookings, String.format("Tỉ lệ: %.1f%%", completedRate), dataStyle, dataStyle);
+        
+        // 6. Đơn đang xử lý
+        double pendingRate = totalBookings > 0 ? (double) pendingBookings / totalBookings * 100 : 0;
+        addReportRow(overviewSheet, rowNum++, "Đơn đang xử lý", pendingBookings, String.format("Tỉ lệ: %.1f%%", pendingRate), dataStyle, dataStyle);
+        
+        // 7. Đơn đã hủy
+        double cancelledRate = totalBookings > 0 ? (double) cancelledBookings / totalBookings * 100 : 0;
+        addReportRow(overviewSheet, rowNum++, "Đơn đã hủy", cancelledBookings, String.format("Tỉ lệ: %.1f%%", cancelledRate), dataStyle, dataStyle);
+        
+        // 8. Tổng số khách hàng
+        addReportRow(overviewSheet, rowNum++, "Tổng số khách hàng", totalCustomers, "", dataStyle, dataStyle);
+        
+        // 9. Khách mới
+        addReportRow(overviewSheet, rowNum++, "Khách mới", newCustomers, "", dataStyle, dataStyle);
+        
+        // 10. Khách cũ quay lại
+        addReportRow(overviewSheet, rowNum++, "Khách cũ quay lại", returningCustomers, "", dataStyle, dataStyle);
 
-        rowNum = 0;
-
-        // Title
-        Row dailyTitle = dailySheet.createRow(rowNum++);
-        Cell dailyTitleCell = dailyTitle.createCell(0);
-        dailyTitleCell.setCellValue("DOANH THU THEO NGÀY - THÁNG " + month + "/" + year);
-        dailyTitleCell.setCellStyle(headerStyle);
-        dailySheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
-
-        rowNum++; // blank
-
-        // Table header
-        Row hdrRow = dailySheet.createRow(rowNum++);
-        Cell hdr1 = hdrRow.createCell(0);
-        hdr1.setCellValue("Ngày");
-        hdr1.setCellStyle(subHeaderStyle);
-        Cell hdr2 = hdrRow.createCell(1);
-        hdr2.setCellValue("Doanh thu (VNĐ)");
-        hdr2.setCellStyle(subHeaderStyle);
-
-        // Data rows
-        BigDecimal total = BigDecimal.ZERO;
-        for (Map.Entry<Integer, BigDecimal> entry : dailyChart.entrySet()) {
-            Row row = dailySheet.createRow(rowNum++);
-            Cell dayCell = row.createCell(0);
-            dayCell.setCellValue("Ngày " + entry.getKey());
-            dayCell.setCellStyle(dataStyle);
-
-            Cell revCell = row.createCell(1);
-            revCell.setCellValue(entry.getValue().doubleValue());
-            revCell.setCellStyle(moneyStyle);
-
-            total = total.add(entry.getValue());
-        }
-
-        // Total row
-        Row totalRow = dailySheet.createRow(rowNum++);
-        Cell totalLabel = totalRow.createCell(0);
-        totalLabel.setCellValue("TỔNG CỘNG");
-        totalLabel.setCellStyle(totalLabelStyle);
-        Cell totalValue = totalRow.createCell(1);
-        totalValue.setCellValue(total.doubleValue());
-        totalValue.setCellStyle(totalStyle);
-
-        // ===== Sheet 3: Top sân =====
-        if (topFields != null && !topFields.isEmpty()) {
-            Sheet topSheet = workbook.createSheet("Top sân");
-            topSheet.setColumnWidth(0, 3000);
-            topSheet.setColumnWidth(1, 8000);
-            topSheet.setColumnWidth(2, 4000);
-            topSheet.setColumnWidth(3, 8000);
-
-            rowNum = 0;
-
-            Row topTitle = topSheet.createRow(rowNum++);
-            Cell topTitleCell = topTitle.createCell(0);
-            topTitleCell.setCellValue("SÂN CÓ DOANH THU CAO NHẤT - THÁNG " + month + "/" + year);
-            topTitleCell.setCellStyle(headerStyle);
-            topSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
-
-            rowNum++;
-
-            Row topHdr = topSheet.createRow(rowNum++);
-            String[] topHeaders = {"#", "Tên sân", "Số lượt", "Doanh thu (VNĐ)"};
-            for (int i = 0; i < topHeaders.length; i++) {
-                Cell c = topHdr.createCell(i);
-                c.setCellValue(topHeaders[i]);
-                c.setCellStyle(subHeaderStyle);
-            }
-
-            int rank = 1;
-            for (Map<String, Object> field : topFields) {
-                Row row = topSheet.createRow(rowNum++);
-
-                Cell rankCell = row.createCell(0);
-                rankCell.setCellValue(rank++);
-                rankCell.setCellStyle(dataStyle);
-
-                Cell nameCell = row.createCell(1);
-                nameCell.setCellValue((String) field.get("fieldName"));
-                nameCell.setCellStyle(dataStyle);
-
-                Cell countCell = row.createCell(2);
-                countCell.setCellValue((Integer) field.get("totalBookings"));
-                countCell.setCellStyle(dataStyle);
-
-                Cell revCell = row.createCell(3);
-                revCell.setCellValue(((BigDecimal) field.get("totalRevenue")).doubleValue());
-                revCell.setCellStyle(moneyStyle);
-            }
-        }
+        // Auto-size columns
+        for (int i = 0; i < 3; i++) overviewSheet.autoSizeColumn(i);
 
         // ===== Write to response =====
         String fileName = "BaoCaoDoanhThu_Thang" + month + "_" + year + ".xlsx";
@@ -310,5 +347,27 @@ public class AdminReportController extends HttpServlet {
         } finally {
             workbook.close();
         }
+    }
+
+    private void addReportRow(Sheet sheet, int rowIdx, String metric, Object value, String note, CellStyle valueStyle, CellStyle baseStyle) {
+        Row row = sheet.createRow(rowIdx);
+        Cell c1 = row.createCell(0);
+        c1.setCellValue(metric);
+        c1.setCellStyle(baseStyle);
+
+        Cell c2 = row.createCell(1);
+        if (value instanceof BigDecimal) {
+            c2.setCellValue(((BigDecimal) value).doubleValue());
+        } else if (value instanceof Integer) {
+            c2.setCellValue((Integer) value);
+        } else {
+            c2.setCellValue(value.toString());
+        }
+        c2.setCellStyle(valueStyle);
+
+        Cell c3 = row.createCell(2);
+        c3.setCellValue(note);
+        c3.setCellStyle(baseStyle);
+    
     }
 }
