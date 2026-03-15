@@ -239,15 +239,35 @@
                                             <td class="border-0 ps-0">
                                                 <span class="text-muted">Dịch vụ</span>
                                                 <c:if test="${serviceAmount > 0}">
-                                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
-                                                          class="d-inline ms-2"
-                                                          onsubmit="return confirm('Xóa toàn bộ dịch vụ và reset về giá sân?');">
-                                                        <input type="hidden" name="action" value="removeService">
-                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                                        <button type="submit" class="btn btn-link btn-sm text-danger p-0 lh-1" title="Xóa dịch vụ">
-                                                            <i class="fas fa-times-circle"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" class="btn btn-link btn-sm text-danger p-0 lh-1" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#removeServiceModal"
+                                                            title="Xóa dịch vụ">
+                                                        <i class="fas fa-times-circle"></i>
+                                                    </button>
+
+                                                    <!-- Remove Service Modal -->
+                                                    <div class="modal fade" id="removeServiceModal" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content border-0 shadow-lg rounded-4 text-start">
+                                                                <div class="modal-header border-bottom-0">
+                                                                    <h5 class="modal-title fw-bold">Xác nhận xóa dịch vụ</h5>
+                                                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body py-3">
+                                                                    Bạn có chắc chắn muốn xóa toàn bộ dịch vụ và reset về giá sân gốc cho đơn hàng này?
+                                                                </div>
+                                                                <div class="modal-footer border-top-0 pt-0">
+                                                                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Hủy</button>
+                                                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="m-0">
+                                                                        <input type="hidden" name="action" value="removeService">
+                                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                                        <button type="submit" class="btn btn-danger rounded-pill px-3">Xác nhận xóa</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </c:if>
                                             </td>
                                             <td class="border-0 text-end fw-semibold">
@@ -272,22 +292,61 @@
                                     </table>
                                 </div>
                                 <div class="col-md-5 d-flex justify-content-end align-items-end gap-2 mt-3 mt-md-0">
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
-                                          onsubmit="return confirm('Tạo thanh toán VNPay cho đơn này?');" class="m-0">
-                                        <input type="hidden" name="action" value="vnpayCheckout">
-                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                        <button type="submit" class="btn btn-outline-primary btn-lg rounded-pill px-3 shadow-sm">
-                                            <i class="fas fa-credit-card me-2"></i>Link VNPay
-                                        </button>
-                                    </form>
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings"
-                                          onsubmit="return confirm('Xác nhận đã thu đủ tiền mặt và hoàn thành đơn này?');" class="m-0">
-                                        <input type="hidden" name="action" value="checkout">
-                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                        <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 shadow">
-                                            <i class="fas fa-hand-holding-usd me-2"></i>Thu tiền mặt
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-outline-primary btn-lg rounded-pill px-3 shadow-sm"
+                                            data-bs-toggle="modal" data-bs-target="#vnpayModal">
+                                        <i class="fas fa-credit-card me-2"></i>Link VNPay
+                                    </button>
+                                    
+                                    <button type="button" class="btn btn-success btn-lg rounded-pill px-4 shadow"
+                                            data-bs-toggle="modal" data-bs-target="#cashModal">
+                                        <i class="fas fa-hand-holding-usd me-2"></i>Thu tiền mặt
+                                    </button>
+
+                                    <!-- VNPay Modal -->
+                                    <div class="modal fade" id="vnpayModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-4 text-start">
+                                                <div class="modal-header border-bottom-0 pb-0">
+                                                    <h5 class="modal-title fw-bold text-primary">Thanh toán VNPay</h5>
+                                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body py-4">
+                                                    Hệ thống sẽ tạo link thanh toán VNPay cho số tiền còn lại: <strong><fmt:formatNumber value="${booking.remainingAmount}" pattern="#,###"/>đ</strong>. Tiếp tục?
+                                                </div>
+                                                <div class="modal-footer border-top-0 pt-0">
+                                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="m-0">
+                                                        <input type="hidden" name="action" value="vnpayCheckout">
+                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Tạo link ngay</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cash Modal -->
+                                    <div class="modal fade" id="cashModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-4 text-start">
+                                                <div class="modal-header border-bottom-0 pb-0">
+                                                    <h5 class="modal-title fw-bold text-success">Xác nhận thu tiền mặt</h5>
+                                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body py-4">
+                                                    Xác nhận đã thu đủ số tiền còn lại <strong><fmt:formatNumber value="${booking.remainingAmount}" pattern="#,###"/>đ</strong> bằng tiền mặt và hoàn thành đơn hàng này?
+                                                </div>
+                                                <div class="modal-footer border-top-0 pt-0">
+                                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                                                    <form method="post" action="${pageContext.request.contextPath}/admin/bookings" class="m-0">
+                                                        <input type="hidden" name="action" value="checkout">
+                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                        <button type="submit" class="btn btn-success rounded-pill px-4 shadow-sm">Xác nhận thu tiền</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

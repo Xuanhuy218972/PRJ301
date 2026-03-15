@@ -170,17 +170,44 @@
                                             </div>
                                             <c:if test="${booking.bookingStatus == 'CONFIRMED'}">
                                                 <div class="mt-3 pt-3 border-top">
-                                                    <form method="post" action="${pageContext.request.contextPath}/profile" class="d-flex gap-2 align-items-end">
-                                                        <input type="hidden" name="action" value="cancelBooking">
-                                                        <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                                        <div class="flex-grow-1">
-                                                            <input type="text" class="form-control form-control-sm" name="cancelReason" placeholder="Lý do hủy (tùy chọn)">
-                                                        </div>
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                                                onclick="return confirm('Bạn chắc chắn muốn hủy sân này?');">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#cancelModal${booking.bookingID}">
                                                             <i class="fas fa-times me-1"></i>Hủy sân
                                                         </button>
-                                                    </form>
+
+                                                        <!-- Cancel Modal -->
+                                                        <div class="modal fade" id="cancelModal${booking.bookingID}" tabindex="-1" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content border-0 shadow-lg rounded-4">
+                                                                    <div class="modal-header border-bottom-0 pb-0">
+                                                                        <h5 class="modal-title fw-bold text-danger">
+                                                                            <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận hủy sân
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body py-4">
+                                                                        <p class="mb-3">Bạn có chắc chắn muốn hủy sân <strong>${booking.fieldName}</strong> vào ngày <strong>${booking.bookingDate}</strong>?</p>
+                                                                        <p class="text-muted small mb-3">Hành động này có thể không được hoàn phí tùy theo quy định của sân.</p>
+                                                                        
+                                                                        <form method="post" action="${pageContext.request.contextPath}/profile" id="cancelForm${booking.bookingID}">
+                                                                            <input type="hidden" name="action" value="cancelBooking">
+                                                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                                                            <div class="mb-0">
+                                                                                <label class="form-label small fw-bold text-muted text-uppercase">Lý do hủy (tùy chọn)</label>
+                                                                                <input type="text" class="form-control rounded-3" name="cancelReason" placeholder="Nhập lý do hủy sân...">
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <div class="modal-footer border-top-0 pt-0 gap-2">
+                                                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Quay lại</button>
+                                                                        <button type="submit" form="cancelForm${booking.bookingID}" class="btn btn-danger rounded-pill px-4 shadow-sm">
+                                                                            Xác nhận hủy
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             </c:if>
                                         </div>
