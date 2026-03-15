@@ -116,26 +116,6 @@
                     </div>
                 </div>
 
-                <!-- ===== Quick Actions ===== -->
-                <div class="quick-actions-row d-flex flex-wrap gap-2 mb-4">
-                    <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-action-btn">
-                        <i class="fas fa-calendar-plus text-primary"></i> Quản lý Booking
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/fields" class="quick-action-btn">
-                        <i class="fas fa-layer-group text-success"></i> Quản lý Sân
-                    </a>
-                    <a href="${pageContext.request.contextPath}/admin/contacts" class="quick-action-btn">
-                        <i class="fas fa-envelope text-info"></i> Liên hệ
-                    </a>
-                    <c:if test="${sessionScope.account.role == 'ADMIN'}">
-                        <a href="${pageContext.request.contextPath}/admin/reports" class="quick-action-btn">
-                            <i class="fas fa-chart-pie text-danger"></i> Báo cáo
-                        </a>
-                        <a href="${pageContext.request.contextPath}/admin/users" class="quick-action-btn">
-                            <i class="fas fa-user-shield text-warning"></i> Người dùng
-                        </a>
-                    </c:if>
-                </div>
 
                 <!-- ===== ADMIN: 12-Month Revenue Chart ===== -->
                 <c:if test="${sessionScope.account.role == 'ADMIN' && not empty monthlyChart}">
@@ -178,7 +158,7 @@
                 <div class="row g-4">
                     <!-- Recent Bookings -->
                     <div class="col-lg-8">
-                        <div class="table-container">
+                        <div class="table-container h-100">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold mb-0"><i class="fas fa-clock text-primary me-2"></i>Lượt đặt sân gần đây</h5>
                                 <a href="${pageContext.request.contextPath}/admin/bookings" class="btn btn-primary btn-sm shadow-sm rounded-pill">Xem tất cả</a>
@@ -255,17 +235,62 @@
                         </div>
                     </div>
 
-                    <!-- Sidebar: Occupancy -->
+                    <!-- Sidebar Area -->
                     <div class="col-lg-4">
-                        <!-- Court Occupancy -->
-                        <div class="dashboard-side-card">
-                            <h6 class="card-title mb-3"><i class="fas fa-futbol me-1"></i> Trạng thái sân</h6>
-                            <c:set var="occupancyPct" value="${totalFields > 0 ? (activeFields * 100 / totalFields) : 0}" />
-                            <div class="occupancy-label">Hiện có ${activeFields}/${totalFields} sân đang hoạt động</div>
-                            <div class="progress rounded-pill progress-sm">
-                                <div class="progress-bar bg-success rounded-pill" role="progressbar" style="width: ${occupancyPct}%;" aria-valuenow="${occupancyPct}" aria-valuemin="0" aria-valuemax="100"></div>
+                        <!-- ===== Quick Actions (Vertical Cards) ===== -->
+                        <div class="quick-action-container mb-4 shadow-sm">
+                            <div class="quick-action-header">
+                                <i class="fas fa-bolt"></i>
+                                <h5>Thao tác nhanh</h5>
                             </div>
-                            <div class="occupancy-value mt-2"><fmt:formatNumber value="${occupancyPct}" maxFractionDigits="0"/>% đang hoạt động</div>
+                            
+                            <!-- Action 1: Pending Bookings -->
+                            <a href="${pageContext.request.contextPath}/admin/bookings?status=PENDING" class="quick-card">
+                                <div class="quick-icon-box quick-icon-blue">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Xem các booking đang xử lý</span>
+                                    <span class="quick-desc">Quản lý & xác nhận ${pendingBookings} đơn chờ</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
+
+                            <!-- Action 2: Export Excel -->
+                            <a href="${pageContext.request.contextPath}/admin/reports?action=export" class="quick-card">
+                                <div class="quick-icon-box quick-icon-green">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Xuất Excel tháng ${currentMonth}</span>
+                                    <span class="quick-desc">Tải báo cáo doanh thu chi tiết</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
+
+                            <!-- Action 3: New Customers -->
+                            <a href="${pageContext.request.contextPath}/admin/users?role=CUSTOMER" class="quick-card">
+                                <div class="quick-icon-box quick-icon-purple">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Khách mới tháng ${currentMonth}</span>
+                                    <span class="quick-desc">${newCustomersThisMonth} khách đăng ký — xem danh sách</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
+
+                            <!-- Action 4: New Contacts -->
+                            <a href="${pageContext.request.contextPath}/admin/contacts?status=NEW" class="quick-card">
+                                <div class="quick-icon-box quick-icon-yellow">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Tin nhắn liên hệ chưa đọc</span>
+                                    <span class="quick-desc">Xem & xử lý ${newContacts} yêu cầu từ khách</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

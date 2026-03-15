@@ -46,8 +46,16 @@ public class ContactDAO {
     }
 
     public List<ContactMessage> getAllContactMessages() {
+        return getContactMessagesByStatus(null);
+    }
+
+    public List<ContactMessage> getContactMessagesByStatus(String status) {
         List<ContactMessage> messages = new ArrayList<>();
-        String sql = "SELECT * FROM ContactMessages ORDER BY CreatedAt DESC";
+        StringBuilder sql = new StringBuilder("SELECT * FROM ContactMessages");
+        if (status != null && !status.isEmpty()) {
+            sql.append(" WHERE Status = ?");
+        }
+        sql.append(" ORDER BY CreatedAt DESC");
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -55,7 +63,10 @@ public class ContactDAO {
 
         try {
             conn = DBContext.getConnection();
-            ps = conn.prepareStatement(sql);
+            ps = conn.prepareStatement(sql.toString());
+            if (status != null && !status.isEmpty()) {
+                ps.setString(1, status);
+            }
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -83,6 +94,28 @@ public class ContactDAO {
         }
 
         return messages;
+    }
+
+    public int countByStatus(String status) {
+        String sql = "SELECT COUNT(*) FROM ContactMessages WHERE Status = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, status);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, "countByStatus error: " + e.getMessage(), e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return 0;
     }
 
     public boolean updateContactStatus(int contactID, String status) {

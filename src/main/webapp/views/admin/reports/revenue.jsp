@@ -222,7 +222,7 @@
                     <!-- Top revenue days -->
                     <div class="col-lg-7">
                         <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
-                            <h6 class="fw-bold text-dark mb-4"><i class="fas fa-calendar-star text-primary me-2"></i>Top ngày doanh thu cao nhất — Tháng ${selectedMonth}</h6>
+                            <h6 class="fw-bold text-dark mb-4"><i class="fas fa-calendar-check text-primary me-2"></i>Ngày doanh thu cao nhất — Tháng ${selectedMonth}</h6>
                             <c:choose>
                                 <c:when test="${empty dailyChart}">
                                     <div class="text-center py-4 text-muted small">Chưa có dữ liệu.</div>
@@ -244,50 +244,47 @@
 
                     <!-- Quick actions for manager -->
                     <div class="col-lg-5">
-                        <div class="bg-white p-4 rounded-3 border border-light shadow-sm h-100">
-                            <h6 class="fw-bold text-dark mb-4"><i class="fas fa-bolt text-warning me-2"></i>Thao tác nhanh</h6>
-                            <div class="d-flex flex-column gap-2">
-                                <a href="${pageContext.request.contextPath}/admin/bookings" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#eef2ff';this.style.borderColor='#6366f1'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
-                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#eef2ff;flex-shrink:0;">
-                                        <i class="fas fa-calendar-check text-primary" style="font-size:0.9rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold text-dark small">Xem tất cả booking</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Quản lý & xác nhận đơn đặt sân</div>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
-                                </a>
-                                <a href="${pageContext.request.contextPath}/admin/reports?action=exportExcel&month=${selectedMonth}&year=${selectedYear}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#f0fdf4';this.style.borderColor='#10b981'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
-                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#dcfce7;flex-shrink:0;">
-                                        <i class="fas fa-file-excel text-success" style="font-size:0.9rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold text-dark small">Xuất Excel tháng ${selectedMonth}</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Tải báo cáo doanh thu chi tiết</div>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
-                                </a>
-                                <a href="${pageContext.request.contextPath}/admin/users?type=new_customers&month=${selectedMonth}&year=${selectedYear}" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#3b82f6'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
-                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#dbeafe;flex-shrink:0;">
-                                        <i class="fas fa-user-plus text-primary" style="font-size:0.9rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold text-dark small">Khách mới tháng ${selectedMonth}</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">${newCustomers} khách đăng ký — xem danh sách</div>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
-                                </a>
-                                <a href="${pageContext.request.contextPath}/admin/contacts" class="d-flex align-items-center gap-3 p-3 rounded-3 text-decoration-none" style="background:#f8fafc; border:1px solid #e2e8f0; transition:all .2s;" onmouseover="this.style.background='#fefce8';this.style.borderColor='#f59e0b'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
-                                    <div class="rounded-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#fef9c3;flex-shrink:0;">
-                                        <i class="fas fa-envelope text-warning" style="font-size:0.9rem;"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold text-dark small">Tin nhắn liên hệ</div>
-                                        <div class="text-muted" style="font-size:0.75rem;">Xem & xử lý yêu cầu từ khách hàng</div>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-muted ms-auto" style="font-size:0.7rem;"></i>
-                                </a>
+                        <div class="quick-action-container shadow-sm">
+                            <div class="quick-action-header">
+                                <i class="fas fa-bolt"></i>
+                                <h5>Thao tác nhanh</h5>
                             </div>
+                            
+                            <!-- Action 1: View Bookings -->
+                            <a href="${pageContext.request.contextPath}/admin/bookings" class="quick-card">
+                                <div class="quick-icon-box quick-icon-blue">
+                                    <i class="fas fa-list-ul"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Quản lý Booking</span>
+                                    <span class="quick-desc">Xem và xử lý tất cả đơn đặt sân</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
+
+                            <!-- Action 2: Export Excel -->
+                            <a href="${pageContext.request.contextPath}/admin/reports?action=exportExcel&month=${selectedMonth}&year=${selectedYear}" class="quick-card">
+                                <div class="quick-icon-box quick-icon-green">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Xuất file Excel</span>
+                                    <span class="quick-desc">Tải báo cáo chi tiết tháng ${selectedMonth}</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
+
+                            <!-- Action 3: View Customers -->
+                            <a href="${pageContext.request.contextPath}/admin/users?role=CUSTOMER" class="quick-card">
+                                <div class="quick-icon-box quick-icon-purple">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="quick-info">
+                                    <span class="quick-title">Danh sách khách hàng</span>
+                                    <span class="quick-desc">Quản lý thông tin người dùng</span>
+                                </div>
+                                <i class="fas fa-chevron-right quick-chevron"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

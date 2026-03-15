@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sportfield.dao.BookingDAO;
+import com.sportfield.dao.ContactDAO;
 import com.sportfield.dao.ReportDAO;
 import com.sportfield.dao.SportFieldDAO;
 import com.sportfield.dao.UserDAO;
@@ -25,6 +26,7 @@ public class AdminDashboardController extends HttpServlet {
     private final BookingDAO bookingDAO = new BookingDAO();
     private final UserDAO userDAO = new UserDAO();
     private final ReportDAO reportDAO = new ReportDAO();
+    private final ContactDAO contactDAO = new ContactDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,14 +44,14 @@ public class AdminDashboardController extends HttpServlet {
         List<SportField> fields = fieldDAO.getAll();
         int totalFields = fields.size();
 
-        long activeFields = 0;
-        for (SportField f : fields) {
-            if ("ACTIVE".equals(f.getStatus())) {
-                activeFields++;
-            }
-        }
-
         int bookingsToday = bookingDAO.countBookingsToday();
+        int pendingBookings = bookingDAO.countByStatus("PENDING");
+        int newContacts = contactDAO.countByStatus("NEW");
+
+        java.time.LocalDate today = java.time.LocalDate.now();
+        String currentMonth = String.valueOf(today.getMonthValue());
+        String currentYear = String.valueOf(today.getYear());
+        int newCustomersThisMonth = reportDAO.getNewCustomersByMonth(currentYear, currentMonth);
 
         List<User> allUsers = userDAO.getAll();
         int totalCustomers = 0;
@@ -64,15 +66,17 @@ public class AdminDashboardController extends HttpServlet {
         List<Booking> latestBookings = recentBookings.subList(0, recentLimit);
 
         request.setAttribute("totalFields", totalFields);
-        request.setAttribute("activeFields", activeFields);
         request.setAttribute("bookingsToday", bookingsToday);
+        request.setAttribute("pendingBookings", pendingBookings);
+        request.setAttribute("newContacts", newContacts);
+        request.setAttribute("newCustomersThisMonth", newCustomersThisMonth);
+        request.setAttribute("currentMonth", currentMonth);
         request.setAttribute("totalCustomers", totalCustomers);
         request.setAttribute("latestBookings", latestBookings);
 
         // --- ADMIN-only data: revenue + 12-month chart ---
         if ("ADMIN".equals(account.getRole())) {
             BigDecimal monthlyRevenue = bookingDAO.getMonthlyRevenue();
-            String currentYear = String.valueOf(java.time.LocalDate.now().getYear());
             Map<Integer, BigDecimal> monthlyChart = reportDAO.getMonthlyRevenueByYear(currentYear);
 
             request.setAttribute("monthlyRevenue", monthlyRevenue);

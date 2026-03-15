@@ -76,8 +76,14 @@ public class AdminContactController extends HttpServlet {
             session.removeAttribute("errorMessage");
         }
         
-        List<ContactMessage> messages = contactDAO.getAllContactMessages();
+        String statusFilter = request.getParameter("status");
+        List<ContactMessage> messages = contactDAO.getContactMessagesByStatus(statusFilter);
+        
         request.setAttribute("contactMessages", messages);
+        request.setAttribute("currentStatus", statusFilter);
+        request.setAttribute("newCount", contactDAO.countByStatus("NEW"));
+        request.setAttribute("readCount", contactDAO.countByStatus("READ"));
+        request.setAttribute("repliedCount", contactDAO.countByStatus("REPLIED"));
         
         request.getRequestDispatcher("/views/admin/contacts/list.jsp").forward(request, response);
     }

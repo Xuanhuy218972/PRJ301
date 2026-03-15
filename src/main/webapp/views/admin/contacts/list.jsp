@@ -30,6 +30,35 @@
                         </div>
                     </div>
 
+                    <!-- Filter Bar -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-3">
+                            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="${pageContext.request.contextPath}/admin/contacts" 
+                                       class="btn btn-outline-secondary rounded-pill px-3 py-1 small ${empty currentStatus ? 'active bg-secondary text-white' : ''}">
+                                        Tất cả
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/admin/contacts?status=NEW" 
+                                       class="btn btn-outline-primary rounded-pill px-3 py-1 small ${currentStatus == 'NEW' ? 'active' : ''}">
+                                        Chưa đọc <span class="badge bg-white text-primary ms-1">${newCount}</span>
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/admin/contacts?status=READ" 
+                                       class="btn btn-outline-info rounded-pill px-3 py-1 small ${currentStatus == 'READ' ? 'active' : ''}">
+                                        Đã xem <span class="badge bg-white text-info ms-1">${readCount}</span>
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/admin/contacts?status=REPLIED" 
+                                       class="btn btn-outline-success rounded-pill px-3 py-1 small ${currentStatus == 'REPLIED' ? 'active' : ''}">
+                                        Đã phản hồi <span class="badge bg-white text-success ms-1">${repliedCount}</span>
+                                    </a>
+                                </div>
+                                <div class="text-muted small">
+                                    Hiển thị <strong>${contactMessages.size()}</strong> tin nhắn
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <c:if test="${not empty successMessage}">
                         <div class="alert alert-success alert-dismissible fade show">
                             <i class="fas fa-check-circle me-2"></i>${successMessage}
