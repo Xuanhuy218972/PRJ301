@@ -160,7 +160,7 @@
                                     <td class="fw-bold text-success">
                                         <fmt:formatNumber value="${booking.totalPrice}" pattern="#,###"/>đ
                                     </td>
-                                    <td>
+                                    <td style="min-width: 100px;">
                                         <c:choose>
                                             <c:when test="${booking.paymentStatus == 'PAID'}">
                                                 <span class="badge bg-success-subtle text-success">
@@ -168,9 +168,14 @@
                                                 </span>
                                             </c:when>
                                             <c:when test="${booking.paymentStatus == 'DEPOSITED'}">
-                                                <span class="badge bg-info-subtle text-info">
-                                                    <i class="fas fa-shield-alt me-1"></i>Đã cọc <fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ
-                                                </span>
+                                                <div class="d-inline-flex flex-column align-items-center">
+                                                    <span class="badge bg-info-subtle text-info mb-1 w-100">
+                                                        <i class="fas fa-shield-alt me-1"></i>Đã cọc
+                                                    </span>
+                                                    <span class="small fw-bold text-info">
+                                                        <fmt:formatNumber value="${booking.paidAmount}" pattern="#,###"/>đ
+                                                    </span>
+                                                </div>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="badge bg-danger-subtle text-danger">

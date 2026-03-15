@@ -27,6 +27,15 @@ public class AdminFieldController extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session != null) {
             User account = (User) session.getAttribute("account");
+            return account != null && "ADMIN".equals(account.getRole());
+        }
+        return false;
+    }
+
+    private boolean isStaffOrAdmin(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User account = (User) session.getAttribute("account");
             return account != null && ("ADMIN".equals(account.getRole()) || "STAFF".equals(account.getRole()));
         }
         return false;
@@ -35,7 +44,7 @@ public class AdminFieldController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!isAdmin(request)) {
+        if (!isStaffOrAdmin(request)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             return;
         }
@@ -44,6 +53,14 @@ public class AdminFieldController extends HttpServlet {
         
         if (action == null) {
             action = "list";
+        }
+
+        // STAFF only has access to "list", "manageSlots" (view only)
+        if ("STAFF".equals(((User)request.getSession().getAttribute("account")).getRole())) {
+            if (!"list".equals(action) && !"manageSlots".equals(action)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Staff only allowed to view fields and slots");
+                return;
+            }
         }
 
         switch (action) {
@@ -67,7 +84,7 @@ public class AdminFieldController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         if (!isAdmin(request)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Admin access required for modifications");
             return;
         }
 

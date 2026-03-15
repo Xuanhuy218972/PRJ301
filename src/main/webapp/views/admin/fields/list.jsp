@@ -39,9 +39,11 @@
                         <p class="page-subtitle">Quản lý thông tin sân, giá thuê và khung giờ hoạt động.</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="?action=add" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
-                            <i class="fas fa-plus me-1"></i> Thêm sân mới
-                        </a>
+                        <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                            <a href="?action=add" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                <i class="fas fa-plus me-1"></i> Thêm sân mới
+                            </a>
+                        </c:if>
                     </div>
                 </div>
 
@@ -140,27 +142,29 @@
                                                 <i class="fas fa-calendar-alt text-success"></i>
                                             </a>
                                             <a href="?action=manageSlots&id=${field.fieldID}" 
-                                               class="btn btn-white btn-sm border-end" 
+                                               class="btn btn-white btn-sm ${sessionScope.account.role == 'ADMIN' ? 'border-end' : ''}" 
                                                title="Quản lý khung giờ">
                                                 <i class="fas fa-clock text-info"></i>
                                             </a>
-                                            <a href="?action=edit&id=${field.fieldID}" 
-                                               class="btn btn-white btn-sm border-end" 
-                                               title="Chỉnh sửa">
-                                                <i class="fas fa-edit text-primary"></i>
-                                            </a>
-                                            <button class="btn btn-white btn-sm border-end" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#hideModal${field.fieldID}"
-                                                    title="Ẩn/Hiện">
-                                                <i class="fas fa-eye-slash text-warning"></i>
-                                            </button>
-                                            <button class="btn btn-white btn-sm" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#deleteModal${field.fieldID}"
-                                                    title="Xóa">
-                                                <i class="fas fa-trash text-danger"></i>
-                                            </button>
+                                            <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                                                <a href="?action=edit&id=${field.fieldID}" 
+                                                class="btn btn-white btn-sm border-end" 
+                                                title="Chỉnh sửa">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                </a>
+                                                <button class="btn btn-white btn-sm border-end" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#hideModal${field.fieldID}"
+                                                        title="Ẩn/Hiện">
+                                                    <i class="fas fa-eye-slash text-warning"></i>
+                                                </button>
+                                                <button class="btn btn-white btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteModal${field.fieldID}"
+                                                        title="Xóa">
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                </button>
+                                            </c:if>
                                         </div>
                                     </td>
                                 </tr>

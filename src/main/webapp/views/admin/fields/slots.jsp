@@ -61,9 +61,11 @@
                                     <h5 class="mb-0">
                                         <i class="fas fa-list me-2"></i>Danh sách khung giờ
                                     </h5>
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSlotModal">
-                                        <i class="fas fa-plus me-1"></i>Thêm khung giờ
-                                    </button>
+                                    <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSlotModal">
+                                            <i class="fas fa-plus me-1"></i>Thêm khung giờ
+                                        </button>
+                                    </c:if>
                                 </div>
                             </div>
                             <div class="card-body p-0">
@@ -102,20 +104,25 @@
                                                         </c:choose>
                                                     </td>
                                                     <td class="text-end pe-4">
-                                                        <div class="btn-group shadow-sm rounded-3 overflow-hidden">
-                                                            <button class="btn btn-white btn-sm border-end" 
-                                                                    data-bs-toggle="modal" 
-                                                                    data-bs-target="#editSlotModal${slot.slotID}"
-                                                                    title="Chỉnh sửa">
-                                                                <i class="fas fa-edit text-primary"></i>
-                                                            </button>
-                                                            <button class="btn btn-white btn-sm" 
-                                                                    data-bs-toggle="modal" 
-                                                                    data-bs-target="#deleteSlotModal${slot.slotID}"
-                                                                    title="Xóa">
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                            </button>
-                                                        </div>
+                                                        <c:if test="${sessionScope.account.role == 'ADMIN'}">
+                                                            <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+                                                                <button class="btn btn-white btn-sm border-end" 
+                                                                        data-bs-toggle="modal" 
+                                                                        data-bs-target="#editSlotModal${slot.slotID}"
+                                                                        title="Chỉnh sửa">
+                                                                    <i class="fas fa-edit text-primary"></i>
+                                                                </button>
+                                                                <button class="btn btn-white btn-sm" 
+                                                                        data-bs-toggle="modal" 
+                                                                        data-bs-target="#deleteSlotModal${slot.slotID}"
+                                                                        title="Xóa">
+                                                                    <i class="fas fa-trash text-danger"></i>
+                                                                </button>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${sessionScope.account.role != 'ADMIN'}">
+                                                            <span class="text-muted small italic">Chỉ xem</span>
+                                                        </c:if>
 
                                                         <!-- Edit Slot Modal -->
                                                         <div class="modal fade" id="editSlotModal${slot.slotID}" tabindex="-1">
