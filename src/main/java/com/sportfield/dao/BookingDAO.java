@@ -259,6 +259,53 @@ public class BookingDAO {
         return details;
     }
 
+    public List<BookingDetail> getBookingDetailsByDate(String dateStr) {
+        List<BookingDetail> details = new ArrayList<>();
+        String sql = "SELECT bd.*, f.FieldName, fs.StartTime AS SlotStart, fs.EndTime AS SlotEnd, "
+                   + "u.FullName AS CustomerName, u.Phone AS CustomerPhone, b.Status AS BookingStatus "
+                   + "FROM BookingDetails bd "
+                   + "JOIN Bookings b ON bd.BookingID = b.BookingID "
+                   + "JOIN Users u ON b.CustomerID = u.UserID "
+                   + "JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
+                   + "JOIN Fields f ON fs.FieldID = f.FieldID "
+                   + "WHERE bd.BookingDate = ? "
+                   + "ORDER BY f.FieldName, fs.StartTime";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, dateStr);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    BookingDetail detail = new BookingDetail();
+                    detail.setDetailID(rs.getInt("DetailID"));
+                    detail.setBookingID(rs.getInt("BookingID"));
+                    detail.setSlotID(rs.getInt("SlotID"));
+                    detail.setBookingDate(rs.getDate("BookingDate").toLocalDate());
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    detail.setFieldName(rs.getString("FieldName"));
+                    detail.setSlotStartTime(rs.getTime("SlotStart").toString().substring(0, 5));
+                    detail.setSlotEndTime(rs.getTime("SlotEnd").toString().substring(0, 5));
+                    detail.setCustomerName(rs.getString("CustomerName"));
+                    detail.setCustomerPhone(rs.getString("CustomerPhone"));
+                    detail.setBookingStatus(rs.getString("BookingStatus"));
+                    details.add(detail);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return details;
+    }
+
     public boolean insertBooking(Booking booking) {
         String sql = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, "
                    + "PaymentMethod, PaymentStatus, PaidAmount, CreatedAt) "

@@ -294,6 +294,92 @@ public class ReportDAO {
         return years;
     }
 
+    public int getPendingBookingsByMonth(String year, String month) {
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
+                   + "AND Status = 'PENDING'";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, Integer.parseInt(year));
+                ps.setInt(2, Integer.parseInt(month));
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return 0;
+    }
+
+    public int getTotalCustomersInMonth(String year, String month) {
+        String sql = "SELECT COUNT(DISTINCT CustomerID) FROM Bookings "
+                   + "WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, Integer.parseInt(year));
+                ps.setInt(2, Integer.parseInt(month));
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return 0;
+    }
+
+    public int getReturningCustomersByMonth(String year, String month) {
+        // Customers who have bookings in this month AND had at least one booking before this month
+        String sql = "SELECT COUNT(DISTINCT b1.CustomerID) FROM Bookings b1 "
+                   + "WHERE YEAR(b1.CreatedAt) = ? AND MONTH(b1.CreatedAt) = ? "
+                   + "AND EXISTS (SELECT 1 FROM Bookings b2 WHERE b2.CustomerID = b1.CustomerID "
+                   + "AND b2.CreatedAt < CAST(? + '-' + ? + '-01' AS DATE))";
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, Integer.parseInt(year));
+                ps.setInt(2, Integer.parseInt(month));
+                ps.setString(3, year);
+                ps.setString(4, month);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            DBContext.close(conn, ps, rs);
+        }
+        return 0;
+    }
+
     public int getNewCustomersByMonth(String year, String month) {
         String sql = "SELECT COUNT(*) FROM Users WHERE Role = 'CUSTOMER' "
                    + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
