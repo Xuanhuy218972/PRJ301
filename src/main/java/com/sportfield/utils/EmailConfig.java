@@ -12,11 +12,11 @@ package com.sportfield.utils;
  */
 public class EmailConfig {
 
-    public static final String SMTP_HOST     = getEnv("SMTP_HOST",     "smtp.gmail.com");
+    public static final String SMTP_HOST     = getEnv("SMTP_HOST",     "sandbox.smtp.mailtrap.io");
     public static final String SMTP_PORT     = getEnv("SMTP_PORT",     "587");
-    public static final String SMTP_USER     = getEnv("SMTP_USER",     "camapchua44@gmail.com");
-    public static final String SMTP_PASSWORD = getEnv("SMTP_PASSWORD", "jprk sttv lyll tsab");
-    public static final String ADMIN_EMAIL   = getEnv("ADMIN_EMAIL",   "camapchua44@gmail.com");
+    public static final String SMTP_USER     = getEnv("SMTP_USER",     "e7bb8688c4669f");
+    public static final String SMTP_PASSWORD = getEnv("SMTP_PASSWORD", "6aa9b014cb3eee");
+    public static final String ADMIN_EMAIL   = getEnv("ADMIN_EMAIL",   "admin@sportfieldhub.com");
     public static final String FROM_NAME     = "SportFieldHub";
 
     private static String getEnv(String key, String defaultValue) {
