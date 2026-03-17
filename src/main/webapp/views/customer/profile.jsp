@@ -1,8 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@page import="java.time.format.DateTimeFormatter" %>
-
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -20,30 +18,21 @@
 
         <main class="py-5">
             <div class="container py-4">
+
                 <c:if test="${not empty sessionScope.success}">
-                    <input type="checkbox" id="close-success" class="alert-closer">
-                    <div class="alert custom-alert-box border-0 bg-success text-white rounded-3 shadow-sm mb-4 position-relative" role="alert">
+                    <div class="alert border-0 bg-success text-white rounded-3 shadow-sm mb-4 alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle me-2"></i>${sessionScope.success}
-                        <label for="close-success" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75 alert-close-btn">
-                            <i class="fas fa-times fs-5"></i>
-                        </label>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
                     </div>
                     <c:remove var="success" scope="session" />
                 </c:if>
-
                 <c:if test="${not empty sessionScope.error}">
-                    <input type="checkbox" id="close-error" class="alert-closer">
-                    <div class="alert custom-alert-box border-0 bg-danger text-white rounded-3 shadow-sm mb-4 position-relative" role="alert">
+                    <div class="alert border-0 bg-danger text-white rounded-3 shadow-sm mb-4 alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>${sessionScope.error}
-                        <label for="close-error" class="position-absolute top-50 end-0 translate-middle-y me-3 opacity-75 alert-close-btn">
-                            <i class="fas fa-times fs-5"></i>
-                        </label>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
                     </div>
                     <c:remove var="error" scope="session" />
                 </c:if>
-                <input type="radio" name="profile_tabs" id="tab-info" checked>
-                <input type="radio" name="profile_tabs" id="tab-bookings">
-                <input type="radio" name="profile_tabs" id="tab-security">
 
                 <div class="row g-4">
                     <div class="col-lg-4">
@@ -62,28 +51,28 @@
                             <p class="text-muted small opacity-75 mb-0">${user.email}</p>
                             <div class="mt-3 pt-3 border-top border-secondary">
                                 <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
-                                    <i class="fas fa-id-badge text-danger me-1"></i> 
+                                    <i class="fas fa-id-badge text-danger me-1"></i>
                                     ${user.role == 'ADMIN' ? 'Quản trị viên' : (user.role == 'STAFF' ? 'Nhân viên' : 'Khách hàng')}
                                 </span>
                             </div>
                         </div>
 
                         <div class="bg-white rounded-4 p-3 shadow-sm">
-                            <label for="tab-info" class="tab-label label-info">
+                            <button class="tab-label w-100 text-start border-0 bg-transparent" onclick="showTab('info', this)">
                                 <i class="fas fa-user-edit"></i> Hồ sơ cá nhân
-                            </label>
-                            <label for="tab-bookings" class="tab-label label-bookings">
+                            </button>
+                            <button class="tab-label w-100 text-start border-0 bg-transparent" onclick="showTab('bookings', this)">
                                 <i class="fas fa-futbol"></i> Lịch sử ra sân
-                            </label>
-                            <label for="tab-security" class="tab-label label-security">
+                            </button>
+                            <button class="tab-label w-100 text-start border-0 bg-transparent" onclick="showTab('security', this)">
                                 <i class="fas fa-shield-alt"></i> Bảo mật
-                            </label>
+                            </button>
                         </div>
                     </div>
 
                     <div class="col-lg-8">
-
-                        <div class="content-card css-tab-content content-info">
+                        <!-- Tab: Thông tin -->
+                        <div id="tab-content-info" class="content-card tab-pane-content">
                             <h4 class="fw-bold mb-4 border-bottom pb-3">Thông Tin Cơ Bản</h4>
                             <form method="post" action="${pageContext.request.contextPath}/profile">
                                 <input type="hidden" name="action" value="updateProfile">
@@ -111,7 +100,8 @@
                             </form>
                         </div>
 
-                        <div class="content-card css-tab-content content-bookings">
+                        <!-- Tab: Lịch sử -->
+                        <div id="tab-content-bookings" class="content-card tab-pane-content" style="display:none;">
                             <h4 class="fw-bold mb-4 border-bottom pb-3">Các Trận Đã Đặt</h4>
                             <c:choose>
                                 <c:when test="${empty bookings}">
@@ -163,51 +153,18 @@
                                                 <div class="col-sm-4">
                                                     <div class="small text-muted mb-1">Đã trả / Tổng</div>
                                                     <div class="fw-bold text-success fs-5">
-                                                        <fmt:formatNumber value="${booking.paidAmount != null ? booking.paidAmount : 0}" pattern="#,###"/>đ 
+                                                        <fmt:formatNumber value="${booking.paidAmount != null ? booking.paidAmount : 0}" pattern="#,###"/>đ
                                                         <span class="fs-6 text-muted">/ <fmt:formatNumber value="${booking.price}" pattern="#,###"/>đ</span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <c:if test="${booking.bookingStatus == 'CONFIRMED'}">
                                                 <div class="mt-3 pt-3 border-top">
-                                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#cancelModal${booking.bookingID}">
-                                                            <i class="fas fa-times me-1"></i>Hủy sân
-                                                        </button>
-
-                                                        <!-- Cancel Modal -->
-                                                        <div class="modal fade" id="cancelModal${booking.bookingID}" tabindex="-1" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content border-0 shadow-lg rounded-4">
-                                                                    <div class="modal-header border-bottom-0 pb-0">
-                                                                        <h5 class="modal-title fw-bold text-danger">
-                                                                            <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận hủy sân
-                                                                        </h5>
-                                                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body py-4">
-                                                                        <p class="mb-3">Bạn có chắc chắn muốn hủy sân <strong>${booking.fieldName}</strong> vào ngày <strong>${booking.bookingDate}</strong>?</p>
-                                                                        <p class="text-muted small mb-3">Hành động này có thể không được hoàn phí tùy theo quy định của sân.</p>
-                                                                        
-                                                                        <form method="post" action="${pageContext.request.contextPath}/profile" id="cancelForm${booking.bookingID}">
-                                                                            <input type="hidden" name="action" value="cancelBooking">
-                                                                            <input type="hidden" name="bookingID" value="${booking.bookingID}">
-                                                                            <div class="mb-0">
-                                                                                <label class="form-label small fw-bold text-muted text-uppercase">Lý do hủy (tùy chọn)</label>
-                                                                                <input type="text" class="form-control rounded-3" name="cancelReason" placeholder="Nhập lý do hủy sân...">
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-                                                                    <div class="modal-footer border-top-0 pt-0 gap-2">
-                                                                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Quay lại</button>
-                                                                        <button type="submit" form="cancelForm${booking.bookingID}" class="btn btn-danger rounded-pill px-4 shadow-sm">
-                                                                            Xác nhận hủy
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#cancelModal${booking.bookingID}">
+                                                        <i class="fas fa-times me-1"></i>Hủy sân
+                                                    </button>
                                                 </div>
                                             </c:if>
                                         </div>
@@ -216,7 +173,8 @@
                             </c:choose>
                         </div>
 
-                        <div class="content-card css-tab-content content-security">
+                        <!-- Tab: Bảo mật -->
+                        <div id="tab-content-security" class="content-card tab-pane-content" style="display:none;">
                             <h4 class="fw-bold mb-4 border-bottom pb-3">Đổi Mật Khẩu</h4>
                             <form method="post" action="${pageContext.request.contextPath}/profile" class="w-75">
                                 <input type="hidden" name="action" value="changePassword">
@@ -235,13 +193,64 @@
                                 <button type="submit" class="btn btn-action w-100"><i class="fas fa-key me-2"></i>Lưu mật khẩu</button>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
         </main>
 
+        <%-- Tất cả modal đặt NGOÀI main để tránh xung đột CSS tab --%>
+        <c:forEach var="booking" items="${bookings}">
+            <c:if test="${booking.bookingStatus == 'CONFIRMED'}">
+                <div class="modal fade" id="cancelModal${booking.bookingID}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg rounded-4">
+                            <div class="modal-header border-bottom-0 pb-0">
+                                <h5 class="modal-title fw-bold text-danger">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận hủy sân
+                                </h5>
+                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body py-4">
+                                <p class="mb-3">Bạn có chắc chắn muốn hủy sân <strong>${booking.fieldName}</strong> vào ngày <strong>${booking.bookingDate}</strong>?</p>
+                                <p class="text-muted small mb-3">Hành động này có thể không được hoàn phí tùy theo quy định của sân.</p>
+                                <form method="post" action="${pageContext.request.contextPath}/profile" id="cancelForm${booking.bookingID}">
+                                    <input type="hidden" name="action" value="cancelBooking">
+                                    <input type="hidden" name="bookingID" value="${booking.bookingID}">
+                                    <div class="mb-0">
+                                        <label class="form-label small fw-bold text-muted text-uppercase">Lý do hủy (tùy chọn)</label>
+                                        <input type="text" class="form-control rounded-3" name="cancelReason" placeholder="Nhập lý do hủy sân...">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer border-top-0 pt-0 gap-2">
+                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Quay lại</button>
+                                <button type="submit" form="cancelForm${booking.bookingID}" class="btn btn-danger rounded-pill px-4 shadow-sm">
+                                    Xác nhận hủy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </c:forEach>
+
         <jsp:include page="../common/footer.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function showTab(tab, btn) {
+                document.querySelectorAll('.tab-pane-content').forEach(function(el) {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.tab-label').forEach(function(el) {
+                    el.classList.remove('active-tab');
+                });
+                document.getElementById('tab-content-' + tab).style.display = 'block';
+                btn.classList.add('active-tab');
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                var firstBtn = document.querySelector('.tab-label');
+                if (firstBtn) firstBtn.classList.add('active-tab');
+            });
+        </script>
     </body>
 </html>
-

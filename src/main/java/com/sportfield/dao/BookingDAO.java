@@ -892,31 +892,52 @@ public class BookingDAO {
 
     /**
      * Hủy booking + ghi lý do + số tiền hoàn.
+     * Dùng 2 câu UPDATE riêng để tương thích DB chưa có cột RefundAmount/CancelReason.
      */
     public boolean cancelBooking(int bookingID, String cancelReason, BigDecimal refundAmount) {
-        String sql = "UPDATE Bookings SET Status = 'CANCELLED', "
-                   + "PaymentStatus = CASE WHEN PaymentStatus IN ('DEPOSITED','PAID') THEN 'PAID' ELSE PaymentStatus END, "
-                   + "RefundAmount = ?, CancelReason = ?, "
-                   + "Note = ISNULL(Note,'') + CHAR(10) + ? "
-                   + "WHERE BookingID = ?";
-
         Connection conn = null;
         PreparedStatement ps = null;
 
         try {
             conn = DBContext.getConnection();
-            if (conn != null) {
-                String cancelNote = "[HỦY] " + cancelReason;
-                ps = conn.prepareStatement(sql);
-                ps.setBigDecimal(1, refundAmount);
-                ps.setString(2, cancelReason);
-                ps.setString(3, cancelNote);
-                ps.setInt(4, bookingID);
+            if (conn == null) return false;
 
-                int rows = ps.executeUpdate();
-                return rows > 0;
+            conn.setAutoCommit(false);
+
+            // Bước 1: Cập nhật status + note (các cột chắc chắn tồn tại)
+            String cancelNote = "[HỦY] " + cancelReason;
+            String sqlBase = "UPDATE Bookings SET Status = 'CANCELLED', "
+                           + "Note = ISNULL(Note,'') + CHAR(10) + ? "
+                           + "WHERE BookingID = ?";
+            ps = conn.prepareStatement(sqlBase);
+            ps.setString(1, cancelNote);
+            ps.setInt(2, bookingID);
+            int rows = ps.executeUpdate();
+            ps.close();
+            ps = null;
+
+            if (rows > 0) {
+                // Bước 2: Thử cập nhật RefundAmount + CancelReason nếu cột tồn tại
+                try {
+                    String sqlExtra = "UPDATE Bookings SET RefundAmount = ?, CancelReason = ? WHERE BookingID = ?";
+                    ps = conn.prepareStatement(sqlExtra);
+                    ps.setBigDecimal(1, refundAmount);
+                    ps.setString(2, cancelReason);
+                    ps.setInt(3, bookingID);
+                    ps.executeUpdate();
+                    ps.close();
+                    ps = null;
+                } catch (Exception ignored) {
+                    // Cột chưa tồn tại trong DB — bỏ qua, không ảnh hưởng chức năng hủy
+                    LOGGER.log(Level.WARNING, "[BookingDAO] RefundAmount/CancelReason columns not found, skipping");
+                }
             }
+
+            conn.commit();
+            return rows > 0;
+
         } catch (Exception e) {
+            try { if (conn != null) conn.rollback(); } catch (Exception ex) { /* ignore */ }
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             DBContext.close(conn, ps, null);

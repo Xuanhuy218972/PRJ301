@@ -230,7 +230,7 @@ public class BookingController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/field-detail?id=" + fieldID);
                 }
 
-            } else if ("ON_SITE".equals(paymentOption)) {
+            } else if ("CASH".equals(paymentOption)) {
                 // ============================================
                 // ON-SITE FLOW: Create CONFIRMED booking, pay at field
                 // ============================================
@@ -241,7 +241,7 @@ public class BookingController extends HttpServlet {
                 booking.setDeposit(BigDecimal.ZERO);
                 booking.setStatus("CONFIRMED");
                 booking.setNote(note);
-                booking.setPaymentMethod("ON_SITE");
+                booking.setPaymentMethod("CASH");
                 booking.setPaymentStatus("UNPAID");
                 booking.setPaidAmount(BigDecimal.ZERO);
 
@@ -258,7 +258,7 @@ public class BookingController extends HttpServlet {
                     session.setAttribute("successTotalPrice", slotPrice);
                     session.setAttribute("successPaidAmount", BigDecimal.ZERO);
                     session.setAttribute("successPaymentStatus", "UNPAID");
-                    session.setAttribute("successPaymentMethod", "ON_SITE");
+                    session.setAttribute("successPaymentMethod", "CASH");
 
                     // Send confirmation email
                     String email = request.getParameter("customerEmail");
@@ -282,10 +282,16 @@ public class BookingController extends HttpServlet {
             }
 
         } catch (Exception e) {
-            getServletContext().log("[BookingController] doPost error", e);
+            getServletContext().log("[BookingController] doPost error: " + e.getMessage(), e);
             session = request.getSession(true);
-            session.setAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau!");
-            response.sendRedirect(request.getContextPath() + "/shop");
+            session.setAttribute("error", "Đặt sân thất bại: " + e.getMessage() + ". Vui lòng thử lại hoặc liên hệ hỗ trợ!");
+            // Redirect về field-detail nếu có fieldId, không thì về shop
+            String fieldIdParam = request.getParameter("fieldId");
+            if (fieldIdParam != null && !fieldIdParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/field-detail?id=" + fieldIdParam);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/shop");
+            }
         }
     }
 }

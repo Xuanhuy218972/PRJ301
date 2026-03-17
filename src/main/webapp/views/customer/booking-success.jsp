@@ -103,7 +103,7 @@
                                      Phương thức: 
                                      <c:choose>
                                          <c:when test="${sessionScope.successPaymentMethod == 'VNPAY'}">Chuyển khoản Online (VNPay)</c:when>
-                                         <c:when test="${sessionScope.successPaymentMethod == 'ON_SITE'}">Thanh toán tại sân</c:when>
+                                         <c:when test="${sessionScope.successPaymentMethod == 'CASH'}">Thanh toán tại sân</c:when>
                                          <c:otherwise>${sessionScope.successPaymentMethod}</c:otherwise>
                                      </c:choose>
                                  </small>

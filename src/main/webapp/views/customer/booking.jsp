@@ -140,7 +140,7 @@
 
                                         <!-- Option 3: Thanh toán tại sân -->
                                         <label class="payment-option" for="payOnSite">
-                                            <input type="radio" name="paymentOption" id="payOnSite" value="ON_SITE"
+                                            <input type="radio" name="paymentOption" id="payOnSite" value="CASH"
                                                    data-amount="${slot.price}">
                                             <div class="payment-option-content">
                                                 <div class="d-flex align-items-center gap-3">

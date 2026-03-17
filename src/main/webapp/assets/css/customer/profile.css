@@ -83,10 +83,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     text-decoration: line-through;
 }
 
-/* Pure CSS tabs */
-input[type="radio"][name="profile_tabs"] {
-    display: none;
-}
+/* JS-based tabs */
 .tab-label {
     display: block;
     color: #2d3436;
@@ -96,6 +93,7 @@ input[type="radio"][name="profile_tabs"] {
     margin-bottom: 5px;
     cursor: pointer;
     transition: 0.3s;
+    text-align: left;
 }
 .tab-label:hover {
     background: #f1f2f6;
@@ -103,37 +101,19 @@ input[type="radio"][name="profile_tabs"] {
 .tab-label i {
     width: 25px;
 }
-.css-tab-content {
-    display: none;
-    animation: fadeIn 0.4s ease;
-}
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-#tab-info:checked ~ .row .content-info, #tab-bookings:checked ~ .row .content-bookings, #tab-security:checked ~ .row .content-security {
-    display: block;
-}
-#tab-info:checked ~ .row .label-info, #tab-bookings:checked ~ .row .label-bookings, #tab-security:checked ~ .row .label-security {
+.tab-label.active-tab {
     background: #ff4757;
     color: white;
 }
+.tab-pane-content {
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
 /* Dismissible alerts */
-input.alert-closer {
-    display: none;
-}
-input.alert-closer:checked + .custom-alert-box {
-    display: none;
-    animation: fadeOut 0.3s;
-}
-
 .alert-close-btn {
     cursor: pointer;
     transition: 0.2s;

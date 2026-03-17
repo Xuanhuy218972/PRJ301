@@ -14,8 +14,8 @@ public class EmailConfig {
 
     public static final String SMTP_HOST     = getEnv("SMTP_HOST",     "sandbox.smtp.mailtrap.io");
     public static final String SMTP_PORT     = getEnv("SMTP_PORT",     "587");
-    public static final String SMTP_USER     = getEnv("SMTP_USER",     "e7bb8688c4669f");
-    public static final String SMTP_PASSWORD = getEnv("SMTP_PASSWORD", "6aa9b014cb3eee");
+    public static final String SMTP_USER     = getEnv("SMTP_USER",     "d055ed281fc412");
+    public static final String SMTP_PASSWORD = getEnv("SMTP_PASSWORD", "580c3e852aa866");
     public static final String ADMIN_EMAIL   = getEnv("ADMIN_EMAIL",   "admin@sportfieldhub.com");
     public static final String FROM_NAME     = "SportFieldHub";
 
