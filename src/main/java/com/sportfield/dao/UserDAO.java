@@ -43,7 +43,7 @@ public class UserDAO {
 
     public boolean register(User user) {
         String sql = "INSERT INTO Users (Username, Password, FullName, Email, Phone, Role, Avatar, CreatedAt, Address, Gender, DateOfBirth) "
-                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', ?, GETDATE(), ?, ?, ?)";
+                   + "VALUES (?, ?, ?, ?, ?, 'CUSTOMER', ?, CURRENT_TIMESTAMP, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement ps = null;
 
@@ -136,7 +136,7 @@ public class UserDAO {
 
     public List<User> getNewCustomers(int month, int year) {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM Users WHERE Role = 'CUSTOMER' AND MONTH(CreatedAt) = ? AND YEAR(CreatedAt) = ? ORDER BY CreatedAt DESC";
+        String sql = "SELECT * FROM Users WHERE Role = 'CUSTOMER' AND EXTRACT(MONTH FROM CreatedAt) = ? AND EXTRACT(YEAR FROM CreatedAt) = ? ORDER BY CreatedAt DESC";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -165,7 +165,7 @@ public class UserDAO {
         StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1=1 ");
 
         if ("new_customers".equals(type)) {
-            sql.append("AND Role = 'CUSTOMER' AND MONTH(CreatedAt) = ? AND YEAR(CreatedAt) = ? ");
+            sql.append("AND Role = 'CUSTOMER' AND EXTRACT(MONTH FROM CreatedAt) = ? AND EXTRACT(YEAR FROM CreatedAt) = ? ");
         } else if (role != null && !role.trim().isEmpty() && !"ALL".equalsIgnoreCase(role)) {
             sql.append("AND Role = ? ");
         }

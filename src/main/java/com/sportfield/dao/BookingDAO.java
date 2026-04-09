@@ -309,7 +309,7 @@ public class BookingDAO {
     public boolean insertBooking(Booking booking) {
         String sql = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, "
                    + "PaymentMethod, PaymentStatus, PaidAmount, CreatedAt) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -346,8 +346,8 @@ public class BookingDAO {
     public int insertBookingWithDetails(Booking booking, int slotID, java.time.LocalDate bookingDate, BigDecimal slotPrice) {
         String sqlBooking = "INSERT INTO Bookings (CustomerID, BookingType, TotalPrice, Deposit, Status, Note, "
                           + "PaymentMethod, PaymentStatus, PaidAmount, CreatedAt) "
-                          + "OUTPUT INSERTED.BookingID "
-                          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+                          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP) "
+                          + "RETURNING BookingID";
         String sqlDetail = "INSERT INTO BookingDetails (BookingID, SlotID, BookingDate, Price) VALUES (?, ?, ?, ?)";
 
         Connection conn = null;
@@ -360,7 +360,7 @@ public class BookingDAO {
             if (conn != null) {
                 conn.setAutoCommit(false);
 
-                psBooking = conn.prepareStatement(sqlBooking);
+                psBooking = conn.prepareStatement(sqlBooking, java.sql.Statement.RETURN_GENERATED_KEYS);
                 psBooking.setInt(1, booking.getCustomerID());
                 psBooking.setString(2, booking.getBookingType());
                 psBooking.setBigDecimal(3, booking.getTotalPrice());
@@ -371,8 +371,8 @@ public class BookingDAO {
                 psBooking.setString(8, booking.getPaymentStatus() != null ? booking.getPaymentStatus() : "UNPAID");
                 psBooking.setBigDecimal(9, booking.getPaidAmount() != null ? booking.getPaidAmount() : BigDecimal.ZERO);
 
-                // OUTPUT INSERTED returns a ResultSet via executeQuery
-                rs = psBooking.executeQuery();
+                psBooking.executeUpdate();
+                rs = psBooking.getGeneratedKeys();
                 int newBookingID = -1;
 
                 if (rs.next()) {
@@ -509,7 +509,7 @@ public class BookingDAO {
      * Reset TotalPrice về đúng giá sân (sum BookingDetails), xóa toàn bộ dịch vụ đã thêm.
      */
     public boolean resetServiceCharges(int bookingID) {
-        String sqlFieldPrice = "SELECT ISNULL(SUM(Price), 0) FROM BookingDetails WHERE BookingID = ?";
+        String sqlFieldPrice = "SELECT COALESCE(SUM(Price), 0) FROM BookingDetails WHERE BookingID = ?";
         String sqlUpdateSimple = "UPDATE Bookings SET TotalPrice = ? WHERE BookingID = ?";
 
         Connection conn = null;
@@ -605,7 +605,7 @@ public class BookingDAO {
     }
 
     public int countBookingsToday() {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE CAST(CreatedAt AS DATE) = CURRENT_DATE";
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -628,8 +628,9 @@ public class BookingDAO {
     }
 
     public BigDecimal getMonthlyRevenue() {
-        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
-                   + "WHERE MONTH(CreatedAt) = MONTH(GETDATE()) AND YEAR(CreatedAt) = YEAR(GETDATE()) "
+        String sql = "SELECT COALESCE(SUM(TotalPrice), 0) FROM Bookings "
+                   + "WHERE EXTRACT(MONTH FROM CreatedAt) = EXTRACT(MONTH FROM CURRENT_DATE) "
+                   + "AND EXTRACT(YEAR FROM CreatedAt) = EXTRACT(YEAR FROM CURRENT_DATE) "
                    + "AND Status = 'COMPLETED'";
         Connection conn = null;
         PreparedStatement ps = null;
@@ -838,11 +839,11 @@ public class BookingDAO {
      * Lấy BookingDetail đầu tiên của một booking (dùng để tính thời gian hủy).
      */
     public BookingDetail getFirstDetailByBookingID(int bookingID) {
-        String sql = "SELECT TOP 1 bd.*, f.FieldName, fs.StartTime AS SlotStart, fs.EndTime AS SlotEnd "
+        String sql = "SELECT bd.*, f.FieldName, fs.StartTime AS SlotStart, fs.EndTime AS SlotEnd "
                    + "FROM BookingDetails bd "
                    + "LEFT JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
                    + "LEFT JOIN Fields f ON fs.FieldID = f.FieldID "
-                   + "WHERE bd.BookingID = ? ORDER BY bd.BookingDate, fs.StartTime";
+                   + "WHERE bd.BookingID = ? ORDER BY bd.BookingDate, fs.StartTime LIMIT 1";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -907,7 +908,7 @@ public class BookingDAO {
             // Bước 1: Cập nhật status + note (các cột chắc chắn tồn tại)
             String cancelNote = "[HỦY] " + cancelReason;
             String sqlBase = "UPDATE Bookings SET Status = 'CANCELLED', "
-                           + "Note = ISNULL(Note,'') + CHAR(10) + ? "
+                           + "Note = COALESCE(Note,'') || CHR(10) || ? "
                            + "WHERE BookingID = ?";
             ps = conn.prepareStatement(sqlBase);
             ps.setString(1, cancelNote);
@@ -951,8 +952,8 @@ public class BookingDAO {
      */
     public int autoCancelExpiredPendingBookings() {
         String sql = "UPDATE Bookings SET Status = 'CANCELLED', "
-                   + "Note = ISNULL(Note,'') + CHAR(10) + '[AUTO] Hủy do quá thời gian thanh toán' "
-                   + "WHERE Status = 'PENDING' AND DATEDIFF(MINUTE, CreatedAt, GETDATE()) > 30";
+                   + "Note = COALESCE(Note,'') || CHR(10) || '[AUTO] Hủy do quá thời gian thanh toán' "
+                   + "WHERE Status = 'PENDING' AND EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - CreatedAt))/60 > 30";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -975,11 +976,12 @@ public class BookingDAO {
      * Auto-complete bookings đã qua ngày đá.
      */
     public int autoCompletePassedBookings() {
-        String sql = "UPDATE b SET b.Status = 'COMPLETED' FROM Bookings b "
+        String sql = "UPDATE Bookings SET Status = 'COMPLETED' "
+                   + "FROM Bookings b "
                    + "INNER JOIN BookingDetails bd ON b.BookingID = bd.BookingID "
                    + "INNER JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
                    + "WHERE b.Status = 'CONFIRMED' "
-                   + "AND CAST(bd.BookingDate AS DATETIME) + CAST(fs.EndTime AS DATETIME) < GETDATE()";
+                   + "AND (bd.BookingDate + fs.EndTime) < CURRENT_TIMESTAMP";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -999,8 +1001,8 @@ public class BookingDAO {
     }
 
     public BigDecimal getDailyRevenue() {
-        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
-                   + "WHERE CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE) "
+        String sql = "SELECT COALESCE(SUM(TotalPrice), 0) FROM Bookings "
+                   + "WHERE CAST(CreatedAt AS DATE) = CURRENT_DATE "
                    + "AND Status IN ('CONFIRMED', 'COMPLETED')";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -1011,8 +1013,8 @@ public class BookingDAO {
     }
 
     public BigDecimal getWeeklyRevenue() {
-        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
-                   + "WHERE CreatedAt >= DATEADD(day, -7, GETDATE()) "
+        String sql = "SELECT COALESCE(SUM(TotalPrice), 0) FROM Bookings "
+                   + "WHERE CreatedAt >= CURRENT_DATE - INTERVAL '7 days' "
                    + "AND Status IN ('CONFIRMED', 'COMPLETED')";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);

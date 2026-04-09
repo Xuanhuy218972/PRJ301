@@ -114,7 +114,7 @@ public class SportFieldDAO {
     }
 
     public boolean insert(SportField field) {
-        String sql = "INSERT INTO Fields (OwnerID, FieldName, FieldType, PricePerHour, ImageURL, Status, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Fields (OwnerID, FieldName, FieldType, PricePerHour, ImageURL, Status, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
         Connection conn = null;
         PreparedStatement ps = null;
 

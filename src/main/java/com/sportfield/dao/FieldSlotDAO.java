@@ -202,14 +202,14 @@ public class FieldSlotDAO {
             "    FROM FieldSlots fs " +
             "    JOIN Fields f ON fs.FieldID = f.FieldID AND f.Status = 'ACTIVE' " +
             "    CROSS JOIN ( " +
-            "        SELECT CAST(GETDATE() AS DATE) AS DateValue " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 1, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 2, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 3, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 4, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 5, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 6, GETDATE()) AS DATE) " +
-            "        UNION ALL SELECT CAST(DATEADD(day, 7, GETDATE()) AS DATE) " +
+            "        SELECT CURRENT_DATE AS DateValue " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '1 day' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '2 days' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '3 days' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '4 days' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '5 days' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '6 days' " +
+            "        UNION ALL SELECT CURRENT_DATE + INTERVAL '7 days' " +
             "    ) d " +
             "    WHERE fs.Status = 'ACTIVE' AND NOT EXISTS ( " +
             "        SELECT 1 FROM BookingDetails bd " +
@@ -221,16 +221,17 @@ public class FieldSlotDAO {
             "RankedSlots AS ( " +
             "    SELECT *, " +
             "    CASE " +
-            "        WHEN IsGoldenHour = 1 AND DateValue <= CAST(DATEADD(day, 1, GETDATE()) AS DATE) THEN 1 " +
-            "        WHEN IsGoldenHour = 1 AND DateValue > CAST(DATEADD(day, 1, GETDATE()) AS DATE) AND DateValue <= CAST(DATEADD(day, 7, GETDATE()) AS DATE) THEN 2 " +
-            "        WHEN IsGoldenHour = 0 AND DateValue <= CAST(DATEADD(day, 1, GETDATE()) AS DATE) THEN 3 " +
+            "        WHEN IsGoldenHour = 1 AND DateValue <= CURRENT_DATE + INTERVAL '1 day' THEN 1 " +
+            "        WHEN IsGoldenHour = 1 AND DateValue > CURRENT_DATE + INTERVAL '1 day' AND DateValue <= CURRENT_DATE + INTERVAL '7 days' THEN 2 " +
+            "        WHEN IsGoldenHour = 0 AND DateValue <= CURRENT_DATE + INTERVAL '1 day' THEN 3 " +
             "        ELSE 4 " +
             "    END AS PriorityTier " +
             "    FROM AvailableSlots " +
             ") " +
-            "SELECT TOP 6 * FROM RankedSlots " +
+            "SELECT * FROM RankedSlots " +
             "WHERE PriorityTier <= 3 " +
-            "ORDER BY PriorityTier ASC, DateValue ASC, StartTime ASC";
+            "ORDER BY PriorityTier ASC, DateValue ASC, StartTime ASC " +
+            "LIMIT 6";
 
         try {
             conn = DBContext.getConnection();

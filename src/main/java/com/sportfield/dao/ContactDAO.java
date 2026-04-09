@@ -19,7 +19,7 @@ public class ContactDAO {
 
     public boolean saveContactMessage(ContactMessage contact) {
         String sql = "INSERT INTO ContactMessages (FullName, Email, Phone, Subject, Message, CreatedAt, Status) "
-                   + "VALUES (?, ?, ?, ?, ?, GETDATE(), ?)";
+                   + "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
         
         Connection conn = null;
         PreparedStatement ps = null;

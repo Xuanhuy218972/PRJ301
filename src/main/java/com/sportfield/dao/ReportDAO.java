@@ -20,9 +20,9 @@ public class ReportDAO {
     private static final Logger LOGGER = Logger.getLogger(ReportDAO.class.getName());
 
     public BigDecimal getTotalRevenue(String year, String month) {
-        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
+        String sql = "SELECT COALESCE(SUM(TotalPrice), 0) FROM Bookings "
                    + "WHERE Status = 'COMPLETED' "
-                   + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
+                   + "AND EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ?";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -48,9 +48,9 @@ public class ReportDAO {
     }
 
     public BigDecimal getTotalRevenueToday() {
-        String sql = "SELECT ISNULL(SUM(TotalPrice), 0) FROM Bookings "
+        String sql = "SELECT COALESCE(SUM(TotalPrice), 0) FROM Bookings "
                    + "WHERE Status = 'COMPLETED' "
-                   + "AND CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
+                   + "AND CAST(CreatedAt AS DATE) = CURRENT_DATE";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -79,9 +79,9 @@ public class ReportDAO {
             monthlyRevenue.put(i, BigDecimal.ZERO);
         }
 
-        String sql = "SELECT MONTH(CreatedAt) AS M, ISNULL(SUM(TotalPrice), 0) AS Revenue "
+        String sql = "SELECT EXTRACT(MONTH FROM CreatedAt) AS M, COALESCE(SUM(TotalPrice), 0) AS Revenue "
                    + "FROM Bookings WHERE Status = 'COMPLETED' "
-                   + "AND YEAR(CreatedAt) = ? GROUP BY MONTH(CreatedAt) ORDER BY M";
+                   + "AND EXTRACT(YEAR FROM CreatedAt) = ? GROUP BY EXTRACT(MONTH FROM CreatedAt) ORDER BY M";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -118,10 +118,10 @@ public class ReportDAO {
             dailyRevenue.put(i, BigDecimal.ZERO);
         }
 
-        String sql = "SELECT DAY(CreatedAt) AS D, ISNULL(SUM(TotalPrice), 0) AS Revenue "
+        String sql = "SELECT EXTRACT(DAY FROM CreatedAt) AS D, COALESCE(SUM(TotalPrice), 0) AS Revenue "
                    + "FROM Bookings WHERE Status = 'COMPLETED' "
-                   + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
-                   + "GROUP BY DAY(CreatedAt) ORDER BY D";
+                   + "AND EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ? "
+                   + "GROUP BY EXTRACT(DAY FROM CreatedAt) ORDER BY D";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -147,7 +147,7 @@ public class ReportDAO {
     }
 
     public int getTotalBookingsByMonth(String year, String month) {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ?";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -173,7 +173,7 @@ public class ReportDAO {
     }
 
     public int getCompletedBookingsByMonth(String year, String month) {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ? "
                    + "AND Status = 'COMPLETED'";
 
         Connection conn = null;
@@ -200,7 +200,7 @@ public class ReportDAO {
     }
 
     public int getCancelledBookingsByMonth(String year, String month) {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ? "
                    + "AND Status = 'CANCELLED'";
 
         Connection conn = null;
@@ -228,15 +228,15 @@ public class ReportDAO {
 
     public List<Map<String, Object>> getTopFieldsByRevenue(String year, String month) {
         List<Map<String, Object>> result = new ArrayList<>();
-        String sql = "SELECT TOP 5 f.FieldName, COUNT(bd.DetailID) AS TotalBookings, "
-                   + "ISNULL(SUM(bd.Price), 0) AS TotalRevenue "
+        String sql = "SELECT f.FieldName, COUNT(bd.DetailID) AS TotalBookings, "
+                   + "COALESCE(SUM(bd.Price), 0) AS TotalRevenue "
                    + "FROM BookingDetails bd "
                    + "JOIN FieldSlots fs ON bd.SlotID = fs.SlotID "
                    + "JOIN Fields f ON fs.FieldID = f.FieldID "
                    + "JOIN Bookings b ON bd.BookingID = b.BookingID "
                    + "WHERE b.Status = 'COMPLETED' "
-                   + "AND YEAR(b.CreatedAt) = ? AND MONTH(b.CreatedAt) = ? "
-                   + "GROUP BY f.FieldName ORDER BY TotalRevenue DESC";
+                   + "AND EXTRACT(YEAR FROM b.CreatedAt) = ? AND EXTRACT(MONTH FROM b.CreatedAt) = ? "
+                   + "GROUP BY f.FieldName ORDER BY TotalRevenue DESC LIMIT 5";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -267,7 +267,7 @@ public class ReportDAO {
 
     public List<Integer> getAvailableYears() {
         List<Integer> years = new ArrayList<>();
-        String sql = "SELECT DISTINCT YEAR(CreatedAt) AS Y FROM Bookings ORDER BY Y DESC";
+        String sql = "SELECT DISTINCT EXTRACT(YEAR FROM CreatedAt) AS Y FROM Bookings ORDER BY Y DESC";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -295,7 +295,7 @@ public class ReportDAO {
     }
 
     public int getPendingBookingsByMonth(String year, String month) {
-        String sql = "SELECT COUNT(*) FROM Bookings WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ? "
+        String sql = "SELECT COUNT(*) FROM Bookings WHERE EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ? "
                    + "AND Status = 'PENDING'";
 
         Connection conn = null;
@@ -323,7 +323,7 @@ public class ReportDAO {
 
     public int getTotalCustomersInMonth(String year, String month) {
         String sql = "SELECT COUNT(DISTINCT CustomerID) FROM Bookings "
-                   + "WHERE YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
+                   + "WHERE EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ?";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -351,9 +351,9 @@ public class ReportDAO {
     public int getReturningCustomersByMonth(String year, String month) {
         // Customers who have bookings in this month AND had at least one booking before this month
         String sql = "SELECT COUNT(DISTINCT b1.CustomerID) FROM Bookings b1 "
-                   + "WHERE YEAR(b1.CreatedAt) = ? AND MONTH(b1.CreatedAt) = ? "
+                   + "WHERE EXTRACT(YEAR FROM b1.CreatedAt) = ? AND EXTRACT(MONTH FROM b1.CreatedAt) = ? "
                    + "AND EXISTS (SELECT 1 FROM Bookings b2 WHERE b2.CustomerID = b1.CustomerID "
-                   + "AND b2.CreatedAt < CAST(? + '-' + ? + '-01' AS DATE))";
+                   + "AND b2.CreatedAt < TO_DATE(? || '-' || ? || '-01', 'YYYY-MM-DD'))";
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -382,7 +382,7 @@ public class ReportDAO {
 
     public int getNewCustomersByMonth(String year, String month) {
         String sql = "SELECT COUNT(*) FROM Users WHERE Role = 'CUSTOMER' "
-                   + "AND YEAR(CreatedAt) = ? AND MONTH(CreatedAt) = ?";
+                   + "AND EXTRACT(YEAR FROM CreatedAt) = ? AND EXTRACT(MONTH FROM CreatedAt) = ?";
 
         Connection conn = null;
         PreparedStatement ps = null;
