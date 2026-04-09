@@ -64,3 +64,21 @@ bin/
 *.iml
 *.iws
 *.ipr
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+# .env.example KHÔNG ignore — cần push lên để người khác biết cần set gì
+
+# Docker sensitive files
+docker-compose.override.yml
+.dockerignore
+
+# SSL certificates & keys (NEVER push to git)
+ssl/
+*.key
+*.crt
+*.pem
+*.p12
+*.jks
